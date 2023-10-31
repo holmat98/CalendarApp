@@ -11,13 +11,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.mateuszholik.calendarapp.ui.theme.CalendarAppTheme
+import com.mateuszholik.calendarapp.ui.theme.StyleType
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            CalendarAppTheme {
-                // A surface container using the 'background' color from the theme
+            CalendarAppTheme(styleType = StyleType.AUTUMN) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -40,7 +40,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    CalendarAppTheme {
+    CalendarAppTheme(styleType = StyleType.AUTUMN) {
         Greeting("Android")
     }
 }
