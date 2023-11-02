@@ -27,6 +27,16 @@ fun DependencyHandler.compose() {
     implementation(AndroidX.Compose.Hilt.DEPENDENCY)
 }
 
+fun DependencyHandler.unitTesting() {
+    testImplementation(Testing.JUnit.DEPENDENCY)
+    testCompileOnly(Testing.JUnit.API_DEPENDENCY)
+    testRuntimeOnly(Testing.JUnit.ENGINE)
+    testImplementation(Testing.JUnit.PARAMS)
+    testImplementation(Testing.AssertJ.DEPENDENCY)
+    testImplementation(AndroidX.CoreKtx.Testing.DEPENDENCY)
+    testImplementation(Mockk.DEPENDENCY)
+}
+
 private fun DependencyHandler.implementation(dependency: String) {
     add("implementation", dependency)
 }
@@ -37,4 +47,16 @@ private fun DependencyHandler.debugImplementation(dependency: String) {
 
 private fun DependencyHandler.ksp(dependency: String) {
     add("ksp", dependency)
+}
+
+private fun DependencyHandler.testImplementation(dependency: String) {
+    add("testImplementation", dependency)
+}
+
+private fun DependencyHandler.testRuntimeOnly(dependency: String) {
+    add("testRuntimeOnly", dependency)
+}
+
+private fun DependencyHandler.testCompileOnly(dependency: String) {
+    add("testCompileOnly", dependency)
 }
