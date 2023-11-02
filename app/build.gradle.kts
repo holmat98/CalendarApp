@@ -18,4 +18,9 @@ dependencies {
     activity()
     compose()
     hilt()
+    unitTesting()
+}
+
+tasks.withType(Test::class) {
+    useJUnitPlatform()
 }

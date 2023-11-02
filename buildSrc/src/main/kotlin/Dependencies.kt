@@ -27,6 +27,12 @@ object AndroidX {
         private const val version = "1.12.0"
 
         const val DEPENDENCY = "androidx.core:core-ktx:$version"
+
+        object Testing {
+            private const val version = "2.2.0"
+
+            const val DEPENDENCY = "androidx.arch.core:core-testing:$version"
+        }
     }
 
     object Lifecycle {
@@ -77,5 +83,33 @@ object Google {
         object Compiler {
             const val DEPENDENCY = "com.google.dagger:hilt-android-compiler:$version"
         }
+    }
+}
+
+object Testing {
+
+    object JUnit {
+        private const val version = "5.9.1"
+
+        const val DEPENDENCY = "org.junit.jupiter:junit-jupiter:$version"
+        const val API_DEPENDENCY = "org.junit.jupiter:junit-jupiter-api:$version"
+        const val ENGINE = "org.junit.jupiter:junit-jupiter-engine:$version"
+        const val PARAMS = "org.junit.jupiter:junit-jupiter-params:$version"
+    }
+
+    object AssertJ {
+        private const val version = "3.21.0"
+
+        const val DEPENDENCY = "org.assertj:assertj-core:$version"
+    }
+}
+
+object Mockk {
+    private const val version = "1.13.5"
+
+    const val DEPENDENCY = "io.mockk:mockk:$version"
+
+    object Android {
+        const val DEPENDENCY = "io.mockk:mockk-android:$version"
     }
 }

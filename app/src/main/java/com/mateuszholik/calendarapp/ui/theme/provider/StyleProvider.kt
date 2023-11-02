@@ -1,5 +1,6 @@
 package com.mateuszholik.calendarapp.ui.theme.provider
 
+import com.mateuszholik.calendarapp.provider.CurrentDateProvider
 import com.mateuszholik.calendarapp.ui.theme.models.StyleType
 import java.time.LocalDate
 import javax.inject.Inject
@@ -9,10 +10,12 @@ interface StyleProvider {
     fun provide(): StyleType
 }
 
-class StyleProviderImpl @Inject constructor() : StyleProvider {
+class StyleProviderImpl @Inject constructor(
+    private val currentDateProvider: CurrentDateProvider,
+) : StyleProvider {
 
     override fun provide(): StyleType {
-        val today = LocalDate.now()
+        val today = currentDateProvider.provide()
         val currentYear = today.year
 
         return when (today) {

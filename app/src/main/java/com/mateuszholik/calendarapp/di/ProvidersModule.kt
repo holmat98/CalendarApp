@@ -1,11 +1,14 @@
 package com.mateuszholik.calendarapp.di
 
+import com.mateuszholik.calendarapp.provider.CurrentDateProvider
+import com.mateuszholik.calendarapp.provider.CurrentDateProviderImpl
 import com.mateuszholik.calendarapp.ui.theme.provider.StyleProvider
 import com.mateuszholik.calendarapp.ui.theme.provider.StyleProviderImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -15,4 +18,14 @@ internal abstract class ProvidersModule {
     abstract fun bindsStyleProvider(
         styleProviderImpl: StyleProviderImpl,
     ): StyleProvider
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+internal abstract class SingletonsProvidersModule {
+
+    @Binds
+    abstract fun bindsCurrentDateProvider(
+        currentDateProviderImpl: CurrentDateProviderImpl,
+    ): CurrentDateProvider
 }
