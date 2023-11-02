@@ -28,7 +28,9 @@ class MainActivity : ComponentActivity() {
             val styleType = remember { viewModel.currentStyle }
 
             CalendarAppTheme(styleType = styleType) {
-                WelcomeScreen()
+                WelcomeScreen(
+                    goToNextScreen = {}
+                )
             }
         }
     }

@@ -4,6 +4,8 @@ import com.mateuszholik.calendarapp.provider.CurrentDateProvider
 import com.mateuszholik.calendarapp.provider.CurrentDateProviderImpl
 import com.mateuszholik.calendarapp.ui.theme.provider.StyleProvider
 import com.mateuszholik.calendarapp.ui.theme.provider.StyleProviderImpl
+import com.mateuszholik.calendarapp.ui.welcome.provider.WelcomeScreenInfoProvider
+import com.mateuszholik.calendarapp.ui.welcome.provider.WelcomeScreenInfoProviderImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -18,6 +20,11 @@ internal abstract class ProvidersModule {
     abstract fun bindsStyleProvider(
         styleProviderImpl: StyleProviderImpl,
     ): StyleProvider
+
+    @Binds
+    abstract fun bindsWelcomeScreenInfoProvider(
+        welcomeScreenInfoProviderImpl: WelcomeScreenInfoProviderImpl,
+    ): WelcomeScreenInfoProvider
 }
 
 @Module
