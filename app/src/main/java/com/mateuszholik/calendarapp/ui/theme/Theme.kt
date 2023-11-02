@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.mateuszholik.calendarapp.ui.theme.autumn.AutumnDarkColors
 import com.mateuszholik.calendarapp.ui.theme.autumn.AutumnLightColors
+import com.mateuszholik.calendarapp.ui.theme.models.StyleType
 import com.mateuszholik.calendarapp.ui.theme.spring.SpringDarkColors
 import com.mateuszholik.calendarapp.ui.theme.spring.SpringLightColors
 import com.mateuszholik.calendarapp.ui.theme.summer.SummerDarkColors
@@ -22,32 +23,8 @@ import com.mateuszholik.calendarapp.ui.theme.summer.SummerLightColors
 import com.mateuszholik.calendarapp.ui.theme.winter.WinterDarkColors
 import com.mateuszholik.calendarapp.ui.theme.winter.WinterLightColors
 
-
-internal enum class StyleType {
-    SPRING,
-    SUMMER,
-    AUTUMN,
-    WINTER
-}
-
-private fun StyleType.lightMode(): ColorScheme =
-    when (this) {
-        StyleType.SPRING -> SpringLightColors
-        StyleType.SUMMER -> SummerLightColors
-        StyleType.AUTUMN -> AutumnLightColors
-        StyleType.WINTER -> WinterLightColors
-    }
-
-private fun StyleType.darkMode(): ColorScheme =
-    when (this) {
-        StyleType.SPRING -> SpringDarkColors
-        StyleType.SUMMER -> SummerDarkColors
-        StyleType.AUTUMN -> AutumnDarkColors
-        StyleType.WINTER -> WinterDarkColors
-    }
-
 @Composable
-internal fun CalendarAppTheme(
+fun CalendarAppTheme(
     styleType: StyleType,
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = false,
@@ -78,3 +55,19 @@ internal fun CalendarAppTheme(
         content = content
     )
 }
+
+private fun StyleType.lightMode(): ColorScheme =
+    when (this) {
+        StyleType.SPRING -> SpringLightColors
+        StyleType.SUMMER -> SummerLightColors
+        StyleType.AUTUMN -> AutumnLightColors
+        StyleType.WINTER -> WinterLightColors
+    }
+
+private fun StyleType.darkMode(): ColorScheme =
+    when (this) {
+        StyleType.SPRING -> SpringDarkColors
+        StyleType.SUMMER -> SummerDarkColors
+        StyleType.AUTUMN -> AutumnDarkColors
+        StyleType.WINTER -> WinterDarkColors
+    }
