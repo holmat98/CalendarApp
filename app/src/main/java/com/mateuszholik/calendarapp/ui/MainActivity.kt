@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.mateuszholik.calendarapp.ui.theme.CalendarAppTheme
 import com.mateuszholik.calendarapp.ui.theme.models.StyleType
+import com.mateuszholik.calendarapp.ui.welcome.WelcomeScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,12 +28,7 @@ class MainActivity : ComponentActivity() {
             val styleType = remember { viewModel.currentStyle }
 
             CalendarAppTheme(styleType = styleType) {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
-                }
+                WelcomeScreen()
             }
         }
     }
