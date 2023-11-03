@@ -4,14 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.mateuszholik.calendarapp.ui.model.rememberWindowSize
 import com.mateuszholik.calendarapp.ui.theme.CalendarAppTheme
 import com.mateuszholik.calendarapp.ui.theme.models.StyleType
 import com.mateuszholik.calendarapp.ui.welcome.WelcomeScreen
@@ -26,9 +24,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val styleType = remember { viewModel.currentStyle }
+            val windowSizeInfo = rememberWindowSize()
 
             CalendarAppTheme(styleType = styleType) {
                 WelcomeScreen(
+                    windowSizeInfo = windowSizeInfo,
                     goToNextScreen = {}
                 )
             }
