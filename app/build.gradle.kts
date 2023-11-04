@@ -13,6 +13,10 @@ android.configure(
 
 dependencies {
 
+    // modules
+    implementation(project(":designsystem"))
+
+    // dependencies
     coreKtx()
     lifecycle()
     activity()

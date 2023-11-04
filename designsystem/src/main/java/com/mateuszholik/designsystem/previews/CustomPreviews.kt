@@ -1,4 +1,4 @@
-package com.mateuszholik.calendarapp.ui.previews
+package com.mateuszholik.designsystem.previews
 
 import androidx.compose.ui.tooling.preview.Preview
 

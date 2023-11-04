@@ -1,5 +1,6 @@
 object Plugins {
     const val ANDROID_APPLICATION = "com.android.application"
+    const val ANDROID_LIBRARY = "com.android.library"
     const val KOTLIN = "org.jetbrains.kotlin.android"
     const val HILT = "com.google.dagger.hilt.android"
 }
@@ -9,6 +10,7 @@ object DefaultConfig {
     const val MIN_SDK = 30
     const val TARGET_SDK = 34
     const val TEST_INSTRUMENTATION_RUNNER = "androidx.test.runner.AndroidJUnitRunner"
+    const val CONSUMER_RULES_FILE = "consumer-rules.pro"
 }
 
 object Proguard {

@@ -1,7 +1,7 @@
-package com.mateuszholik.calendarapp.ui.theme.provider
+package com.mateuszholik.calendarapp.ui.provider
 
 import com.mateuszholik.calendarapp.provider.CurrentDateProvider
-import com.mateuszholik.calendarapp.ui.theme.models.StyleType
+import com.mateuszholik.designsystem.models.StyleType
 import java.time.LocalDate
 import javax.inject.Inject
 

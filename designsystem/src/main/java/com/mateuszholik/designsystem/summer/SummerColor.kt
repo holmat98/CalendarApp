@@ -1,4 +1,4 @@
-package com.mateuszholik.calendarapp.ui.theme.summer
+package com.mateuszholik.designsystem.summer
 
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -66,7 +66,7 @@ private val md_theme_dark_surfaceTint = Color(0xFFE9C349)
 private val md_theme_dark_outlineVariant = Color(0xFF4C4639)
 private val md_theme_dark_scrim = Color(0xFF000000)
 
-val seed = Color(0xFFFFE394)
+internal val seed = Color(0xFFFFE394)
 
 internal val SummerLightColors = lightColorScheme(
     primary = md_theme_light_primary,

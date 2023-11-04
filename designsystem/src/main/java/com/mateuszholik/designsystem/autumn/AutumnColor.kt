@@ -1,4 +1,4 @@
-package com.mateuszholik.calendarapp.ui.theme.autumn
+package com.mateuszholik.designsystem.autumn
 
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -66,7 +66,7 @@ private val md_theme_dark_surfaceTint = Color(0xFFFFB4AC)
 private val md_theme_dark_outlineVariant = Color(0xFF534341)
 private val md_theme_dark_scrim = Color(0xFF000000)
 
-val seed = Color(0xFFD9736A)
+internal val seed = Color(0xFFD9736A)
 
 internal val AutumnLightColors = lightColorScheme(
     primary = md_theme_light_primary,

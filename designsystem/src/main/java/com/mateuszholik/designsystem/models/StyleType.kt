@@ -1,4 +1,4 @@
-package com.mateuszholik.calendarapp.ui.theme.models
+package com.mateuszholik.designsystem.models
 
 enum class StyleType {
     SPRING,
