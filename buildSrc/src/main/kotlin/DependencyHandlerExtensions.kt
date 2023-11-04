@@ -25,6 +25,7 @@ fun DependencyHandler.compose() {
     debugImplementation(AndroidX.Compose.UI_TOOLING)
     debugImplementation(AndroidX.Compose.TEST_MANIFEST)
     implementation(AndroidX.Compose.Hilt.DEPENDENCY)
+    implementation(AndroidX.Compose.Lifecycle.DEPENDENCY)
 }
 
 fun DependencyHandler.unitTesting() {

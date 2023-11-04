@@ -1,3 +1,26 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">CalendarApp</string>
+    <string name="welcome_screen_hello_spring">Hello\nSpring!</string>
+    <string name="welcome_screen_hello_summer">Hello\nSummer!</string>
+    <string name="welcome_screen_hello_autumn">Hello\nAutumn!</string>
+    <string name="welcome_screen_hello_winter">Hello\nWinter!</string>
+    <string name="welcome_screen_hello_january">Hello\nJanuary!</string>
+    <string name="welcome_screen_hello_february">Hello\nFebruary!</string>
+    <string name="welcome_screen_hello_march">Hello\nMarch!</string>
+    <string name="welcome_screen_hello_april">Hello\nApril!</string>
+    <string name="welcome_screen_hello_may">Hello\nMay!</string>
+    <string name="welcome_screen_hello_june">Hello\nJune!</string>
+    <string name="welcome_screen_hello_july">Hello\nJuly!</string>
+    <string name="welcome_screen_hello_august">Hello\nAugust!</string>
+    <string name="welcome_screen_hello_september">Hello\nSeptember!</string>
+    <string name="welcome_screen_hello_october">Hello\nOctober!</string>
+    <string name="welcome_screen_hello_november">Hello\nNovember!</string>
+    <string name="welcome_screen_hello_december">Hello\nDecember!</string>
+    <string name="welcome_screen_hello_christmas">Merry\nChristmas</string>
+    <string name="welcome_screen_hello_santa" tools:ignore="Typos">Ho ho ho!</string>
+    <string name="welcome_screen_hello_halloween">Happy\nHalloween!</string>
+    <string name="welcome_screen_hello_new_year_eve">New Year Eve</string>
+    <string name="welcome_screen_hello_vacation">Happy\nVacation!</string>
+    <string name="welcome_screen_hello_school">Welcome\nSchool!</string>
+    <string name="welcome_screen_hello_new_year">Happy\nNew Year!</string>
 </resources>

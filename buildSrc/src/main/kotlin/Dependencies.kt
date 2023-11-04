@@ -11,11 +11,6 @@ object DefaultConfig {
     const val TEST_INSTRUMENTATION_RUNNER = "androidx.test.runner.AndroidJUnitRunner"
 }
 
-object GradlePlugins {
-    const val KOTLIN_VERSION = "1.9.10"
-    const val GRADLE_PLUGIN_VERSION = "8.1.2"
-}
-
 object Proguard {
     const val FILE = "proguard-android-optimize.txt"
     const val RULES = "proguard-rules.pro"
@@ -62,6 +57,12 @@ object AndroidX {
             private const val version = "1.0.0"
 
             const val DEPENDENCY = "androidx.hilt:hilt-navigation-compose:$version"
+        }
+
+        object Lifecycle {
+            private const val version = "2.6.2"
+
+            const val DEPENDENCY = "androidx.lifecycle:lifecycle-runtime-compose:$version"
         }
     }
 }
