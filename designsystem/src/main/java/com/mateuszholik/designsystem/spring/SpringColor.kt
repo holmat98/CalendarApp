@@ -1,4 +1,4 @@
-package com.mateuszholik.calendarapp.ui.theme.spring
+package com.mateuszholik.designsystem.spring
 
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -66,7 +66,7 @@ private val md_theme_dark_surfaceTint = Color(0xFFA2D579)
 private val md_theme_dark_outlineVariant = Color(0xFF44483E)
 private val md_theme_dark_scrim = Color(0xFF000000)
 
-val seed = Color(0xFF7E8C70)
+internal val seed = Color(0xFF7E8C70)
 
 internal val SpringLightColors = lightColorScheme(
     primary = md_theme_light_primary,

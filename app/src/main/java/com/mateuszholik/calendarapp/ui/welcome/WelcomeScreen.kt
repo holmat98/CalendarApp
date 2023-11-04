@@ -23,14 +23,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
-import com.mateuszholik.calendarapp.ui.previews.BigPhonePreview
-import com.mateuszholik.calendarapp.ui.previews.MediumPhonePreview
-import com.mateuszholik.calendarapp.ui.previews.SmallPhonePreview
-import com.mateuszholik.calendarapp.ui.theme.CalendarAppTheme
-import com.mateuszholik.calendarapp.ui.theme.models.StyleType
-import com.mateuszholik.calendarapp.ui.theme.textSizing
+import com.mateuszholik.designsystem.previews.BigPhonePreview
+import com.mateuszholik.designsystem.previews.MediumPhonePreview
+import com.mateuszholik.designsystem.previews.SmallPhonePreview
+import com.mateuszholik.designsystem.textSizing
 import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenState.NextScreen
 import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenState.WelcomeInfo
+import com.mateuszholik.designsystem.CalendarAppTheme
 
 @Composable
 fun WelcomeScreen(
@@ -87,7 +86,7 @@ private fun Content(
 @SmallPhonePreview
 @Composable
 fun Preview() {
-    CalendarAppTheme(styleType = StyleType.AUTUMN) {
+    CalendarAppTheme(styleType = com.mateuszholik.designsystem.models.StyleType.AUTUMN) {
         Content(
             text = R.string.welcome_screen_hello_november,
             image = R.drawable.ic_autumn_3
@@ -98,7 +97,7 @@ fun Preview() {
 @MediumPhonePreview
 @Composable
 fun Preview2() {
-    CalendarAppTheme(styleType = StyleType.SPRING) {
+    CalendarAppTheme(styleType = com.mateuszholik.designsystem.models.StyleType.SPRING) {
         Content(
             text = R.string.welcome_screen_hello_spring,
             image = R.drawable.ic_spring_1
@@ -109,7 +108,7 @@ fun Preview2() {
 @BigPhonePreview
 @Composable
 fun Preview3() {
-    CalendarAppTheme(styleType = StyleType.SUMMER) {
+    CalendarAppTheme(styleType = com.mateuszholik.designsystem.models.StyleType.SUMMER) {
         Content(
             text = R.string.welcome_screen_hello_summer,
             image = R.drawable.ic_summer_3

@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.remember
-import com.mateuszholik.calendarapp.ui.theme.CalendarAppTheme
+import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.calendarapp.ui.welcome.WelcomeScreen
 import dagger.hilt.android.AndroidEntryPoint
 

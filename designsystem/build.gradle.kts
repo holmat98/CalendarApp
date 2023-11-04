@@ -1,8 +1,6 @@
 plugins {
     id(Plugins.ANDROID_LIBRARY)
     id(Plugins.KOTLIN)
-    id(Google.KSP.PLUGIN)
-    id(Plugins.HILT)
 }
 
 android.configure(
@@ -13,5 +11,4 @@ android.configure(
 dependencies {
     coreKtx()
     compose()
-    hilt()
 }

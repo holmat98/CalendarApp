@@ -1,4 +1,4 @@
-package com.mateuszholik.calendarapp.ui.theme.winter
+package com.mateuszholik.designsystem.winter
 
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -66,7 +66,7 @@ private val md_theme_dark_surfaceTint = Color(0xFFABC7FF)
 private val md_theme_dark_outlineVariant = Color(0xFF44474E)
 private val md_theme_dark_scrim = Color(0xFF000000)
 
-val seed = Color(0xFF9E9DA0)
+internal val seed = Color(0xFF9E9DA0)
 
 internal val WinterLightColors = lightColorScheme(
     primary = md_theme_light_primary,

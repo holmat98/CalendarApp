@@ -2,8 +2,8 @@ package com.mateuszholik.calendarapp.di
 
 import com.mateuszholik.calendarapp.provider.CurrentDateProvider
 import com.mateuszholik.calendarapp.provider.CurrentDateProviderImpl
-import com.mateuszholik.calendarapp.ui.theme.provider.StyleProvider
-import com.mateuszholik.calendarapp.ui.theme.provider.StyleProviderImpl
+import com.mateuszholik.calendarapp.ui.provider.StyleProvider
+import com.mateuszholik.calendarapp.ui.provider.StyleProviderImpl
 import com.mateuszholik.calendarapp.ui.welcome.provider.WelcomeScreenInfoProvider
 import com.mateuszholik.calendarapp.ui.welcome.provider.WelcomeScreenInfoProviderImpl
 import dagger.Binds
