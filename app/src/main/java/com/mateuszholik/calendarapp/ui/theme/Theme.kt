@@ -8,11 +8,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.mateuszholik.calendarapp.ui.model.WindowType
+import com.mateuszholik.calendarapp.ui.model.rememberWindowSize
 import com.mateuszholik.calendarapp.ui.theme.autumn.AutumnDarkColors
 import com.mateuszholik.calendarapp.ui.theme.autumn.AutumnLightColors
 import com.mateuszholik.calendarapp.ui.theme.models.StyleType
@@ -49,11 +52,21 @@ fun CalendarAppTheme(
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    val textSizing = when (rememberWindowSize().widthInfo) {
+        WindowType.SMALL -> TextSizing.SMALL
+        WindowType.MEDIUM -> TextSizing.MEDIUM
+        WindowType.BIG -> TextSizing.BIG
+    }
+
+    CompositionLocalProvider(
+        LocalTextSizing provides textSizing
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }
 
 private fun StyleType.lightMode(): ColorScheme =

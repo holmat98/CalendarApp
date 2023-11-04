@@ -17,8 +17,7 @@ import kotlin.time.Duration.Companion.seconds
 @HiltViewModel
 class WelcomeViewModel @Inject constructor(
     welcomeScreenInfoProvider: WelcomeScreenInfoProvider,
-) :
-    BaseStateViewModel<WelcomeViewModel.WelcomeScreenState>() {
+) : BaseStateViewModel<WelcomeViewModel.WelcomeScreenState>() {
 
     private val _state: MutableStateFlow<WelcomeScreenState> =
         MutableStateFlow(welcomeScreenInfoProvider.provide())
