@@ -14,7 +14,8 @@ android.configure(
 dependencies {
 
     // modules
-    implementation(project(":designsystem"))
+    module(name = ":designsystem")
+    module(name = ":uicomponents")
 
     // dependencies
     coreKtx()
