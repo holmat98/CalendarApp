@@ -44,7 +44,8 @@ fun CalendarAppTheme(
     val windowSizeInfo = rememberWindowSizeInfo()
 
     CompositionLocalProvider(
-        LocalTextSizing provides windowSizeInfo.widthInfo.toTextSizing()
+        LocalTextSizing provides windowSizeInfo.widthInfo.toTextSizing(),
+        LocalSizing provides windowSizeInfo.widthInfo.toSizing()
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
@@ -75,4 +76,11 @@ private fun WindowType.toTextSizing(): TextSizing =
         WindowType.SMALL -> TextSizing.SMALL
         WindowType.MEDIUM -> TextSizing.MEDIUM
         WindowType.BIG -> TextSizing.BIG
+    }
+
+private fun WindowType.toSizing(): Sizing =
+    when (this) {
+        WindowType.SMALL -> Sizing.SMALL
+        WindowType.MEDIUM -> Sizing.MEDIUM
+        WindowType.BIG -> Sizing.BIG
     }
