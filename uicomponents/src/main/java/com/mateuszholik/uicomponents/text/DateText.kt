@@ -30,7 +30,7 @@ fun DateText(
         when (locale.language) {
             Locale.ENGLISH.language -> {
                 Text(
-                    text = "$monthName ' ",
+                    text = "$monthName' ",
                     fontSize = textSize,
                     color = textColor
                 )
