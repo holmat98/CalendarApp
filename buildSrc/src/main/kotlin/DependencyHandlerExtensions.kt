@@ -38,7 +38,11 @@ fun DependencyHandler.unitTesting() {
     testImplementation(Mockk.DEPENDENCY)
 }
 
-private fun DependencyHandler.implementation(dependency: String) {
+fun DependencyHandler.module(name: String) {
+    implementation(project(mapOf("path" to name)))
+}
+
+private fun DependencyHandler.implementation(dependency: Any) {
     add("implementation", dependency)
 }
 

@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = "CalendarApp"
 include(":app")
 include(":designsystem")
+include(":uicomponents")

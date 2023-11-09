@@ -7,10 +7,26 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 
-enum class TextSizing(val bigHeader: TextUnit) {
-    SMALL(bigHeader = 50.sp),
-    MEDIUM(bigHeader = 65.sp),
-    BIG(bigHeader = 85.sp)
+enum class TextSizing(
+    val bigHeader: TextUnit,
+    val header: TextUnit,
+    val normal: TextUnit,
+) {
+    SMALL(
+        bigHeader = 50.sp,
+        header = 25.sp,
+        normal = 16.sp,
+    ),
+    MEDIUM(
+        bigHeader = 65.sp,
+        header = 30.sp,
+        normal = 20.sp,
+    ),
+    BIG(
+        bigHeader = 85.sp,
+        header = 40.sp,
+        normal = 28.sp,
+    )
 }
 
 val LocalTextSizing = staticCompositionLocalOf { TextSizing.MEDIUM }
