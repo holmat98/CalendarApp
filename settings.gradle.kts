@@ -17,3 +17,5 @@ rootProject.name = "CalendarApp"
 include(":app")
 include(":designsystem")
 include(":uicomponents")
+include(":data")
+include(":domain")

@@ -15,6 +15,7 @@ dependencies {
 
     // modules
     module(name = ":designsystem")
+    module(name = ":domain")
     module(name = ":uicomponents")
 
     // dependencies
