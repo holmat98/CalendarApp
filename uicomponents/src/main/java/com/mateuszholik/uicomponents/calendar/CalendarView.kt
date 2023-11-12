@@ -13,7 +13,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.derivedStateOf
@@ -32,8 +31,8 @@ import com.mateuszholik.designsystem.previews.BigPhonePreview
 import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.sizing
-import com.mateuszholik.designsystem.textSizing
 import com.mateuszholik.uicomponents.models.CalendarField
+import com.mateuszholik.uicomponents.text.BodyLargeText
 import com.mateuszholik.uicomponents.text.DateText
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -64,7 +63,6 @@ fun CalendarView(
         DateText(
             modifier = Modifier.padding(bottom = 32.dp),
             date = currentDay,
-            textSize = MaterialTheme.textSizing.header,
             textColor = colors.foregroundColor
         )
         Row(
@@ -132,12 +130,15 @@ fun CurrentDay(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
+        BodyLargeText(
             text = text,
-            fontSize = MaterialTheme.textSizing.normal,
             color = textColor,
             fontWeight = FontWeight.SemiBold,
-            textDecoration = if (hasEvent) { TextDecoration.Underline } else { TextDecoration.None }
+            textDecoration = if (hasEvent) {
+                TextDecoration.Underline
+            } else {
+                TextDecoration.None
+            }
         )
     }
 }
@@ -156,11 +157,14 @@ private fun CalendarText(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
+        BodyLargeText(
             text = text,
-            fontSize = MaterialTheme.textSizing.normal,
             color = textColor,
-            textDecoration = if (hasEvent) { TextDecoration.Underline } else { TextDecoration.None }
+            textDecoration = if (hasEvent) {
+                TextDecoration.Underline
+            } else {
+                TextDecoration.None
+            }
         )
     }
 }

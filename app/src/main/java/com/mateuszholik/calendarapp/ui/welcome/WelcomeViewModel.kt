@@ -26,7 +26,7 @@ class WelcomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            delay(1.seconds)
+            delay(2.seconds)
             _state.emit(WelcomeScreenState.NextScreen)
         }
     }
