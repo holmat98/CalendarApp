@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
@@ -44,12 +45,11 @@ fun CalendarAppTheme(
     val windowSizeInfo = rememberWindowSizeInfo()
 
     CompositionLocalProvider(
-        LocalTextSizing provides windowSizeInfo.widthInfo.toTextSizing(),
         LocalSizing provides windowSizeInfo.widthInfo.toSizing()
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = Typography,
+            typography = windowSizeInfo.widthInfo.toTypography(),
             content = content
         )
     }
@@ -71,11 +71,11 @@ private fun StyleType.darkMode(): ColorScheme =
         StyleType.WINTER -> WinterDarkColors
     }
 
-private fun WindowType.toTextSizing(): TextSizing =
+private fun WindowType.toTypography(): Typography =
     when (this) {
-        WindowType.SMALL -> TextSizing.SMALL
-        WindowType.MEDIUM -> TextSizing.MEDIUM
-        WindowType.BIG -> TextSizing.BIG
+        WindowType.SMALL -> SmallTypography
+        WindowType.MEDIUM -> MediumTypography
+        WindowType.BIG -> BigTypography
     }
 
 private fun WindowType.toSizing(): Sizing =

@@ -10,26 +10,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
-import com.mateuszholik.designsystem.previews.BigPhonePreview
-import com.mateuszholik.designsystem.previews.MediumPhonePreview
-import com.mateuszholik.designsystem.previews.SmallPhonePreview
-import com.mateuszholik.designsystem.textSizing
 import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenState.NextScreen
 import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenState.WelcomeInfo
 import com.mateuszholik.designsystem.CalendarAppTheme
+import com.mateuszholik.designsystem.models.StyleType
+import com.mateuszholik.designsystem.previews.BigPhonePreview
+import com.mateuszholik.designsystem.previews.MediumPhonePreview
+import com.mateuszholik.designsystem.previews.SmallPhonePreview
+import com.mateuszholik.uicomponents.text.DisplayLargeText
 
 @Composable
 fun WelcomeScreen(
@@ -64,13 +63,11 @@ private fun Content(
             .background(MaterialTheme.colorScheme.primary),
         verticalArrangement = Arrangement.Center,
     ) {
-        Text(
+        DisplayLargeText(
             modifier = Modifier.padding(horizontal = 32.dp),
-            text = stringResource(id = text),
+            textResId = text,
             color = MaterialTheme.colorScheme.onPrimary,
-            fontSize = MaterialTheme.textSizing.bigHeader,
             fontWeight = FontWeight.Bold,
-            lineHeight = MaterialTheme.textSizing.bigHeader
         )
         Image(
             modifier = Modifier
@@ -86,7 +83,7 @@ private fun Content(
 @SmallPhonePreview
 @Composable
 fun Preview() {
-    CalendarAppTheme(styleType = com.mateuszholik.designsystem.models.StyleType.AUTUMN) {
+    CalendarAppTheme(styleType = StyleType.AUTUMN) {
         Content(
             text = R.string.welcome_screen_hello_november,
             image = R.drawable.ic_autumn_3
@@ -97,7 +94,7 @@ fun Preview() {
 @MediumPhonePreview
 @Composable
 fun Preview2() {
-    CalendarAppTheme(styleType = com.mateuszholik.designsystem.models.StyleType.SPRING) {
+    CalendarAppTheme(styleType = StyleType.SPRING) {
         Content(
             text = R.string.welcome_screen_hello_spring,
             image = R.drawable.ic_spring_1
@@ -108,7 +105,7 @@ fun Preview2() {
 @BigPhonePreview
 @Composable
 fun Preview3() {
-    CalendarAppTheme(styleType = com.mateuszholik.designsystem.models.StyleType.SUMMER) {
+    CalendarAppTheme(styleType = StyleType.SUMMER) {
         Content(
             text = R.string.welcome_screen_hello_summer,
             image = R.drawable.ic_summer_3
