@@ -25,6 +25,7 @@ dependencies {
     compose()
     hilt()
     unitTesting()
+    timber()
 }
 
 tasks.withType(Test::class) {

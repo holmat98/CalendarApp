@@ -46,6 +46,7 @@ private fun BaseAppModuleExtension.configureDefaultConfig(
 
 private fun BaseAppModuleExtension.configureBuildFeatures() {
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 }

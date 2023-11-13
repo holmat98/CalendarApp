@@ -38,6 +38,10 @@ fun DependencyHandler.unitTesting() {
     testImplementation(Mockk.DEPENDENCY)
 }
 
+fun DependencyHandler.timber() {
+    implementation(Timber.DEPENDENCY)
+}
+
 fun DependencyHandler.module(name: String) {
     implementation(project(mapOf("path" to name)))
 }
