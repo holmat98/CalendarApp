@@ -12,7 +12,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiState.CalendarInfo
@@ -27,9 +26,9 @@ import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
 import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
+import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.uicomponents.calendar.CalendarView
 import com.mateuszholik.uicomponents.event.EventItem
-import com.mateuszholik.uicomponents.text.HeadlineMediumText
 import java.time.LocalDate
 
 @Composable
@@ -49,11 +48,7 @@ fun CalendarScreen(
                     paddingValues = paddingValues,
                     calendarInfo = info,
                     onDateChanged = { newDate ->
-                        viewModel.performUserAction(
-                            SelectedDateChanged(
-                                newDate = newDate
-                            )
-                        )
+                        viewModel.performUserAction(SelectedDateChanged(newDate = newDate))
                     },
                     onEventClicked = { eventId ->
                         viewModel.performUserAction(EventClicked(eventId))
@@ -93,7 +88,7 @@ private fun Content(
             EventItem(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp),
+                    .padding(top = MaterialTheme.spacing.normal),
                 title = it.title,
                 startTime = it.startDate,
                 endTime = it.endDate,
@@ -109,7 +104,7 @@ private fun SmallPhonePreview() {
     CalendarAppTheme(styleType = StyleType.AUTUMN) {
         Surface(color = MaterialTheme.colorScheme.secondary) {
             Content(
-                paddingValues = PaddingValues(16.dp),
+                paddingValues = PaddingValues(MaterialTheme.spacing.normal),
                 calendarInfo = CalendarInfo(
                     currentDate = CURRENT_DATE,
                     daysWithEvents = DAYS_WITH_EVENTS,
@@ -128,7 +123,7 @@ private fun MediumPhonePreview() {
     CalendarAppTheme(styleType = StyleType.WINTER) {
         Surface(color = MaterialTheme.colorScheme.secondary) {
             Content(
-                paddingValues = PaddingValues(24.dp),
+                paddingValues = PaddingValues(MaterialTheme.spacing.normal),
                 calendarInfo = CalendarInfo(
                     currentDate = CURRENT_DATE,
                     daysWithEvents = DAYS_WITH_EVENTS,
@@ -147,7 +142,7 @@ private fun BigPhonePreview() {
     CalendarAppTheme(styleType = StyleType.SUMMER) {
         Surface(color = MaterialTheme.colorScheme.secondary) {
             Content(
-                paddingValues = PaddingValues(32.dp),
+                paddingValues = PaddingValues(MaterialTheme.spacing.normal),
                 calendarInfo = CalendarInfo(
                     currentDate = CURRENT_DATE,
                     daysWithEvents = DAYS_WITH_EVENTS,

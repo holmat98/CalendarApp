@@ -45,7 +45,9 @@ fun CalendarAppTheme(
     val windowSizeInfo = rememberWindowSizeInfo()
 
     CompositionLocalProvider(
-        LocalSizing provides windowSizeInfo.widthInfo.toSizing()
+        LocalSizing provides windowSizeInfo.widthInfo.toSizing(),
+        LocalSpacing provides windowSizeInfo.widthInfo.toSpacing(),
+        LocalCornerRadius provides windowSizeInfo.widthInfo.toCornerRadius(),
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
@@ -83,4 +85,18 @@ private fun WindowType.toSizing(): Sizing =
         WindowType.SMALL -> Sizing.SMALL
         WindowType.MEDIUM -> Sizing.MEDIUM
         WindowType.BIG -> Sizing.BIG
+    }
+
+private fun WindowType.toSpacing(): Spacing =
+    when (this) {
+        WindowType.SMALL -> Spacing.SMALL
+        WindowType.MEDIUM -> Spacing.MEDIUM
+        WindowType.BIG -> Spacing.BIG
+    }
+
+private fun WindowType.toCornerRadius(): CornerRadius =
+    when (this) {
+        WindowType.SMALL -> CornerRadius.SMALL
+        WindowType.MEDIUM -> CornerRadius.MEDIUM
+        WindowType.BIG -> CornerRadius.BIG
     }

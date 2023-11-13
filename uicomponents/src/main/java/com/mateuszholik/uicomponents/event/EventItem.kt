@@ -12,12 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import com.mateuszholik.designsystem.CalendarAppTheme
+import com.mateuszholik.designsystem.cornerRadius
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
 import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
+import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.uicomponents.extensions.asTimeString
 import com.mateuszholik.uicomponents.text.HeadlineSmallText
 import com.mateuszholik.uicomponents.text.TitleMediumText
@@ -37,7 +38,7 @@ fun EventItem(
         modifier = modifier
             .background(
                 color = backgroundColor,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(MaterialTheme.cornerRadius.normal)
             )
             .clickable { onEventClicked() },
         verticalArrangement = Arrangement.Center,
@@ -45,13 +46,17 @@ fun EventItem(
     ) {
 
         HeadlineSmallText(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(
+                start = MaterialTheme.spacing.normal,
+                top = MaterialTheme.spacing.small,
+                bottom = MaterialTheme.spacing.small,
+            ),
             text = title, color = contentColor
         )
         TitleMediumText(
             modifier = Modifier.padding(
-                start = 16.dp,
-                bottom = 16.dp
+                start = MaterialTheme.spacing.normal,
+                bottom = MaterialTheme.spacing.small
             ),
             text = "${startTime.asTimeString()} - ${endTime.asTimeString()}",
             color = contentColor

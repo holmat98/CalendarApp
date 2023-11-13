@@ -7,17 +7,17 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-enum class Sizing(
+enum class CornerRadius(
     val normal: Dp,
 ) {
-    SMALL(normal = 30.dp),
-    MEDIUM(normal = 40.dp),
-    BIG(normal = 60.dp)
+    SMALL(normal = 16.dp),
+    MEDIUM(normal = 24.dp),
+    BIG(normal = 40.dp)
 }
 
-internal val LocalSizing = staticCompositionLocalOf { Sizing.MEDIUM }
+internal val LocalCornerRadius = staticCompositionLocalOf { CornerRadius.MEDIUM }
 
-val MaterialTheme.sizing: Sizing
+val MaterialTheme.cornerRadius: CornerRadius
     @Composable
     @ReadOnlyComposable
-    get() = LocalSizing.current
+    get() = LocalCornerRadius.current

@@ -7,17 +7,27 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-enum class Sizing(
+enum class Spacing(
+    val small: Dp,
     val normal: Dp,
 ) {
-    SMALL(normal = 30.dp),
-    MEDIUM(normal = 40.dp),
-    BIG(normal = 60.dp)
+    SMALL(
+        small = 8.dp,
+        normal = 16.dp
+    ),
+    MEDIUM(
+        small = 12.dp,
+        normal = 24.dp
+    ),
+    BIG(
+        small = 20.dp,
+        normal = 40.dp
+    )
 }
 
-internal val LocalSizing = staticCompositionLocalOf { Sizing.MEDIUM }
+internal val LocalSpacing = staticCompositionLocalOf { Spacing.MEDIUM }
 
-val MaterialTheme.sizing: Sizing
+val MaterialTheme.spacing: Spacing
     @Composable
     @ReadOnlyComposable
-    get() = LocalSizing.current
+    get() = LocalSpacing.current

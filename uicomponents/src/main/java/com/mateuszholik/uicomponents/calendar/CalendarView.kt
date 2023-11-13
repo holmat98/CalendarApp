@@ -24,13 +24,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.dp
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
 import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.sizing
+import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.uicomponents.models.CalendarField
 import com.mateuszholik.uicomponents.text.BodyLargeText
 import com.mateuszholik.uicomponents.text.DateText
@@ -61,7 +61,7 @@ fun CalendarView(
             .background(colors.backgroundColor)
     ) {
         DateText(
-            modifier = Modifier.padding(bottom = 32.dp),
+            modifier = Modifier.padding(bottom = MaterialTheme.spacing.normal),
             date = currentDay,
             textColor = colors.foregroundColor
         )
@@ -79,7 +79,7 @@ fun CalendarView(
         }
 
         Divider(
-            modifier = Modifier.padding(vertical = 8.dp),
+            modifier = Modifier.padding(vertical = MaterialTheme.spacing.small),
             color = MaterialTheme.colorScheme.secondaryContainer
         )
 
@@ -87,7 +87,7 @@ fun CalendarView(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
+                    .padding(top = MaterialTheme.spacing.small),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 week.forEach {
@@ -195,7 +195,7 @@ private fun Preview() {
     CalendarAppTheme(styleType = StyleType.AUTUMN) {
         Surface(color = MaterialTheme.colorScheme.secondary) {
             CalendarView(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.normal),
                 currentDay = LocalDate.of(2023, 11, 5),
                 daysWithEvents = listOf(
                     LocalDate.of(2023, 11, 1),
@@ -215,7 +215,7 @@ private fun Preview2() {
     CalendarAppTheme(styleType = StyleType.WINTER) {
         Surface(color = MaterialTheme.colorScheme.secondary) {
             CalendarView(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.normal),
                 currentDay = LocalDate.of(2023, 12, 6),
                 daysWithEvents = listOf(
                     LocalDate.of(2023, 12, 8),
@@ -235,7 +235,7 @@ private fun Preview3() {
     CalendarAppTheme(styleType = StyleType.SPRING) {
         Surface(color = MaterialTheme.colorScheme.secondary) {
             CalendarView(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.normal),
                 currentDay = LocalDate.of(2024, 1, 15),
                 daysWithEvents = listOf(
                     LocalDate.of(2024, 1, 8),

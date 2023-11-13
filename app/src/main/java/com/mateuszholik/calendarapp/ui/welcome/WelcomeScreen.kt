@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
@@ -28,6 +27,7 @@ import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
 import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
+import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.uicomponents.text.DisplayLargeText
 
 @Composable
@@ -64,7 +64,7 @@ private fun Content(
         verticalArrangement = Arrangement.Center,
     ) {
         DisplayLargeText(
-            modifier = Modifier.padding(horizontal = 32.dp),
+            modifier = Modifier.padding(horizontal = MaterialTheme.spacing.normal),
             textResId = text,
             color = MaterialTheme.colorScheme.onPrimary,
             fontWeight = FontWeight.Bold,
@@ -72,7 +72,11 @@ private fun Content(
         Image(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(32.dp),
+                .padding(
+                    top = MaterialTheme.spacing.normal,
+                    start = MaterialTheme.spacing.normal,
+                    end = MaterialTheme.spacing.normal,
+                ),
             painter = painterResource(image),
             contentScale = ContentScale.Inside,
             contentDescription = null
