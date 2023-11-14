@@ -49,7 +49,6 @@ fun EventItem(
             modifier = Modifier.padding(
                 start = MaterialTheme.spacing.normal,
                 top = MaterialTheme.spacing.small,
-                bottom = MaterialTheme.spacing.small,
             ),
             text = title, color = contentColor
         )

@@ -10,7 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -22,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import com.mateuszholik.designsystem.CalendarAppTheme
@@ -43,13 +49,15 @@ import java.util.Locale
 @Composable
 fun CalendarView(
     currentDay: LocalDate,
+    currentMonth: YearMonth,
     daysWithEvents: List<LocalDate>,
     onDateChanged: (newDate: LocalDate) -> Unit,
+    onMonthChanged: (newMonth: YearMonth) -> Unit,
     modifier: Modifier = Modifier,
     colors: CalendarViewDefaults.Colors = CalendarViewDefaults.defaultColors(),
 ) {
     val yearMonth by remember {
-        derivedStateOf { YearMonth.of(currentDay.year, currentDay.month) }
+        derivedStateOf { currentMonth }
     }
     val days by remember {
         derivedStateOf { CalendarField.createFieldsForMonth(yearMonth).chunked(7) }
@@ -60,11 +68,41 @@ fun CalendarView(
             .fillMaxWidth()
             .background(colors.backgroundColor)
     ) {
-        DateText(
-            modifier = Modifier.padding(bottom = MaterialTheme.spacing.normal),
-            date = currentDay,
-            textColor = colors.foregroundColor
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = MaterialTheme.spacing.normal),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            DateText(
+                modifier = Modifier.weight(1f),
+                date = currentDay,
+                textColor = colors.foregroundColor
+            )
+
+            IconButton(
+                modifier = Modifier.size(MaterialTheme.sizing.normal),
+                onClick = { onMonthChanged(yearMonth.minusMonths(1)) }
+            ) {
+                Icon(
+                    modifier = Modifier.size(MaterialTheme.sizing.normal),
+                    imageVector = Icons.Filled.KeyboardArrowLeft,
+                    contentDescription = null,
+
+                )
+            }
+
+            IconButton(
+                onClick = { onMonthChanged(yearMonth.plusMonths(1)) }
+            ) {
+                Icon(
+                    modifier = Modifier.size(MaterialTheme.sizing.normal),
+                    imageVector = Icons.Filled.KeyboardArrowRight,
+                    contentDescription = null
+                )
+            }
+        }
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -197,13 +235,15 @@ private fun Preview() {
             CalendarView(
                 modifier = Modifier.padding(horizontal = MaterialTheme.spacing.normal),
                 currentDay = LocalDate.of(2023, 11, 5),
+                currentMonth = YearMonth.of(2023, 11),
                 daysWithEvents = listOf(
                     LocalDate.of(2023, 11, 1),
                     LocalDate.of(2023, 11, 5),
                     LocalDate.of(2023, 11, 16),
                     LocalDate.of(2023, 11, 24),
                 ),
-                onDateChanged = {}
+                onDateChanged = {},
+                onMonthChanged = {},
             )
         }
     }
@@ -217,13 +257,15 @@ private fun Preview2() {
             CalendarView(
                 modifier = Modifier.padding(horizontal = MaterialTheme.spacing.normal),
                 currentDay = LocalDate.of(2023, 12, 6),
+                currentMonth = YearMonth.of(2023, 12),
                 daysWithEvents = listOf(
                     LocalDate.of(2023, 12, 8),
                     LocalDate.of(2023, 12, 15),
                     LocalDate.of(2023, 12, 16),
                     LocalDate.of(2023, 12, 31),
                 ),
-                onDateChanged = {}
+                onDateChanged = {},
+                onMonthChanged = {},
             )
         }
     }
@@ -237,13 +279,15 @@ private fun Preview3() {
             CalendarView(
                 modifier = Modifier.padding(horizontal = MaterialTheme.spacing.normal),
                 currentDay = LocalDate.of(2024, 1, 15),
+                currentMonth = YearMonth.of(2024, 1),
                 daysWithEvents = listOf(
                     LocalDate.of(2024, 1, 8),
                     LocalDate.of(2024, 1, 15),
                     LocalDate.of(2024, 1, 16),
                     LocalDate.of(2024, 1, 31),
                 ),
-                onDateChanged = {}
+                onDateChanged = {},
+                onMonthChanged = {},
             )
         }
     }

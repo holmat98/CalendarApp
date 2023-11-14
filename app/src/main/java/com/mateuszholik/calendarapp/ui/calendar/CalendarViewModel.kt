@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDate
+import java.time.YearMonth
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,7 +32,7 @@ class CalendarViewModel @Inject constructor(
     private val getEventsForDayUseCase: GetEventsForDayUseCase,
     private val getDaysWithEventsForMonthUseCase: GetDaysWithEventsForMonthUseCase,
     private val dispatcherProvider: DispatcherProvider,
-    currentDateProvider: CurrentDateProvider,
+    private val currentDateProvider: CurrentDateProvider,
 ) : BaseViewModel<CalendarUiState, CalendarUserAction, CalendarUiEvent>() {
 
     private val _uiState: MutableStateFlow<CalendarUiState> =
@@ -48,47 +49,64 @@ class CalendarViewModel @Inject constructor(
         _uiEvent.tryEmit(CalendarUiEvent.Error)
     }
 
-    init {
-        handleSelectedDateChangedAction(currentDateProvider.provide())
-    }
+    init { setInitialUiState() }
 
     override fun performUserAction(action: CalendarUserAction) {
         when (action) {
             is CalendarUserAction.SelectedDateChanged ->
                 handleSelectedDateChangedAction(action.newDate)
+            is CalendarUserAction.CurrentMonthChanged ->
+                handleCurrentMonthChangedAction(action.newMonth)
             is CalendarUserAction.EventClicked ->
                 handleEventClickedAction(action.eventId)
         }
     }
 
+    private fun setInitialUiState() {
+        viewModelScope.launch(dispatcherProvider.io() + exceptionHandler) {
+            val currentDate = currentDateProvider.provide()
+            val currentMonth = currentDate.toYearMonth()
+
+            val daysWithEvents = getDaysWithEventsForMonthUseCase(currentMonth)
+            val events = getEventsForDayUseCase(currentDate)
+
+            _uiState.emit(
+                CalendarUiState.CalendarInfo(
+                    currentDate = currentDate,
+                    currentMonth = currentMonth,
+                    events = events,
+                    daysWithEvents = daysWithEvents
+                )
+            )
+        }
+    }
+
     private fun handleSelectedDateChangedAction(newDate: LocalDate) {
         viewModelScope.launch(dispatcherProvider.io() + exceptionHandler) {
-            val state = _uiState.value
-
             _uiState.update { currentState ->
                 if (currentState is CalendarUiState.CalendarInfo) {
-                    currentState.copy(loading = true)
+                    currentState.copy(
+                        currentDate = newDate,
+                        events = getEventsForDayUseCase(newDate)
+                    )
                 } else {
                     currentState
                 }
             }
+        }
+    }
 
-            val eventsForDay = getEventsForDayUseCase(newDate)
-            val daysWithEvents = if (state is CalendarUiState.CalendarInfo
-                && state.currentDate.toYearMonth() == newDate.toYearMonth()
-            ) {
-                state.daysWithEvents
-            } else {
-                getDaysWithEventsForMonthUseCase(newDate.toYearMonth())
+    private fun handleCurrentMonthChangedAction(yearMonth: YearMonth) {
+        viewModelScope.launch(dispatcherProvider.io() + exceptionHandler) {
+            _uiState.update { currentState ->
+                if (currentState is CalendarUiState.CalendarInfo) {
+                    currentState.copy(
+                        daysWithEvents = getDaysWithEventsForMonthUseCase(yearMonth)
+                    )
+                } else {
+                    currentState
+                }
             }
-
-            _uiState.emit(
-                CalendarUiState.CalendarInfo(
-                    currentDate = newDate,
-                    events = eventsForDay,
-                    daysWithEvents = daysWithEvents
-                )
-            )
         }
     }
 
@@ -104,9 +122,9 @@ class CalendarViewModel @Inject constructor(
 
         data class CalendarInfo(
             val currentDate: LocalDate,
+            val currentMonth: YearMonth,
             val events: List<Event>,
             val daysWithEvents: List<LocalDate>,
-            val loading: Boolean = false,
         ) : CalendarUiState()
     }
 
@@ -120,6 +138,8 @@ class CalendarViewModel @Inject constructor(
     sealed class CalendarUserAction : UserAction {
 
         data class SelectedDateChanged(val newDate: LocalDate) : CalendarUserAction()
+
+        data class CurrentMonthChanged(val newMonth: YearMonth) : CalendarUserAction()
 
         data class EventClicked(val eventId: Long) : CalendarUserAction()
     }

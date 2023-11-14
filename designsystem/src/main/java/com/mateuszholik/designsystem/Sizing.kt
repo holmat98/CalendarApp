@@ -9,10 +9,20 @@ import androidx.compose.ui.unit.dp
 
 enum class Sizing(
     val normal: Dp,
+    val big: Dp,
 ) {
-    SMALL(normal = 30.dp),
-    MEDIUM(normal = 40.dp),
-    BIG(normal = 60.dp)
+    SMALL(
+        normal = 30.dp,
+        big = 120.dp,
+    ),
+    MEDIUM(
+        normal = 40.dp,
+        big = 220.dp,
+    ),
+    BIG(
+        normal = 60.dp,
+        big = 320.dp,
+    )
 }
 
 internal val LocalSizing = staticCompositionLocalOf { Sizing.MEDIUM }
