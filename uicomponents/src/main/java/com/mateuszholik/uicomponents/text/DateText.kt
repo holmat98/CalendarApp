@@ -19,37 +19,11 @@ fun DateText(
     modifier: Modifier = Modifier,
     textColor: Color = MaterialTheme.colorScheme.onSecondary,
 ) {
-    val locale = Locale.getDefault()
-    val monthName = date.month.getDisplayName(TextStyle.FULL_STANDALONE, locale)
+    val monthName = date.month.getDisplayName(TextStyle.FULL_STANDALONE, Locale.getDefault())
 
     Row(modifier = modifier) {
-        when (locale.language) {
-            Locale.ENGLISH.language -> {
-                HeadlineSmallText(
-                    text = "$monthName' ",
-                    color = textColor
-                )
-                HeadlineSmallText(
-                    text = "${date.dayOfMonth} ",
-                    color = textColor,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            else -> {
-                HeadlineSmallText(
-                    text = "${date.dayOfMonth} ",
-                    color = textColor,
-                    fontWeight = FontWeight.Bold
-                )
-                HeadlineSmallText(
-                    text = "$monthName ",
-                    color = textColor
-                )
-            }
-        }
-
         HeadlineSmallText(
-            text = date.year.toString(),
+            text = "$monthName ${date.year}",
             color = textColor
         )
     }

@@ -1,5 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">CalendarApp</string>
+    <string name="calendar_screen_no_events_title">No events found</string>
+    <string name="calendar_screen_no_events_message">You don\'t have any scheduled events today</string>
     <string name="welcome_screen_hello_spring">Hello\nSpring!</string>
     <string name="welcome_screen_hello_summer">Hello\nSummer!</string>
     <string name="welcome_screen_hello_autumn">Hello\nAutumn!</string>

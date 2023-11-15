@@ -19,7 +19,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
@@ -42,6 +44,8 @@ import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.uicomponents.calendar.CalendarView
 import com.mateuszholik.uicomponents.event.EventItem
+import com.mateuszholik.uicomponents.text.HeadlineSmallText
+import com.mateuszholik.uicomponents.text.TitleSmallText
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -77,7 +81,12 @@ fun CalendarScreen(
             is CalendarInfo -> {
                 val info = uiState as CalendarInfo
                 Content(
-                    paddingValues = paddingValues,
+                    paddingValues = PaddingValues(
+                        top = paddingValues.calculateTopPadding(),
+                        start = MaterialTheme.spacing.normal,
+                        bottom = paddingValues.calculateBottomPadding(),
+                        end = MaterialTheme.spacing.normal,
+                    ),
                     calendarInfo = info,
                     onDateChanged = { newDate ->
                         viewModel.performUserAction(SelectedDateChanged(newDate = newDate))
@@ -124,10 +133,25 @@ private fun Content(
             item {
                 Image(
                     modifier = Modifier
-                        .size(MaterialTheme.sizing.big)
-                        .padding(top = MaterialTheme.spacing.normal),
+                        .padding(MaterialTheme.spacing.extraBig)
+                        .size(MaterialTheme.sizing.big),
                     painter = painterResource(R.drawable.ic_empty),
-                    contentDescription = null
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit
+                )
+            }
+            item {
+                HeadlineSmallText(
+                    textResId = R.string.calendar_screen_no_events_title,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+            item {
+                TitleSmallText(
+                    textResId = R.string.calendar_screen_no_events_message,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
         } else {
