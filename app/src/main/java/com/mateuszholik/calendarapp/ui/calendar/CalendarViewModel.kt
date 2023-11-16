@@ -101,6 +101,7 @@ class CalendarViewModel @Inject constructor(
             _uiState.update { currentState ->
                 if (currentState is CalendarUiState.CalendarInfo) {
                     currentState.copy(
+                        currentMonth = yearMonth,
                         daysWithEvents = getDaysWithEventsForMonthUseCase(yearMonth)
                     )
                 } else {

@@ -56,9 +56,7 @@ fun CalendarView(
     modifier: Modifier = Modifier,
     colors: CalendarViewDefaults.Colors = CalendarViewDefaults.defaultColors(),
 ) {
-    val days by remember {
-        derivedStateOf { CalendarField.createFieldsForMonth(currentMonth).chunked(7) }
-    }
+    val days = CalendarField.createFieldsForMonth(currentMonth).chunked(7)
 
     Column(
         modifier = modifier
