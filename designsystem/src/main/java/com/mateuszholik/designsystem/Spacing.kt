@@ -16,19 +16,19 @@ enum class Spacing(
     SMALL(
         small = 8.dp,
         normal = 16.dp,
-        big = 24.dp,
+        big = 22.dp,
         extraBig = 48.dp,
     ),
     MEDIUM(
         small = 12.dp,
         normal = 24.dp,
-        big = 36.dp,
+        big = 32.dp,
         extraBig = 72.dp,
     ),
     BIG(
         small = 20.dp,
         normal = 40.dp,
-        big = 60.dp,
+        big = 50.dp,
         extraBig = 120.dp,
     )
 }

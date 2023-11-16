@@ -1,6 +1,8 @@
 package com.mateuszholik.uicomponents.calendar
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,10 +28,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.dp
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
@@ -37,6 +41,7 @@ import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
+import com.mateuszholik.uicomponents.extensions.conditional
 import com.mateuszholik.uicomponents.models.CalendarField
 import com.mateuszholik.uicomponents.text.BodyLargeText
 import com.mateuszholik.uicomponents.text.DateText
@@ -159,7 +164,16 @@ fun CurrentDay(
         modifier = Modifier
             .size(MaterialTheme.sizing.normal)
             .clip(CircleShape)
-            .background(backgroundColor),
+            .background(backgroundColor)
+            .conditional(
+                condition = hasEvent
+            ) {
+                border(
+                    width = 1.dp,
+                    color = textColor,
+                    shape = CircleShape,
+                )
+            },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -186,18 +200,22 @@ private fun CalendarText(
     Column(
         modifier = Modifier
             .size(MaterialTheme.sizing.normal)
-            .clickable { onClick() },
+            .clickable { onClick() }
+            .conditional(
+                condition = hasEvent
+            ) {
+                border(
+                    width = 1.dp,
+                    color = textColor,
+                    shape = CircleShape,
+                )
+            },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         BodyLargeText(
             text = text,
             color = textColor,
-            textDecoration = if (hasEvent) {
-                TextDecoration.Underline
-            } else {
-                TextDecoration.None
-            }
         )
     }
 }

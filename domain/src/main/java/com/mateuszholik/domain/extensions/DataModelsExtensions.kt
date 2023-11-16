@@ -11,5 +11,7 @@ internal fun DataEvent.toCommonModel(): Event =
         id = id,
         title = title,
         startDate = startDate,
-        endDate = endDate
+        endDate = endDate,
+        color = color,
+        allDay = allDay,
     )

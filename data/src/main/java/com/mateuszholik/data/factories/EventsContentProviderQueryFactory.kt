@@ -29,11 +29,13 @@ internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
             "((${CalendarContract.Events.DTSTART} >= ?) AND (${CalendarContract.Events.DTSTART} < ?))"
         val selectionArgs = arrayOf("$dayAtStartEpochMillis", "$dayAtEndEpochMillis")
         val projection = arrayOf(
-            CalendarContract.Events.CALENDAR_ID,
+            CalendarContract.Events._ID,
             CalendarContract.Events.TITLE,
             CalendarContract.Events.DTSTART,
             CalendarContract.Events.DTEND,
-            CalendarContract.Events.EVENT_TIMEZONE
+            CalendarContract.Events.EVENT_TIMEZONE,
+            CalendarContract.Events.EVENT_COLOR,
+            CalendarContract.Events.ALL_DAY,
         )
 
         return QueryData(
@@ -66,5 +68,17 @@ internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
             selectionArgs = selectionArgs,
             projection = projection
         )
+    }
+
+    companion object {
+        internal const val TODAY_EVENTS_ID_INDEX = 0
+        internal const val TODAY_EVENTS_TITLE_INDEX = 1
+        internal const val TODAY_EVENTS_DATE_START_INDEX = 2
+        internal const val TODAY_EVENTS_DATE_END_INDEX = 3
+        internal const val TODAY_EVENTS_TIMEZONE_INDEX = 4
+        internal const val TODAY_EVENTS_COLOR_INDEX = 5
+        internal const val TODAY_EVENTS_ALL_DAY_INDEX = 6
+        internal const val DAYS_WITH_EVENTS_DATE_START_INDEX = 0
+        internal const val DAYS_WITH_EVENTS_TIMEZONE_INDEX = 1
     }
 }

@@ -18,20 +18,26 @@ internal object PreviewConstants {
         Event(
             id = 0,
             title = "Event 1",
-            startDate = LocalDateTime.of(2023, 11, 12, 9, 0),
-            endDate = LocalDateTime.of(2023, 11, 12, 9, 30)
+            startDate = LocalDateTime.of(2023, 11, 12, 0, 0),
+            endDate = LocalDateTime.of(2023, 11, 13, 0, 0),
+            allDay = true,
+            color = null,
         ),
         Event(
             id = 1,
             title = "Event 2",
             startDate = LocalDateTime.of(2023, 11, 12, 12, 0),
-            endDate = LocalDateTime.of(2023, 11, 12, 13, 0)
+            endDate = LocalDateTime.of(2023, 11, 12, 13, 0),
+            allDay = false,
+            color = null,
         ),
         Event(
             id = 2,
             title = "Event 3",
             startDate = LocalDateTime.of(2023, 11, 12, 14, 0),
-            endDate = LocalDateTime.of(2023, 11, 12, 15, 30)
+            endDate = LocalDateTime.of(2023, 11, 12, 15, 30),
+            allDay = false,
+            color = null,
         ),
     )
 }

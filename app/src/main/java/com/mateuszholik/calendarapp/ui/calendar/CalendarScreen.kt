@@ -172,6 +172,8 @@ private fun Content(
                     title = it.title,
                     startTime = it.startDate,
                     endTime = it.endDate,
+                    allDay = it.allDay,
+                    color = it.color,
                     onEventClicked = { onEventClicked(it.id) }
                 )
             }
