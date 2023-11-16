@@ -9,10 +9,13 @@ internal fun <T> Cursor.toList(map: Cursor.() -> T): List<T> =
         this.map()
     }
 
-internal fun Cursor.toEvent(): Event =
-    Event(
+internal fun Cursor.toEvent(): Event {
+    val timezone = getString(4)
+
+    return Event(
         id = getLong(0),
         title = getString(1),
-        startDate = getLong(2).toLocalDateTime(),
-        endDate = getLong(3).toLocalDateTime()
+        startDate = getLong(2).toLocalDateTime(timezone),
+        endDate = getLong(3).toLocalDateTime(timezone)
     )
+}

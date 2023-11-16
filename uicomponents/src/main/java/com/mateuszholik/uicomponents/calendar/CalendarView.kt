@@ -56,11 +56,8 @@ fun CalendarView(
     modifier: Modifier = Modifier,
     colors: CalendarViewDefaults.Colors = CalendarViewDefaults.defaultColors(),
 ) {
-    val yearMonth by remember {
-        derivedStateOf { currentMonth }
-    }
     val days by remember {
-        derivedStateOf { CalendarField.createFieldsForMonth(yearMonth).chunked(7) }
+        derivedStateOf { CalendarField.createFieldsForMonth(currentMonth).chunked(7) }
     }
 
     Column(
@@ -76,13 +73,13 @@ fun CalendarView(
         ) {
             DateText(
                 modifier = Modifier.weight(1f),
-                date = currentDay,
+                date = currentMonth,
                 textColor = colors.foregroundColor
             )
 
             IconButton(
                 modifier = Modifier.size(MaterialTheme.sizing.normal),
-                onClick = { onMonthChanged(yearMonth.minusMonths(1)) }
+                onClick = { onMonthChanged(currentMonth.minusMonths(1)) }
             ) {
                 Icon(
                     modifier = Modifier.size(MaterialTheme.sizing.normal),
@@ -93,7 +90,7 @@ fun CalendarView(
             }
 
             IconButton(
-                onClick = { onMonthChanged(yearMonth.plusMonths(1)) }
+                onClick = { onMonthChanged(currentMonth.plusMonths(1)) }
             ) {
                 Icon(
                     modifier = Modifier.size(MaterialTheme.sizing.normal),

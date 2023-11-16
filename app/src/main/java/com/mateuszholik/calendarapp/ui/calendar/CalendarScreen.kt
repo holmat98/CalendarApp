@@ -44,6 +44,7 @@ import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.uicomponents.calendar.CalendarView
 import com.mateuszholik.uicomponents.event.EventItem
+import com.mateuszholik.uicomponents.text.DisplayLargeText
 import com.mateuszholik.uicomponents.text.HeadlineSmallText
 import com.mateuszholik.uicomponents.text.TitleSmallText
 import kotlinx.coroutines.launch
@@ -99,7 +100,12 @@ fun CalendarScreen(
                     }
                 )
             }
-            Loading -> TODO()
+            Loading -> {
+                DisplayLargeText(
+                    text = "Loading",
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
         }
 
     }

@@ -57,7 +57,12 @@ internal class EventsRepositoryImpl @Inject constructor(
         )
 
         val days = cursor
-            ?.toList { getLong(0).toLocalDate() }
+            ?.toList {
+                val dateStartMillis = getLong(0)
+                val zoneId = getString(1)
+
+                dateStartMillis.toLocalDate(zoneId)
+            }
             ?.distinct()
             .orEmpty()
 

@@ -10,12 +10,13 @@ import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
 fun DateText(
-    date: LocalDate,
+    date: YearMonth,
     modifier: Modifier = Modifier,
     textColor: Color = MaterialTheme.colorScheme.onSecondary,
 ) {
@@ -35,7 +36,7 @@ fun DateText(
 private fun Preview() {
     CalendarAppTheme(styleType = StyleType.AUTUMN) {
         DateText(
-            date = LocalDate.of(2023, 11, 5),
+            date = YearMonth.of(2023, 11),
         )
     }
 }
