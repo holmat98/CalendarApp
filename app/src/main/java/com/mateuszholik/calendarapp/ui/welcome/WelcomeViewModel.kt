@@ -4,11 +4,16 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
 import com.mateuszholik.calendarapp.ui.base.BaseStateViewModel
+import com.mateuszholik.calendarapp.ui.base.UiEvent
 import com.mateuszholik.calendarapp.ui.base.UiState
 import com.mateuszholik.calendarapp.ui.welcome.provider.WelcomeScreenInfoProvider
+import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenUiEvent
+import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,27 +22,31 @@ import kotlin.time.Duration.Companion.seconds
 @HiltViewModel
 class WelcomeViewModel @Inject constructor(
     welcomeScreenInfoProvider: WelcomeScreenInfoProvider,
-) : BaseStateViewModel<WelcomeViewModel.WelcomeScreenState>() {
+) : BaseStateViewModel<WelcomeScreenUiState, WelcomeScreenUiEvent>() {
 
-    private val _state: MutableStateFlow<WelcomeScreenState> =
+    private val _uiState: MutableStateFlow<WelcomeScreenUiState> =
         MutableStateFlow(welcomeScreenInfoProvider.provide())
-    override val state: StateFlow<WelcomeScreenState>
-        get() = _state
+    override val uiState: StateFlow<WelcomeScreenUiState>
+        get() = _uiState
+
+    private val _uiEvent: MutableSharedFlow<WelcomeScreenUiEvent> = MutableSharedFlow()
+    override val uiEvent: SharedFlow<WelcomeScreenUiEvent>
+        get() = _uiEvent
 
     init {
         viewModelScope.launch {
             delay(2.seconds)
-            _state.emit(WelcomeScreenState.NextScreen)
+            _uiEvent.emit(WelcomeScreenUiEvent.NavigateToNextScreen)
         }
     }
 
-    sealed class WelcomeScreenState : UiState {
+    data class WelcomeScreenUiState(
+        @StringRes val text: Int,
+        @DrawableRes val image: Int,
+    ) : UiState
 
-        data class WelcomeInfo(
-            @StringRes val text: Int,
-            @DrawableRes val image: Int,
-        ) : WelcomeScreenState()
+    sealed class WelcomeScreenUiEvent : UiEvent {
 
-        data object NextScreen : WelcomeScreenState()
+        data object NavigateToNextScreen : WelcomeScreenUiEvent()
     }
 }

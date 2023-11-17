@@ -8,11 +8,21 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 enum class CornerRadius(
+    val small: Dp,
     val normal: Dp,
 ) {
-    SMALL(normal = 16.dp),
-    MEDIUM(normal = 24.dp),
-    BIG(normal = 40.dp)
+    SMALL(
+        small = 8.dp,
+        normal = 16.dp
+    ),
+    MEDIUM(
+        small = 12.dp,
+        normal = 24.dp
+    ),
+    BIG(
+        small = 20.dp,
+        normal = 40.dp
+    )
 }
 
 internal val LocalCornerRadius = staticCompositionLocalOf { CornerRadius.MEDIUM }

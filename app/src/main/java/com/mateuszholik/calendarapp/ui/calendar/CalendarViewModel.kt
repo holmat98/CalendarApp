@@ -49,7 +49,9 @@ class CalendarViewModel @Inject constructor(
         _uiEvent.tryEmit(CalendarUiEvent.Error)
     }
 
-    init { setInitialUiState() }
+    init {
+        setInitialUiState()
+    }
 
     override fun performUserAction(action: CalendarUserAction) {
         when (action) {

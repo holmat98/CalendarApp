@@ -10,7 +10,6 @@ import androidx.navigation.compose.rememberNavController
 import com.mateuszholik.calendarapp.ui.navigation.MainNavigation
 import com.mateuszholik.calendarapp.ui.navigation.MainNavigation.mainNavigationGraph
 import com.mateuszholik.designsystem.CalendarAppTheme
-import com.mateuszholik.calendarapp.ui.welcome.WelcomeScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
