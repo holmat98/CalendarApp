@@ -174,12 +174,7 @@ fun CurrentDay(
         BodyLargeText(
             text = text,
             color = textColor,
-            fontWeight = FontWeight.SemiBold,
-            textDecoration = if (hasEvent) {
-                TextDecoration.Underline
-            } else {
-                TextDecoration.None
-            }
+            fontWeight = FontWeight.SemiBold
         )
     }
 }
@@ -194,6 +189,7 @@ private fun CalendarText(
     Column(
         modifier = Modifier
             .size(MaterialTheme.sizing.normal)
+            .clip(CircleShape)
             .clickable { onClick() }
             .conditional(
                 condition = hasEvent

@@ -11,6 +11,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -30,9 +34,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
 import com.mateuszholik.calendarapp.extensions.toYearMonth
+import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent.Error
+import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent.NavigateToAddEvent
+import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent.NavigateToEvent
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiState.CalendarInfo
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiState.Loading
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.CurrentMonthChanged
+import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.AddEventClicked
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.EventClicked
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.SelectedDateChanged
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
@@ -59,6 +67,7 @@ import java.time.YearMonth
 
 @Composable
 fun CalendarScreen(
+    onAddEventClicked: () -> Unit,
     onEventClicked: (eventId: Long) -> Unit,
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
@@ -68,7 +77,7 @@ fun CalendarScreen(
 
     ObserveAsEvents(viewModel.uiEvent) { event ->
         when (event) {
-            CalendarViewModel.CalendarUiEvent.Error -> {
+            is Error -> {
                 coroutineScope.launch {
                     snackBarHostState.showSnackbar(
                         message = "Something went wrong",
@@ -76,13 +85,23 @@ fun CalendarScreen(
                     )
                 }
             }
-            is CalendarViewModel.CalendarUiEvent.NavigateToEvent -> onEventClicked(event.eventId)
+            is NavigateToAddEvent -> onAddEventClicked()
+            is NavigateToEvent -> onEventClicked(event.eventId)
         }
     }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.secondary,
         snackbarHost = { SnackbarHost(snackBarHostState) },
+        floatingActionButton = {
+            FloatingActionButton(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                onClick = { viewModel.performUserAction(AddEventClicked) }
+            ) {
+                Icon(Icons.Filled.Add, contentDescription = null)
+            }
+        }
     ) {
         val paddingValues = PaddingValues(
             top = it.calculateTopPadding(),

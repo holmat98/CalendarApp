@@ -28,7 +28,10 @@ object MainNavigation {
 
     private fun NavGraphBuilder.calendarScreen() {
         composable(CALENDAR_SCREEN) {
-            CalendarScreen(onEventClicked = {})
+            CalendarScreen(
+                onAddEventClicked = {},
+                onEventClicked = {}
+            )
         }
     }
 

@@ -61,6 +61,8 @@ class CalendarViewModel @Inject constructor(
                 handleCurrentMonthChangedAction(action.newMonth)
             is CalendarUserAction.EventClicked ->
                 handleEventClickedAction(action.eventId)
+            is CalendarUserAction.AddEventClicked ->
+                handleAddEventClickedAction()
         }
     }
 
@@ -119,6 +121,12 @@ class CalendarViewModel @Inject constructor(
         }
     }
 
+    private fun handleAddEventClickedAction() {
+        viewModelScope.launch(exceptionHandler) {
+            _uiEvent.emit(CalendarUiEvent.NavigateToAddEvent)
+        }
+    }
+
     sealed class CalendarUiState : UiState {
 
         data object Loading : CalendarUiState()
@@ -135,6 +143,8 @@ class CalendarViewModel @Inject constructor(
 
         data class NavigateToEvent(val eventId: Long) : CalendarUiEvent()
 
+        data object NavigateToAddEvent : CalendarUiEvent()
+
         data object Error : CalendarUiEvent()
     }
 
@@ -145,5 +155,7 @@ class CalendarViewModel @Inject constructor(
         data class CurrentMonthChanged(val newMonth: YearMonth) : CalendarUserAction()
 
         data class EventClicked(val eventId: Long) : CalendarUserAction()
+
+        data object AddEventClicked : CalendarUserAction()
     }
 }
