@@ -23,13 +23,13 @@ enum class Sizing(
         extraTiny = 7.dp,
         normal = 40.dp,
         big = 80.dp,
-        extraBig = 220.dp,
+        extraBig = 160.dp,
     ),
     BIG(
         extraTiny = 10.dp,
         normal = 60.dp,
         big = 120.dp,
-        extraBig = 320.dp,
+        extraBig = 240.dp,
     )
 }
 

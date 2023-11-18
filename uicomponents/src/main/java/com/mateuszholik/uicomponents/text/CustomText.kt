@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
@@ -26,13 +27,15 @@ fun DisplayLargeText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     DisplayLargeText(
         text = stringResource(textResId),
         color = color,
         modifier = modifier,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -43,6 +46,7 @@ fun DisplayLargeText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     Text(
         modifier = modifier,
@@ -50,7 +54,8 @@ fun DisplayLargeText(
         color = color,
         style = MaterialTheme.typography.displayLarge,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -61,13 +66,15 @@ fun DisplayMediumText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     DisplayMediumText(
         text = stringResource(textResId),
         color = color,
         modifier = modifier,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -78,6 +85,7 @@ fun DisplayMediumText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     Text(
         modifier = modifier,
@@ -85,7 +93,8 @@ fun DisplayMediumText(
         color = color,
         style = MaterialTheme.typography.displayMedium,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -96,13 +105,15 @@ fun DisplaySmallText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     DisplaySmallText(
         text = stringResource(textResId),
         color = color,
         modifier = modifier,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -113,6 +124,7 @@ fun DisplaySmallText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     Text(
         modifier = modifier,
@@ -120,7 +132,8 @@ fun DisplaySmallText(
         color = color,
         style = MaterialTheme.typography.displaySmall,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -131,13 +144,15 @@ fun HeadlineLargeText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     HeadlineLargeText(
         text = stringResource(textResId),
         color = color,
         modifier = modifier,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -148,6 +163,7 @@ fun HeadlineLargeText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     Text(
         modifier = modifier,
@@ -155,7 +171,8 @@ fun HeadlineLargeText(
         color = color,
         style = MaterialTheme.typography.headlineLarge,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -166,13 +183,15 @@ fun HeadlineMediumText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     HeadlineMediumText(
         text = stringResource(textResId),
         color = color,
         modifier = modifier,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -183,6 +202,7 @@ fun HeadlineMediumText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     Text(
         modifier = modifier,
@@ -190,7 +210,8 @@ fun HeadlineMediumText(
         color = color,
         style = MaterialTheme.typography.headlineMedium,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -201,13 +222,15 @@ fun HeadlineSmallText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     HeadlineSmallText(
         text = stringResource(textResId),
         color = color,
         modifier = modifier,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -218,6 +241,7 @@ fun HeadlineSmallText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     Text(
         modifier = modifier,
@@ -225,7 +249,8 @@ fun HeadlineSmallText(
         color = color,
         style = MaterialTheme.typography.headlineSmall,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -236,13 +261,15 @@ fun TitleLargeText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     TitleLargeText(
         text = stringResource(textResId),
         color = color,
         modifier = modifier,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -253,6 +280,7 @@ fun TitleLargeText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     Text(
         modifier = modifier,
@@ -260,7 +288,8 @@ fun TitleLargeText(
         color = color,
         style = MaterialTheme.typography.titleLarge,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -271,13 +300,15 @@ fun TitleMediumText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     TitleMediumText(
         text = stringResource(textResId),
         color = color,
         modifier = modifier,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -288,6 +319,7 @@ fun TitleMediumText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     Text(
         modifier = modifier,
@@ -295,7 +327,8 @@ fun TitleMediumText(
         color = color,
         style = MaterialTheme.typography.titleMedium,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -306,13 +339,15 @@ fun TitleSmallText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     TitleSmallText(
         text = stringResource(textResId),
         color = color,
         modifier = modifier,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -323,6 +358,7 @@ fun TitleSmallText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     Text(
         modifier = modifier,
@@ -330,7 +366,8 @@ fun TitleSmallText(
         color = color,
         style = MaterialTheme.typography.titleSmall,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -341,13 +378,15 @@ fun BodyLargeText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     BodyLargeText(
         text = stringResource(textResId),
         color = color,
         modifier = modifier,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -358,6 +397,7 @@ fun BodyLargeText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     Text(
         modifier = modifier,
@@ -365,7 +405,8 @@ fun BodyLargeText(
         color = color,
         style = MaterialTheme.typography.bodyLarge,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -376,13 +417,15 @@ fun BodyMediumText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     BodyLargeText(
         text = stringResource(textResId),
         color = color,
         modifier = modifier,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -393,6 +436,7 @@ fun BodyMediumText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     Text(
         modifier = modifier,
@@ -400,7 +444,8 @@ fun BodyMediumText(
         color = color,
         style = MaterialTheme.typography.bodyMedium,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -411,13 +456,15 @@ fun BodySmallText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     BodySmallText(
         text = stringResource(textResId),
         color = color,
         modifier = modifier,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -428,6 +475,7 @@ fun BodySmallText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     Text(
         modifier = modifier,
@@ -435,7 +483,8 @@ fun BodySmallText(
         color = color,
         style = MaterialTheme.typography.bodySmall,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -446,13 +495,15 @@ fun LabelLargeText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     LabelLargeText(
         text = stringResource(textResId),
         color = color,
         modifier = modifier,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -463,6 +514,7 @@ fun LabelLargeText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     Text(
         modifier = modifier,
@@ -470,7 +522,8 @@ fun LabelLargeText(
         color = color,
         style = MaterialTheme.typography.labelLarge,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -481,13 +534,15 @@ fun LabelMediumText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     LabelMediumText(
         text = stringResource(textResId),
         color = color,
         modifier = modifier,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -498,6 +553,7 @@ fun LabelMediumText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     Text(
         modifier = modifier,
@@ -505,7 +561,8 @@ fun LabelMediumText(
         color = color,
         style = MaterialTheme.typography.labelMedium,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -516,13 +573,15 @@ fun LabelSmallText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     LabelSmallText(
         text = stringResource(textResId),
         color = color,
         modifier = modifier,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 
@@ -533,6 +592,7 @@ fun LabelSmallText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     Text(
         modifier = modifier,
@@ -540,7 +600,8 @@ fun LabelSmallText(
         color = color,
         style = MaterialTheme.typography.labelSmall,
         fontWeight = fontWeight,
-        textDecoration = textDecoration
+        textDecoration = textDecoration,
+        textAlign = textAlign,
     )
 }
 

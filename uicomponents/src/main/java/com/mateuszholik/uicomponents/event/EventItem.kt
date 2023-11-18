@@ -50,13 +50,11 @@ fun EventItem(
                 shape = RoundedCornerShape(MaterialTheme.cornerRadius.normal)
             )
             .clickable { onEventClicked() },
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
             modifier = Modifier
-                .padding(
-                    start = MaterialTheme.spacing.normal,
-                    top = MaterialTheme.spacing.big,
-                )
+                .padding(start = MaterialTheme.spacing.normal)
                 .size(MaterialTheme.sizing.extraTiny)
                 .background(
                     color = color?.let { Color(it) } ?: MaterialTheme.colorScheme.secondaryContainer,

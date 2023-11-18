@@ -28,8 +28,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
@@ -71,6 +73,7 @@ fun CalendarScreen(
     onEventClicked: (eventId: Long) -> Unit,
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -80,7 +83,7 @@ fun CalendarScreen(
             is Error -> {
                 coroutineScope.launch {
                     snackBarHostState.showSnackbar(
-                        message = "Something went wrong",
+                        message = context.getString(R.string.error_unknown_text),
                         withDismissAction = true,
                     )
                 }
@@ -200,7 +203,8 @@ private fun Content(
                 TitleSmallText(
                     textResId = R.string.calendar_screen_no_events_message,
                     color = MaterialTheme.colorScheme.onPrimary,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center,
                 )
             }
         } else {
@@ -287,10 +291,31 @@ private fun MediumPhonePreview() {
     }
 }
 
+@MediumPhonePreview
+@Composable
+private fun MediumPhonePreview2() {
+    CalendarAppTheme(styleType = StyleType.WINTER, darkTheme = true) {
+        Surface(color = MaterialTheme.colorScheme.secondary) {
+            Content(
+                paddingValues = PaddingValues(MaterialTheme.spacing.normal),
+                calendarInfo = CalendarInfo(
+                    currentDate = CURRENT_DATE,
+                    currentMonth = CURRENT_DATE.toYearMonth(),
+                    daysWithEvents = DAYS_WITH_EVENTS,
+                    events = emptyList()
+                ),
+                onDateChanged = {},
+                onMonthChanged = {},
+                onEventClicked = {}
+            )
+        }
+    }
+}
+
 @BigPhonePreview
 @Composable
 private fun BigPhonePreview() {
-    CalendarAppTheme(styleType = StyleType.SUMMER) {
+    CalendarAppTheme(styleType = StyleType.SUMMER, darkTheme = true) {
         Surface(color = MaterialTheme.colorScheme.secondary) {
             Content(
                 paddingValues = PaddingValues(MaterialTheme.spacing.normal),
@@ -299,6 +324,27 @@ private fun BigPhonePreview() {
                     currentMonth = CURRENT_DATE.toYearMonth(),
                     daysWithEvents = DAYS_WITH_EVENTS,
                     events = EVENTS
+                ),
+                onDateChanged = {},
+                onMonthChanged = {},
+                onEventClicked = {}
+            )
+        }
+    }
+}
+
+@BigPhonePreview
+@Composable
+private fun BigPhonePreview2() {
+    CalendarAppTheme(styleType = StyleType.SUMMER) {
+        Surface(color = MaterialTheme.colorScheme.secondary) {
+            Content(
+                paddingValues = PaddingValues(MaterialTheme.spacing.normal),
+                calendarInfo = CalendarInfo(
+                    currentDate = CURRENT_DATE,
+                    currentMonth = CURRENT_DATE.toYearMonth(),
+                    daysWithEvents = DAYS_WITH_EVENTS,
+                    events = emptyList()
                 ),
                 onDateChanged = {},
                 onMonthChanged = {},

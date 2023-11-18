@@ -1,9 +1,9 @@
 package com.mateuszholik.uicomponents.calendar
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,8 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.dp
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
@@ -35,7 +33,6 @@ import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
-import com.mateuszholik.uicomponents.extensions.conditional
 import com.mateuszholik.uicomponents.models.CalendarField
 import com.mateuszholik.uicomponents.text.BodyLargeText
 import com.mateuszholik.uicomponents.text.DateText
@@ -87,6 +84,7 @@ fun CalendarView(
             }
 
             IconButton(
+                modifier = Modifier.size(MaterialTheme.sizing.normal),
                 onClick = { onMonthChanged(currentMonth.plusMonths(1)) }
             ) {
                 Icon(
@@ -102,10 +100,9 @@ fun CalendarView(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             DayOfWeek.values().forEach {
-                CalendarText(
-                    text = it.getDisplayName(TextStyle.NARROW_STANDALONE, Locale.getDefault()),
-                    hasEvent = false,
-                    textColor = colors.foregroundColor
+                BodyLargeText(
+                    text = it.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault()).take(3),
+                    color = colors.foregroundColor
                 )
             }
         }
@@ -128,7 +125,6 @@ fun CalendarView(
                         is CalendarField.Day -> if (it.date == currentDay) {
                             CurrentDay(
                                 text = "${it.date.dayOfMonth}",
-                                hasEvent = it.date in daysWithEvents,
                                 backgroundColor = colors.selectedDayColor,
                                 textColor = colors.selectedDayTextColor
                             )
@@ -150,7 +146,6 @@ fun CalendarView(
 @Composable
 fun CurrentDay(
     text: String,
-    hasEvent: Boolean,
     backgroundColor: Color,
     textColor: Color,
 ) {
@@ -158,16 +153,7 @@ fun CurrentDay(
         modifier = Modifier
             .size(MaterialTheme.sizing.normal)
             .clip(CircleShape)
-            .background(backgroundColor)
-            .conditional(
-                condition = hasEvent
-            ) {
-                border(
-                    width = 1.dp,
-                    color = textColor,
-                    shape = CircleShape,
-                )
-            },
+            .background(backgroundColor),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -190,16 +176,7 @@ private fun CalendarText(
         modifier = Modifier
             .size(MaterialTheme.sizing.normal)
             .clip(CircleShape)
-            .clickable { onClick() }
-            .conditional(
-                condition = hasEvent
-            ) {
-                border(
-                    width = 1.dp,
-                    color = textColor,
-                    shape = CircleShape,
-                )
-            },
+            .clickable { onClick() },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -207,6 +184,18 @@ private fun CalendarText(
             text = text,
             color = textColor,
         )
+        if (hasEvent) {
+            Box(
+                modifier = Modifier
+                    .size(MaterialTheme.sizing.extraTiny)
+                    .background(
+                        color = MaterialTheme.colorScheme.tertiaryContainer,
+                        shape = CircleShape
+                    )
+            )
+        } else {
+            Spacer(modifier = Modifier.size(MaterialTheme.sizing.extraTiny))
+        }
     }
 }
 
