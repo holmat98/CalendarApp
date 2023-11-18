@@ -5,11 +5,11 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 
-internal fun Long.toLocalDateTime(): LocalDateTime =
-    LocalDateTime.ofInstant(
-        Instant.ofEpochMilli(this),
-        ZoneId.systemDefault().toZone()
-    )
+internal fun Long.toLocalDateTime(zoneId: String): LocalDateTime =
+    Instant
+        .ofEpochMilli(this)
+        .atZone(ZoneId.of(zoneId))
+        .toLocalDateTime()
 
-internal fun Long.toLocalDate(): LocalDate =
-    toLocalDateTime().toLocalDate()
+internal fun Long.toLocalDate(zoneId: String): LocalDate =
+    toLocalDateTime(zoneId).toLocalDate()

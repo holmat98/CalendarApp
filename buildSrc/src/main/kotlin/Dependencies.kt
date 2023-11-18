@@ -116,3 +116,9 @@ object Mockk {
         const val DEPENDENCY = "io.mockk:mockk-android:$version"
     }
 }
+
+object Timber {
+    private const val version = "5.0.1"
+
+    const val DEPENDENCY = "com.jakewharton.timber:timber:$version"
+}

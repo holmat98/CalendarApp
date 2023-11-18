@@ -10,46 +10,21 @@ import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
 fun DateText(
-    date: LocalDate,
+    date: YearMonth,
     modifier: Modifier = Modifier,
     textColor: Color = MaterialTheme.colorScheme.onSecondary,
 ) {
-    val locale = Locale.getDefault()
-    val monthName = date.month.getDisplayName(TextStyle.FULL_STANDALONE, locale)
+    val monthName = date.month.getDisplayName(TextStyle.FULL_STANDALONE, Locale.getDefault())
 
     Row(modifier = modifier) {
-        when (locale.language) {
-            Locale.ENGLISH.language -> {
-                HeadlineSmallText(
-                    text = "$monthName' ",
-                    color = textColor
-                )
-                HeadlineSmallText(
-                    text = "${date.dayOfMonth} ",
-                    color = textColor,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            else -> {
-                HeadlineSmallText(
-                    text = "${date.dayOfMonth} ",
-                    color = textColor,
-                    fontWeight = FontWeight.Bold
-                )
-                HeadlineSmallText(
-                    text = "$monthName ",
-                    color = textColor
-                )
-            }
-        }
-
         HeadlineSmallText(
-            text = date.year.toString(),
+            text = "$monthName ${date.year}",
             color = textColor
         )
     }
@@ -61,7 +36,7 @@ fun DateText(
 private fun Preview() {
     CalendarAppTheme(styleType = StyleType.AUTUMN) {
         DateText(
-            date = LocalDate.of(2023, 11, 5),
+            date = YearMonth.of(2023, 11),
         )
     }
 }

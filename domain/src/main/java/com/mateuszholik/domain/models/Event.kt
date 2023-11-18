@@ -7,4 +7,6 @@ data class Event(
     val title: String,
     val startDate: LocalDateTime,
     val endDate: LocalDateTime,
+    val color: Int?,
+    val allDay: Boolean,
 )

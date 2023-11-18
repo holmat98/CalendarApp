@@ -2,25 +2,25 @@ package com.mateuszholik.calendarapp.ui.welcome.provider
 
 import com.mateuszholik.calendarapp.R
 import com.mateuszholik.calendarapp.provider.CurrentDateProvider
-import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenState.WelcomeInfo
+import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenUiState
 import java.time.LocalDate
 import java.time.Month
 import javax.inject.Inject
 
 interface WelcomeScreenInfoProvider {
 
-    fun provide(): WelcomeInfo
+    fun provide(): WelcomeScreenUiState
 }
 
 class WelcomeScreenInfoProviderImpl @Inject constructor(
     private val currentDateProvider: CurrentDateProvider,
 ) : WelcomeScreenInfoProvider {
 
-    override fun provide(): WelcomeInfo {
+    override fun provide(): WelcomeScreenUiState {
         val today = currentDateProvider.provide()
         val currentYear = today.year
 
-        return WelcomeInfo(
+        return WelcomeScreenUiState(
             text = getTextResId(today, currentYear),
             image = getDrawableResId(today, currentYear)
         )

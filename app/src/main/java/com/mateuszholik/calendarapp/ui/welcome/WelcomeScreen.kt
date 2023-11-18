@@ -11,23 +11,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
-import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenState.NextScreen
-import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenState.WelcomeInfo
+import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
+import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenUiEvent.NavigateToNextScreen
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
 import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
+import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.uicomponents.text.DisplayLargeText
 
 @Composable
@@ -35,20 +34,18 @@ fun WelcomeScreen(
     goToNextScreen: () -> Unit,
     viewModel: WelcomeViewModel = hiltViewModel(),
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
-    when (state) {
-        is WelcomeInfo -> {
-            val info = state as WelcomeInfo
-            Content(
-                text = info.text,
-                image = info.image
-            )
-        }
-        is NextScreen -> LaunchedEffect(Unit) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    
+    ObserveAsEvents(viewModel.uiEvent) {
+        if (it is NavigateToNextScreen) {
             goToNextScreen()
         }
     }
+
+    Content(
+        text = state.text,
+        image = state.image
+    )
 }
 
 @Composable
@@ -64,7 +61,7 @@ private fun Content(
         verticalArrangement = Arrangement.Center,
     ) {
         DisplayLargeText(
-            modifier = Modifier.padding(horizontal = 32.dp),
+            modifier = Modifier.padding(horizontal = MaterialTheme.spacing.normal),
             textResId = text,
             color = MaterialTheme.colorScheme.onPrimary,
             fontWeight = FontWeight.Bold,
@@ -72,7 +69,11 @@ private fun Content(
         Image(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(32.dp),
+                .padding(
+                    top = MaterialTheme.spacing.normal,
+                    start = MaterialTheme.spacing.normal,
+                    end = MaterialTheme.spacing.normal,
+                ),
             painter = painterResource(image),
             contentScale = ContentScale.Inside,
             contentDescription = null

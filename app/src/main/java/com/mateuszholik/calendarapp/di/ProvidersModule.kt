@@ -2,6 +2,8 @@ package com.mateuszholik.calendarapp.di
 
 import com.mateuszholik.calendarapp.provider.CurrentDateProvider
 import com.mateuszholik.calendarapp.provider.CurrentDateProviderImpl
+import com.mateuszholik.calendarapp.provider.DispatcherProvider
+import com.mateuszholik.calendarapp.provider.DispatcherProviderImpl
 import com.mateuszholik.calendarapp.ui.provider.StyleProvider
 import com.mateuszholik.calendarapp.ui.provider.StyleProviderImpl
 import com.mateuszholik.calendarapp.ui.welcome.provider.WelcomeScreenInfoProvider
@@ -35,4 +37,9 @@ internal abstract class SingletonsProvidersModule {
     abstract fun bindsCurrentDateProvider(
         currentDateProviderImpl: CurrentDateProviderImpl,
     ): CurrentDateProvider
+
+    @Binds
+    abstract fun bindsDispatcherProvider(
+        dispatcherProviderImpl: DispatcherProviderImpl
+    ): DispatcherProvider
 }
