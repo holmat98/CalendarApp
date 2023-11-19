@@ -5,7 +5,7 @@ import androidx.annotation.StringRes
 import com.mateuszholik.calendarapp.provider.CurrentDateProvider
 import io.mockk.mockk
 import com.mateuszholik.calendarapp.R
-import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenState.WelcomeInfo
+import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenUiState
 import io.mockk.every
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DynamicTest.dynamicTest
@@ -166,7 +166,7 @@ internal class WelcomeScreenInfoProviderTest {
                 val result = welcomeScreenInfoProvider.provide()
 
                 assertThat(result).isEqualTo(
-                    WelcomeInfo(
+                    WelcomeScreenUiState(
                         text = it.stringResId,
                         image = it.drawableResId
                     )

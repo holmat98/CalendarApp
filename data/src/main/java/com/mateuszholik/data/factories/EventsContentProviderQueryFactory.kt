@@ -9,15 +9,15 @@ import javax.inject.Inject
 
 internal interface EventsContentProviderQueryFactory {
 
-    fun createForEventsFromDay(day: LocalDate): QueryData
+    suspend fun createForEventsFromDay(day: LocalDate): QueryData
 
-    fun createForEventsFromMonth(yearMonth: YearMonth): QueryData
+    suspend fun createForEventsFromMonth(yearMonth: YearMonth): QueryData
 }
 
 internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
     EventsContentProviderQueryFactory {
 
-    override fun createForEventsFromDay(day: LocalDate): QueryData {
+    override suspend fun createForEventsFromDay(day: LocalDate): QueryData {
         val dayAtStart = day.atStartOfDay()
         val dayAtEnd = day.plusDays(1).atStartOfDay()
 
@@ -46,7 +46,7 @@ internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
         )
     }
 
-    override fun createForEventsFromMonth(yearMonth: YearMonth): QueryData {
+    override suspend fun createForEventsFromMonth(yearMonth: YearMonth): QueryData {
         val firstDay = yearMonth.atDay(1).atStartOfDay()
         val lastDay = yearMonth.plusMonths(1).atDay(1).atStartOfDay()
 

@@ -7,9 +7,13 @@ import javax.inject.Inject
 interface DispatcherProvider {
 
     fun io(): CoroutineDispatcher
+
+    fun main(): CoroutineDispatcher
 }
 
 class DispatcherProviderImpl @Inject constructor() : DispatcherProvider {
 
     override fun io(): CoroutineDispatcher = Dispatchers.IO
+
+    override fun main(): CoroutineDispatcher = Dispatchers.Main
 }

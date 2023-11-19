@@ -3,6 +3,7 @@ package com.mateuszholik.calendarapp.ui.welcome
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
+import com.mateuszholik.calendarapp.provider.DispatcherProvider
 import com.mateuszholik.calendarapp.ui.base.BaseStateViewModel
 import com.mateuszholik.calendarapp.ui.base.UiEvent
 import com.mateuszholik.calendarapp.ui.base.UiState
@@ -21,6 +22,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class WelcomeViewModel @Inject constructor(
+    dispatcherProvider: DispatcherProvider,
     welcomeScreenInfoProvider: WelcomeScreenInfoProvider,
 ) : BaseStateViewModel<WelcomeScreenUiState, WelcomeScreenUiEvent>() {
 
@@ -34,7 +36,7 @@ class WelcomeViewModel @Inject constructor(
         get() = _uiEvent
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcherProvider.main()) {
             delay(2.seconds)
             _uiEvent.emit(WelcomeScreenUiEvent.NavigateToNextScreen)
         }

@@ -89,6 +89,17 @@ object Google {
     }
 }
 
+object Jetbrains {
+
+    object Coroutines {
+        private const val version = "1.7.3"
+
+        object UnitTesting {
+            const val DEPENDENCY = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$version"
+        }
+    }
+}
+
 object Testing {
 
     object JUnit {
@@ -104,6 +115,12 @@ object Testing {
         private const val version = "3.21.0"
 
         const val DEPENDENCY = "org.assertj:assertj-core:$version"
+    }
+
+    object Turbine {
+        private const val version = "1.0.0"
+
+        const val DEPENDENCY = "app.cash.turbine:turbine:$version"
     }
 }
 
