@@ -11,4 +11,9 @@ dependencies {
 
     coreKtx()
     hilt()
+    unitTesting()
+}
+
+tasks.withType(Test::class) {
+    useJUnitPlatform()
 }

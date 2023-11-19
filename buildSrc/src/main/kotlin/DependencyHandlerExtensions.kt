@@ -36,6 +36,8 @@ fun DependencyHandler.unitTesting() {
     testImplementation(Testing.AssertJ.DEPENDENCY)
     testImplementation(AndroidX.CoreKtx.Testing.DEPENDENCY)
     testImplementation(Mockk.DEPENDENCY)
+    testImplementation(Jetbrains.Coroutines.UnitTesting.DEPENDENCY)
+    testImplementation(Testing.Turbine.DEPENDENCY)
 }
 
 fun DependencyHandler.timber() {

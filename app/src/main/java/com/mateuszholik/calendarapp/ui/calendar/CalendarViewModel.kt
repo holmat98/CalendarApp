@@ -20,6 +20,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -38,15 +40,17 @@ class CalendarViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<CalendarUiState> =
         MutableStateFlow(CalendarUiState.Loading)
     override val uiState: StateFlow<CalendarUiState>
-        get() = _uiState
+        get() = _uiState.asStateFlow()
 
     private val _uiEvent: MutableSharedFlow<CalendarUiEvent> = MutableSharedFlow()
     override val uiEvent: SharedFlow<CalendarUiEvent>
-        get() = _uiEvent
+        get() = _uiEvent.asSharedFlow()
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Timber.e(throwable, "Error on Calendar screen")
-        _uiEvent.tryEmit(CalendarUiEvent.Error)
+        viewModelScope.launch(dispatcherProvider.main()) {
+            _uiEvent.emit(CalendarUiEvent.Error)
+        }
     }
 
     init {
@@ -116,13 +120,13 @@ class CalendarViewModel @Inject constructor(
     }
 
     private fun handleEventClickedAction(eventId: Long) {
-        viewModelScope.launch(exceptionHandler) {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             _uiEvent.emit(CalendarUiEvent.NavigateToEvent(eventId))
         }
     }
 
     private fun handleAddEventClickedAction() {
-        viewModelScope.launch(exceptionHandler) {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             _uiEvent.emit(CalendarUiEvent.NavigateToAddEvent)
         }
     }

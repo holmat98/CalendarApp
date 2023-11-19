@@ -1,12 +1,9 @@
 package com.mateuszholik.data.repositories
 
 import android.content.Context
-import com.mateuszholik.data.extensions.toEvent
-import com.mateuszholik.data.extensions.toList
-import com.mateuszholik.data.extensions.toLocalDate
 import com.mateuszholik.data.factories.EventsContentProviderQueryFactory
-import com.mateuszholik.data.factories.EventsContentProviderQueryFactoryImpl.Companion.DAYS_WITH_EVENTS_DATE_START_INDEX
-import com.mateuszholik.data.factories.EventsContentProviderQueryFactoryImpl.Companion.DAYS_WITH_EVENTS_TIMEZONE_INDEX
+import com.mateuszholik.data.mappers.CursorToEventsMapper
+import com.mateuszholik.data.mappers.CursorToListOfDaysMapper
 import com.mateuszholik.data.repositories.models.Event
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.LocalDate
@@ -22,6 +19,8 @@ interface EventsRepository {
 
 internal class EventsRepositoryImpl @Inject constructor(
     private val eventsContentProviderQueryFactory: EventsContentProviderQueryFactory,
+    private val cursorToEventsMapper: CursorToEventsMapper,
+    private val cursorToListOfDaysMapper: CursorToListOfDaysMapper,
     @ApplicationContext private val context: Context,
 ) : EventsRepository {
 
@@ -39,7 +38,7 @@ internal class EventsRepositoryImpl @Inject constructor(
         )
 
         val events = cursor
-            ?.toList { this.toEvent() }
+            ?.let { cursorToEventsMapper.map(it) }
             .orEmpty()
 
         cursor?.close()
@@ -59,13 +58,7 @@ internal class EventsRepositoryImpl @Inject constructor(
         )
 
         val days = cursor
-            ?.toList {
-                val dateStartMillis = getLong(DAYS_WITH_EVENTS_DATE_START_INDEX)
-                val zoneId = getString(DAYS_WITH_EVENTS_TIMEZONE_INDEX)
-
-                dateStartMillis.toLocalDate(zoneId)
-            }
-            ?.distinct()
+            ?.let { cursorToListOfDaysMapper.map(it) }
             .orEmpty()
 
         cursor?.close()
