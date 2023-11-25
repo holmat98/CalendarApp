@@ -4,10 +4,12 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
@@ -25,9 +27,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
+import com.mateuszholik.designsystem.previews.BigPhonePreview
+import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
+import com.mateuszholik.uicomponents.extensions.shimmerEffect
 import com.mateuszholik.uicomponents.text.HeadlineMediumText
 import com.mateuszholik.uicomponents.text.TitleMediumText
 import com.mateuszholik.uicomponents.text.TitleSmallText
@@ -40,62 +45,108 @@ fun CalendarPermissionScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(containerColor = MaterialTheme.colorScheme.surface) {
+        val paddingValues = PaddingValues(
+            top = it.calculateTopPadding(),
+            bottom = it.calculateBottomPadding(),
+            start = MaterialTheme.spacing.normal,
+            end = MaterialTheme.spacing.normal,
+        )
+
         when (uiState) {
             is CalendarPermissionViewModel.CalendarPermissionUiState.AskForReadCalendarPermission -> {
                 Content(
-                    paddingValues = it,
+                    paddingValues = paddingValues,
                     imageResId = R.drawable.ic_read_calendar,
-                    titleResId = R.string.welcome_screen_hello_december,
-                    messageResId = R.string.calendar_screen_no_events_message,
+                    titleResId = R.string.calendar_permission_screen_read_title,
+                    messageResId = R.string.calendar_permission_screen_read_message,
                     buttonResId = R.string.button_add_permission,
                 )
             }
             is CalendarPermissionViewModel.CalendarPermissionUiState.AskForWriteCalendarPermission -> {
                 Content(
-                    paddingValues = it,
-                    imageResId = R.drawable.ic_read_calendar,
-                    titleResId = R.string.welcome_screen_hello_december,
-                    messageResId = R.string.calendar_screen_no_events_message,
+                    paddingValues = paddingValues,
+                    imageResId = R.drawable.ic_write_calendar,
+                    titleResId = R.string.calendar_permission_screen_write_title,
+                    messageResId = R.string.calendar_permission_screen_write_message,
                     buttonResId = R.string.button_add_permission,
                 )
             }
             CalendarPermissionViewModel.CalendarPermissionUiState.Loading -> {
-                Content(
-                    paddingValues = it,
-                    imageResId = R.drawable.ic_read_calendar,
-                    titleResId = R.string.welcome_screen_hello_december,
-                    messageResId = R.string.calendar_screen_no_events_message,
-                    buttonResId = R.string.button_add_permission,
-                )
+                ShimmerContent(paddingValues = paddingValues)
             }
             is CalendarPermissionViewModel.CalendarPermissionUiState.ShowRationaleForReadCalendarPermission -> {
                 Content(
-                    paddingValues = it,
+                    paddingValues = paddingValues,
                     imageResId = R.drawable.ic_read_calendar,
-                    titleResId = R.string.welcome_screen_hello_december,
-                    messageResId = R.string.calendar_screen_no_events_message,
+                    titleResId = R.string.calendar_permission_screen_read_title,
+                    messageResId = R.string.calendar_permission_screen_read_rationale_message,
                     buttonResId = R.string.button_add_permission,
                 )
             }
             is CalendarPermissionViewModel.CalendarPermissionUiState.ShowRationaleForWriteCalendarPermission -> {
                 Content(
-                    paddingValues = it,
-                    imageResId = R.drawable.ic_read_calendar,
-                    titleResId = R.string.welcome_screen_hello_december,
-                    messageResId = R.string.calendar_screen_no_events_message,
+                    paddingValues = paddingValues,
+                    imageResId = R.drawable.ic_write_calendar,
+                    titleResId = R.string.calendar_permission_screen_write_title,
+                    messageResId = R.string.calendar_permission_screen_write_rationale_message,
                     buttonResId = R.string.button_add_permission,
                 )
             }
             CalendarPermissionViewModel.CalendarPermissionUiState.ShowSettings -> {
                 Content(
-                    paddingValues = it,
-                    imageResId = R.drawable.ic_read_calendar,
-                    titleResId = R.string.welcome_screen_hello_december,
-                    messageResId = R.string.calendar_screen_no_events_message,
-                    buttonResId = R.string.button_add_permission,
+                    paddingValues = paddingValues,
+                    imageResId = R.drawable.ic_settings,
+                    titleResId = R.string.calendar_permission_screen_settings_title,
+                    messageResId = R.string.calendar_permission_screen_settings_message,
+                    buttonResId = R.string.button_go_to_settings,
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun ShimmerContent(paddingValues: PaddingValues) {
+    Column(
+        modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(MaterialTheme.sizing.extraBig)
+                    .shimmerEffect()
+            )
+            Box(
+                modifier = Modifier
+                    .padding(top = MaterialTheme.spacing.normal)
+                    .fillMaxWidth()
+                    .height(MaterialTheme.sizing.big)
+                    .shimmerEffect(),
+            )
+            Box(
+                modifier = Modifier
+                    .padding(top = MaterialTheme.spacing.normal)
+                    .fillMaxWidth()
+                    .height(MaterialTheme.sizing.normal)
+                    .shimmerEffect(),
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .padding(vertical = MaterialTheme.spacing.normal)
+                .fillMaxWidth()
+                .height(MaterialTheme.sizing.normal)
+                .shimmerEffect(),
+        )
     }
 }
 
@@ -140,7 +191,7 @@ private fun Content(
 
         Button(
             modifier = Modifier
-                .padding(MaterialTheme.spacing.normal)
+                .padding(vertical = MaterialTheme.spacing.normal)
                 .fillMaxWidth(),
             onClick = { /*TODO*/ }
         ) {
@@ -159,9 +210,125 @@ private fun SmallPhonePreview() {
                     horizontal = MaterialTheme.spacing.normal
                 ),
                 imageResId = R.drawable.ic_read_calendar,
-                titleResId = R.string.welcome_screen_hello_december,
-                messageResId = R.string.calendar_screen_no_events_message,
+                titleResId = R.string.calendar_permission_screen_read_title,
+                messageResId = R.string.calendar_permission_screen_read_message,
                 buttonResId = R.string.button_add_permission,
+            )
+        }
+    }
+}
+
+@SmallPhonePreview
+@Composable
+private fun SmallPhoneDarkModePreview() {
+    CalendarAppTheme(
+        styleType = StyleType.SUMMER,
+        darkTheme = true,
+    ) {
+        Surface {
+            Content(
+                paddingValues = PaddingValues(
+                    horizontal = MaterialTheme.spacing.normal
+                ),
+                imageResId = R.drawable.ic_read_calendar,
+                titleResId = R.string.calendar_permission_screen_read_title,
+                messageResId = R.string.calendar_permission_screen_read_message,
+                buttonResId = R.string.button_add_permission,
+            )
+        }
+    }
+}
+
+@MediumPhonePreview
+@Composable
+private fun MediumPhonePreview() {
+    CalendarAppTheme(styleType = StyleType.WINTER) {
+        Surface {
+            Content(
+                paddingValues = PaddingValues(
+                    horizontal = MaterialTheme.spacing.normal
+                ),
+                imageResId = R.drawable.ic_write_calendar,
+                titleResId = R.string.calendar_permission_screen_write_title,
+                messageResId = R.string.calendar_permission_screen_write_rationale_message,
+                buttonResId = R.string.button_add_permission,
+            )
+        }
+    }
+}
+
+@MediumPhonePreview
+@Composable
+private fun MediumPhoneDarkModePreview() {
+    CalendarAppTheme(
+        styleType = StyleType.WINTER,
+        darkTheme = true,
+    ) {
+        Surface {
+            Content(
+                paddingValues = PaddingValues(
+                    horizontal = MaterialTheme.spacing.normal
+                ),
+                imageResId = R.drawable.ic_write_calendar,
+                titleResId = R.string.calendar_permission_screen_write_title,
+                messageResId = R.string.calendar_permission_screen_write_rationale_message,
+                buttonResId = R.string.button_add_permission,
+            )
+        }
+    }
+}
+
+@MediumPhonePreview
+@Composable
+private fun MediumPhoneDarkModePreview2() {
+    CalendarAppTheme(
+        styleType = StyleType.WINTER,
+        darkTheme = true,
+    ) {
+        Surface {
+            ShimmerContent(
+                paddingValues = PaddingValues(
+                    horizontal = MaterialTheme.spacing.normal
+                )
+            )
+        }
+    }
+}
+
+@BigPhonePreview
+@Composable
+private fun BigPhonePreview() {
+    CalendarAppTheme(styleType = StyleType.AUTUMN) {
+        Surface {
+            Content(
+                paddingValues = PaddingValues(
+                    horizontal = MaterialTheme.spacing.normal
+                ),
+                imageResId = R.drawable.ic_settings,
+                titleResId = R.string.calendar_permission_screen_settings_title,
+                messageResId = R.string.calendar_permission_screen_settings_message,
+                buttonResId = R.string.button_go_to_settings,
+            )
+        }
+    }
+}
+
+@BigPhonePreview
+@Composable
+private fun BigPhoneDarkModePreview() {
+    CalendarAppTheme(
+        styleType = StyleType.AUTUMN,
+        darkTheme = true,
+    ) {
+        Surface {
+            Content(
+                paddingValues = PaddingValues(
+                    horizontal = MaterialTheme.spacing.normal
+                ),
+                imageResId = R.drawable.ic_settings,
+                titleResId = R.string.calendar_permission_screen_settings_title,
+                messageResId = R.string.calendar_permission_screen_settings_message,
+                buttonResId = R.string.button_go_to_settings,
             )
         }
     }

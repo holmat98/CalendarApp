@@ -1,5 +1,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">CalendarApp</string>
+    <string name="button_add_permission">Grant permission</string>
+    <string name="button_go_to_settings">Open settings</string>
+    <string name="calendar_permission_screen_read_title">Grant permission to READ calendar</string>
+    <string name="calendar_permission_screen_read_message">This permission is required for this application to get all your calendar events.</string>
+    <string name="calendar_permission_screen_read_rationale_message">This permission is required for this application to get all your calendar events. Without that you can not go further.</string>
+    <string name="calendar_permission_screen_write_title">Grant permission to WRITE calendar</string>
+    <string name="calendar_permission_screen_write_message">This permission is required for this application to add, edit or delete events in calendar.</string>
+    <string name="calendar_permission_screen_write_rationale_message">This permission is required for this application to add, edit or delete events in calendar. Without that you CAN NOT go further.</string>
+    <string name="calendar_permission_screen_settings_title">Grant permission in the system settings</string>
+    <string name="calendar_permission_screen_settings_message">This permission is required for this application. Without that you can not go further. Press the button and grant permission in the SYSTEM SETTINGS.</string>
     <string name="calendar_screen_no_events_title">No events found</string>
     <string name="calendar_screen_no_events_message">You don\'t have any scheduled events today</string>
     <string name="error_unknown_text">Something went wrong</string>
@@ -26,5 +36,4 @@
     <string name="welcome_screen_hello_vacation">Happy\nVacation!</string>
     <string name="welcome_screen_hello_school">Welcome\nSchool!</string>
     <string name="welcome_screen_hello_new_year">Happy\nNew Year!</string>
-    <string name="button_add_permission">Grant permission</string>
 </resources>
