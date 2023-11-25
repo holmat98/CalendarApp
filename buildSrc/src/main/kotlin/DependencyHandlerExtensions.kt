@@ -44,6 +44,10 @@ fun DependencyHandler.timber() {
     implementation(Timber.DEPENDENCY)
 }
 
+fun DependencyHandler.preferencesDataStore() {
+    implementation(AndroidX.PreferenceDataStore.DEPENDENCY)
+}
+
 fun DependencyHandler.module(name: String) {
     implementation(project(mapOf("path" to name)))
 }

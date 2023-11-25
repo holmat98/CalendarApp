@@ -32,6 +32,12 @@ object AndroidX {
         }
     }
 
+    object PreferenceDataStore {
+        private const val version = "1.0.0"
+
+        const val DEPENDENCY = "androidx.datastore:datastore-preferences:$version"
+    }
+
     object Lifecycle {
         private const val version = "2.6.2"
 
