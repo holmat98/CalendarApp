@@ -1,5 +1,10 @@
 package com.mateuszholik.calendarapp.ui.permissions.calendar
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -20,11 +25,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
+import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
+import com.mateuszholik.calendarapp.ui.permissions.calendar.CalendarPermissionViewModel.CalendarPermissionUiState
+import com.mateuszholik.calendarapp.ui.permissions.calendar.CalendarPermissionViewModel.CalendarPermissionUserAction
+import com.mateuszholik.calendarapp.ui.permissions.calendar.CalendarPermissionViewModel.CalendarPermissionUiEvent
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
@@ -32,6 +42,7 @@ import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
+import com.mateuszholik.uicomponents.buttons.CommonButton
 import com.mateuszholik.uicomponents.extensions.shimmerEffect
 import com.mateuszholik.uicomponents.text.HeadlineMediumText
 import com.mateuszholik.uicomponents.text.TitleMediumText
@@ -43,6 +54,28 @@ fun CalendarPermissionScreen(
     viewModel: CalendarPermissionViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { results ->
+        viewModel.performUserAction(
+            CalendarPermissionUserAction.OnCalendarPermissionResultUserAction(
+                results = results
+            )
+        )
+    }
+    val settingsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+    ) {
+        viewModel.performUserAction(
+            CalendarPermissionUserAction.OnReturnBackFromSettingsUserAction
+        )
+    }
+
+    ObserveAsEvents(flow = viewModel.uiEvent) { uiEvent ->
+        when (uiEvent) {
+            CalendarPermissionUiEvent.AllPermissionsGranted -> onPermissionGranted()
+        }
+    }
 
     Scaffold(containerColor = MaterialTheme.colorScheme.surface) {
         val paddingValues = PaddingValues(
@@ -53,52 +86,53 @@ fun CalendarPermissionScreen(
         )
 
         when (uiState) {
-            is CalendarPermissionViewModel.CalendarPermissionUiState.AskForReadCalendarPermission -> {
-                Content(
-                    paddingValues = paddingValues,
-                    imageResId = R.drawable.ic_read_calendar,
-                    titleResId = R.string.calendar_permission_screen_read_title,
-                    messageResId = R.string.calendar_permission_screen_read_message,
-                    buttonResId = R.string.button_add_permission,
-                )
-            }
-            is CalendarPermissionViewModel.CalendarPermissionUiState.AskForWriteCalendarPermission -> {
-                Content(
-                    paddingValues = paddingValues,
-                    imageResId = R.drawable.ic_write_calendar,
-                    titleResId = R.string.calendar_permission_screen_write_title,
-                    messageResId = R.string.calendar_permission_screen_write_message,
-                    buttonResId = R.string.button_add_permission,
-                )
-            }
-            CalendarPermissionViewModel.CalendarPermissionUiState.Loading -> {
+            is CalendarPermissionUiState.Loading -> {
                 ShimmerContent(paddingValues = paddingValues)
             }
-            is CalendarPermissionViewModel.CalendarPermissionUiState.ShowRationaleForReadCalendarPermission -> {
+            is CalendarPermissionUiState.AskForCalendarPermissions -> {
+                val permissions =
+                    (uiState as CalendarPermissionUiState.AskForCalendarPermissions).permissions
                 Content(
                     paddingValues = paddingValues,
                     imageResId = R.drawable.ic_read_calendar,
-                    titleResId = R.string.calendar_permission_screen_read_title,
-                    messageResId = R.string.calendar_permission_screen_read_rationale_message,
+                    titleResId = R.string.calendar_permission_screen_title,
+                    messageResId = R.string.calendar_permission_screen_message,
                     buttonResId = R.string.button_add_permission,
+                    onButtonClicked = {
+                        permissionLauncher.launch(permissions.toTypedArray())
+                    },
                 )
             }
-            is CalendarPermissionViewModel.CalendarPermissionUiState.ShowRationaleForWriteCalendarPermission -> {
+            is CalendarPermissionUiState.ShowRationaleForCalendarPermissions -> {
+                val permissions =
+                    (uiState as CalendarPermissionUiState.ShowRationaleForCalendarPermissions).permissions
                 Content(
                     paddingValues = paddingValues,
-                    imageResId = R.drawable.ic_write_calendar,
-                    titleResId = R.string.calendar_permission_screen_write_title,
-                    messageResId = R.string.calendar_permission_screen_write_rationale_message,
+                    imageResId = R.drawable.ic_read_calendar,
+                    titleResId = R.string.calendar_permission_screen_title,
+                    messageResId = R.string.calendar_permission_screen_rationale_message,
                     buttonResId = R.string.button_add_permission,
+                    onButtonClicked = {
+                        permissionLauncher.launch(permissions.toTypedArray())
+                    }
                 )
             }
-            CalendarPermissionViewModel.CalendarPermissionUiState.ShowSettings -> {
+            is CalendarPermissionUiState.ShowSettings -> {
+                val context = LocalContext.current
                 Content(
                     paddingValues = paddingValues,
                     imageResId = R.drawable.ic_settings,
                     titleResId = R.string.calendar_permission_screen_settings_title,
                     messageResId = R.string.calendar_permission_screen_settings_message,
                     buttonResId = R.string.button_go_to_settings,
+                    onButtonClicked = {
+                        settingsLauncher.launch(
+                            Intent(
+                                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.fromParts("package", context.packageName, null)
+                            )
+                        )
+                    }
                 )
             }
         }
@@ -157,6 +191,7 @@ private fun Content(
     @StringRes titleResId: Int,
     @StringRes messageResId: Int,
     @StringRes buttonResId: Int,
+    onButtonClicked: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -189,14 +224,13 @@ private fun Content(
             )
         }
 
-        Button(
+        CommonButton(
             modifier = Modifier
                 .padding(vertical = MaterialTheme.spacing.normal)
                 .fillMaxWidth(),
-            onClick = { /*TODO*/ }
-        ) {
-            TitleSmallText(textResId = buttonResId, color = MaterialTheme.colorScheme.onPrimary)
-        }
+            textResId = buttonResId,
+            onClick = onButtonClicked,
+        )
     }
 }
 
@@ -210,9 +244,10 @@ private fun SmallPhonePreview() {
                     horizontal = MaterialTheme.spacing.normal
                 ),
                 imageResId = R.drawable.ic_read_calendar,
-                titleResId = R.string.calendar_permission_screen_read_title,
-                messageResId = R.string.calendar_permission_screen_read_message,
+                titleResId = R.string.calendar_permission_screen_title,
+                messageResId = R.string.calendar_permission_screen_message,
                 buttonResId = R.string.button_add_permission,
+                onButtonClicked = {},
             )
         }
     }
@@ -231,9 +266,10 @@ private fun SmallPhoneDarkModePreview() {
                     horizontal = MaterialTheme.spacing.normal
                 ),
                 imageResId = R.drawable.ic_read_calendar,
-                titleResId = R.string.calendar_permission_screen_read_title,
-                messageResId = R.string.calendar_permission_screen_read_message,
+                titleResId = R.string.calendar_permission_screen_title,
+                messageResId = R.string.calendar_permission_screen_message,
                 buttonResId = R.string.button_add_permission,
+                onButtonClicked = {},
             )
         }
     }
@@ -249,9 +285,10 @@ private fun MediumPhonePreview() {
                     horizontal = MaterialTheme.spacing.normal
                 ),
                 imageResId = R.drawable.ic_write_calendar,
-                titleResId = R.string.calendar_permission_screen_write_title,
-                messageResId = R.string.calendar_permission_screen_write_rationale_message,
+                titleResId = R.string.calendar_permission_screen_title,
+                messageResId = R.string.calendar_permission_screen_rationale_message,
                 buttonResId = R.string.button_add_permission,
+                onButtonClicked = {},
             )
         }
     }
@@ -270,9 +307,10 @@ private fun MediumPhoneDarkModePreview() {
                     horizontal = MaterialTheme.spacing.normal
                 ),
                 imageResId = R.drawable.ic_write_calendar,
-                titleResId = R.string.calendar_permission_screen_write_title,
-                messageResId = R.string.calendar_permission_screen_write_rationale_message,
+                titleResId = R.string.calendar_permission_screen_title,
+                messageResId = R.string.calendar_permission_screen_rationale_message,
                 buttonResId = R.string.button_add_permission,
+                onButtonClicked = {},
             )
         }
     }
@@ -308,6 +346,7 @@ private fun BigPhonePreview() {
                 titleResId = R.string.calendar_permission_screen_settings_title,
                 messageResId = R.string.calendar_permission_screen_settings_message,
                 buttonResId = R.string.button_go_to_settings,
+                onButtonClicked = {},
             )
         }
     }
@@ -329,6 +368,7 @@ private fun BigPhoneDarkModePreview() {
                 titleResId = R.string.calendar_permission_screen_settings_title,
                 messageResId = R.string.calendar_permission_screen_settings_message,
                 buttonResId = R.string.button_go_to_settings,
+                onButtonClicked = {},
             )
         }
     }

@@ -21,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
 import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenUiEvent.NavigateToNextScreen
+import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenUiEvent.NavigateToPermissionsScreen
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
@@ -32,13 +33,15 @@ import com.mateuszholik.uicomponents.text.DisplayLargeText
 @Composable
 fun WelcomeScreen(
     goToNextScreen: () -> Unit,
+    goToPermissionScreen: () -> Unit,
     viewModel: WelcomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    
-    ObserveAsEvents(viewModel.uiEvent) {
-        if (it is NavigateToNextScreen) {
-            goToNextScreen()
+
+    ObserveAsEvents(viewModel.uiEvent) { uiEvent ->
+        when (uiEvent) {
+            NavigateToNextScreen -> goToNextScreen()
+            NavigateToPermissionsScreen -> goToPermissionScreen()
         }
     }
 

@@ -3,13 +3,14 @@ package com.mateuszholik.calendarapp.ui.welcome
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
+import com.mateuszholik.calendarapp.permissions.CalendarPermissionsManager
 import com.mateuszholik.calendarapp.provider.DispatcherProvider
 import com.mateuszholik.calendarapp.ui.base.BaseStateViewModel
 import com.mateuszholik.calendarapp.ui.base.UiEvent
 import com.mateuszholik.calendarapp.ui.base.UiState
-import com.mateuszholik.calendarapp.ui.welcome.provider.WelcomeScreenInfoProvider
 import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenUiEvent
 import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenUiState
+import com.mateuszholik.calendarapp.ui.welcome.provider.WelcomeScreenInfoProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,6 +23,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class WelcomeViewModel @Inject constructor(
+    private val calendarPermissionsManager: CalendarPermissionsManager,
     dispatcherProvider: DispatcherProvider,
     welcomeScreenInfoProvider: WelcomeScreenInfoProvider,
 ) : BaseStateViewModel<WelcomeScreenUiState, WelcomeScreenUiEvent>() {
@@ -37,8 +39,14 @@ class WelcomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(dispatcherProvider.main()) {
+            val arePermissionsGranted = calendarPermissionsManager.arePermissionsGranted()
+
             delay(2.seconds)
-            _uiEvent.emit(WelcomeScreenUiEvent.NavigateToNextScreen)
+            if (arePermissionsGranted) {
+                _uiEvent.emit(WelcomeScreenUiEvent.NavigateToNextScreen)
+            } else {
+                _uiEvent.emit(WelcomeScreenUiEvent.NavigateToPermissionsScreen)
+            }
         }
     }
 
@@ -50,5 +58,7 @@ class WelcomeViewModel @Inject constructor(
     sealed class WelcomeScreenUiEvent : UiEvent {
 
         data object NavigateToNextScreen : WelcomeScreenUiEvent()
+
+        data object NavigateToPermissionsScreen : WelcomeScreenUiEvent()
     }
 }

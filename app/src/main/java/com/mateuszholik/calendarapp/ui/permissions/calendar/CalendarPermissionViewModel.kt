@@ -1,9 +1,8 @@
 package com.mateuszholik.calendarapp.ui.permissions.calendar
 
 import androidx.lifecycle.viewModelScope
+import com.mateuszholik.calendarapp.permissions.CalendarPermissionsManager
 import com.mateuszholik.calendarapp.permissions.PermissionManager
-import com.mateuszholik.calendarapp.permissions.ReadCalendarPermissionManager
-import com.mateuszholik.calendarapp.permissions.WriteCalendarPermissionManager
 import com.mateuszholik.calendarapp.provider.DispatcherProvider
 import com.mateuszholik.calendarapp.ui.base.BaseViewModel
 import com.mateuszholik.calendarapp.ui.base.UiEvent
@@ -25,8 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CalendarPermissionViewModel @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
-    private val readCalendarPermissionManager: ReadCalendarPermissionManager,
-    private val writeCalendarPermissionManager: WriteCalendarPermissionManager,
+    private val calendarPermissionManager: CalendarPermissionsManager,
 ) :
     BaseViewModel<CalendarPermissionUiState, CalendarPermissionUserAction, CalendarPermissionUiEvent>() {
 
@@ -40,86 +38,53 @@ class CalendarPermissionViewModel @Inject constructor(
         get() = _uiEvent.asSharedFlow()
 
     init {
-        observeReadCalendarPermissionState()
+        observeCalendarPermissionState()
     }
 
     override fun performUserAction(action: CalendarPermissionUserAction) =
         when (action) {
-            is CalendarPermissionUserAction.OnCalendarReadPermissionResultUserAction ->
-                handleReadPermissionResult(action.isGranted)
-            is CalendarPermissionUserAction.OnCalendarWritePermissionResultUserAction ->
-                handleWritePermissionResult(action.isGranted)
+            is CalendarPermissionUserAction.OnCalendarPermissionResultUserAction ->
+                handlePermissionResult(action.results)
             is CalendarPermissionUserAction.OnReturnBackFromSettingsUserAction ->
                 handleReturnBackFromSettings()
         }
 
-    private fun observeReadCalendarPermissionState() {
+    private fun observeCalendarPermissionState() {
         viewModelScope.launch(dispatcherProvider.main()) {
-            readCalendarPermissionManager.permissionState.collect { state ->
+            calendarPermissionManager.permissionState.collect { state ->
                 when (state) {
-                    PermissionManager.State.NOT_ASKED ->
+                    is PermissionManager.State.AskForPermissions ->
                         _uiState.emit(
-                            CalendarPermissionUiState.AskForReadCalendarPermission(
-                                permission = readCalendarPermissionManager.permissionName
+                            CalendarPermissionUiState.AskForCalendarPermissions(
+                                permissions = state.permissions
                             )
                         )
-                    PermissionManager.State.SHOW_RATIONALE ->
+                    PermissionManager.State.PermissionsGranted ->
+                        _uiEvent.emit(CalendarPermissionUiEvent.AllPermissionsGranted)
+                    is PermissionManager.State.ShowRationale ->
                         _uiState.emit(
-                            CalendarPermissionUiState.ShowRationaleForReadCalendarPermission(
-                                permission = readCalendarPermissionManager.permissionName
+                            CalendarPermissionUiState.ShowRationaleForCalendarPermissions(
+                                permissions = state.permissions
                             )
                         )
-                    PermissionManager.State.SHOW_SETTINGS ->
+                    PermissionManager.State.ShowSettings ->
                         _uiState.emit(CalendarPermissionUiState.ShowSettings)
-                    PermissionManager.State.GRANTED ->
-                        observeWriteCalendarPermissionState()
                 }
             }
         }
     }
 
-    private fun observeWriteCalendarPermissionState() {
+    private fun handlePermissionResult(results: Map<String, Boolean>) {
         viewModelScope.launch(dispatcherProvider.main()) {
-            writeCalendarPermissionManager.permissionState.collect { state ->
-                when (state) {
-                    PermissionManager.State.NOT_ASKED ->
-                        _uiState.emit(
-                            CalendarPermissionUiState.AskForWriteCalendarPermission(
-                                permission = readCalendarPermissionManager.permissionName
-                            )
-                        )
-                    PermissionManager.State.SHOW_RATIONALE ->
-                        _uiState.emit(
-                            CalendarPermissionUiState.ShowRationaleForWriteCalendarPermission(
-                                permission = readCalendarPermissionManager.permissionName
-                            )
-                        )
-                    PermissionManager.State.SHOW_SETTINGS ->
-                        _uiState.emit(CalendarPermissionUiState.ShowSettings)
-                    PermissionManager.State.GRANTED ->
-                        _uiEvent.emit(CalendarPermissionUiEvent.AllPermissionGranted)
-                }
-            }
-        }
-    }
-
-    private fun handleReadPermissionResult(isGranted: Boolean) {
-        viewModelScope.launch(dispatcherProvider.main()) {
-            readCalendarPermissionManager.updatePermissionState(isGranted)
-        }
-    }
-
-    private fun handleWritePermissionResult(isGranted: Boolean) {
-        viewModelScope.launch(dispatcherProvider.main()) {
-            writeCalendarPermissionManager.updatePermissionState(isGranted)
+            _uiState.emit(CalendarPermissionUiState.Loading)
+            calendarPermissionManager.handlePermissionsResult(results)
         }
     }
 
     private fun handleReturnBackFromSettings() {
         viewModelScope.launch(dispatcherProvider.main()) {
-            val isReadCalendarGranted = readCalendarPermissionManager.isPermissionGranted()
-
-            readCalendarPermissionManager.updatePermissionState(isReadCalendarGranted)
+            _uiState.emit(CalendarPermissionUiState.Loading)
+            calendarPermissionManager.handleBackFromSettings()
         }
     }
 
@@ -127,20 +92,12 @@ class CalendarPermissionViewModel @Inject constructor(
 
         data object Loading : CalendarPermissionUiState()
 
-        data class AskForReadCalendarPermission(
-            val permission: String,
+        data class AskForCalendarPermissions(
+            val permissions: List<String>,
         ) : CalendarPermissionUiState()
 
-        data class ShowRationaleForReadCalendarPermission(
-            val permission: String,
-        ) : CalendarPermissionUiState()
-
-        data class AskForWriteCalendarPermission(
-            val permission: String,
-        ) : CalendarPermissionUiState()
-
-        data class ShowRationaleForWriteCalendarPermission(
-            val permission: String,
+        data class ShowRationaleForCalendarPermissions(
+            val permissions: List<String>,
         ) : CalendarPermissionUiState()
 
         data object ShowSettings : CalendarPermissionUiState()
@@ -148,17 +105,13 @@ class CalendarPermissionViewModel @Inject constructor(
 
     sealed class CalendarPermissionUiEvent : UiEvent {
 
-        data object AllPermissionGranted : CalendarPermissionUiEvent()
+        data object AllPermissionsGranted : CalendarPermissionUiEvent()
     }
 
     sealed class CalendarPermissionUserAction : UserAction {
 
-        data class OnCalendarReadPermissionResultUserAction(
-            val isGranted: Boolean,
-        ) : CalendarPermissionUserAction()
-
-        data class OnCalendarWritePermissionResultUserAction(
-            val isGranted: Boolean,
+        data class OnCalendarPermissionResultUserAction(
+            val results: Map<String, Boolean>,
         ) : CalendarPermissionUserAction()
 
         data object OnReturnBackFromSettingsUserAction : CalendarPermissionUserAction()

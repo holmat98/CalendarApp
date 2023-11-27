@@ -2,27 +2,25 @@ package com.mateuszholik.common
 
 import android.content.Context
 import android.content.SharedPreferences
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
 
-abstract class PreferenceAssistant(private val context: Context) {
+class PreferenceAssistant(context: Context) {
 
-    protected abstract val preferencesName: String
-
-    private val sharedPreferences: SharedPreferences by lazy {
-        context.getSharedPreferences(preferencesName, Context.MODE_PRIVATE)
-    }
+    private val sharedPreferences: SharedPreferences =
+        context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
 
     fun <T> write(key: String, value: T) {
-        val edit = sharedPreferences.edit()
+        val sharedPrefEditor = sharedPreferences.edit()
+
         when (value) {
-            is String -> edit.putString(key, value)
-            is Boolean -> edit.putBoolean(key, value)
-            is Long -> edit.putLong(key, value)
-            is Float -> edit.putFloat(key, value)
-            is Int -> edit.putInt(key, value)
+            is String -> sharedPrefEditor.putString(key, value)
+            is Boolean -> sharedPrefEditor.putBoolean(key, value)
+            is Long -> sharedPrefEditor.putLong(key, value)
+            is Float -> sharedPrefEditor.putFloat(key, value)
+            is Int -> sharedPrefEditor.putInt(key, value)
+            else -> error("Wrong type")
         }
-        edit.apply()
+
+        sharedPrefEditor.apply()
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -38,14 +36,11 @@ abstract class PreferenceAssistant(private val context: Context) {
                 sharedPreferences.getInt(key, defValue as Int) as T
             else -> (sharedPreferences.getString(key, null) ?: defValue) as T
         }
+
+    private companion object {
+        const val PREFERENCES_NAME = "calendar_app_shared_preferences"
+    }
 }
 
 inline fun <reified T> PreferenceAssistant.read(key: String, defValue: T): T =
     this.read(key, defValue, T::class.java)
-
-class PermissionsPreferenceAssistant @Inject constructor(
-    @ApplicationContext context: Context
-) : PreferenceAssistant(context) {
-
-    override val preferencesName: String = "permissions_preferences"
-}
