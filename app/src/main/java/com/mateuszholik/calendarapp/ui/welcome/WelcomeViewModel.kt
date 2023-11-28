@@ -12,6 +12,7 @@ import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenUiE
 import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenUiState
 import com.mateuszholik.calendarapp.ui.welcome.provider.WelcomeScreenInfoProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,10 +40,12 @@ class WelcomeViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(dispatcherProvider.main()) {
-            val arePermissionsGranted = calendarPermissionsManager.arePermissionsGranted()
+            val arePermissionsGranted = async {
+                calendarPermissionsManager.arePermissionsGranted()
+            }
 
             delay(2.seconds)
-            if (arePermissionsGranted) {
+            if (arePermissionsGranted.await()) {
                 _uiEvent.emit(WelcomeScreenUiEvent.NavigateToNextScreen)
             } else {
                 _uiEvent.emit(WelcomeScreenUiEvent.NavigateToPermissionsScreen)

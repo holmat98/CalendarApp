@@ -11,5 +11,4 @@ dependencies {
 
     coreKtx()
     hilt()
-    preferencesDataStore()
 }

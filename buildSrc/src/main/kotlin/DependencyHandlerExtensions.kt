@@ -44,8 +44,8 @@ fun DependencyHandler.timber() {
     implementation(Timber.DEPENDENCY)
 }
 
-fun DependencyHandler.preferencesDataStore() {
-    implementation(AndroidX.PreferenceDataStore.DEPENDENCY)
+fun DependencyHandler.lottie() {
+    implementation(Lottie.DEPENDENCY)
 }
 
 fun DependencyHandler.module(name: String) {

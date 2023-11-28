@@ -5,9 +5,8 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.DrawableRes
+import androidx.annotation.RawRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -26,15 +24,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
+import com.mateuszholik.calendarapp.ui.permissions.calendar.CalendarPermissionViewModel.CalendarPermissionUiEvent
 import com.mateuszholik.calendarapp.ui.permissions.calendar.CalendarPermissionViewModel.CalendarPermissionUiState
 import com.mateuszholik.calendarapp.ui.permissions.calendar.CalendarPermissionViewModel.CalendarPermissionUserAction
-import com.mateuszholik.calendarapp.ui.permissions.calendar.CalendarPermissionViewModel.CalendarPermissionUiEvent
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
@@ -42,11 +39,11 @@ import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
+import com.mateuszholik.uicomponents.animations.CommonAnimation
 import com.mateuszholik.uicomponents.buttons.CommonButton
 import com.mateuszholik.uicomponents.extensions.shimmerEffect
 import com.mateuszholik.uicomponents.text.HeadlineMediumText
 import com.mateuszholik.uicomponents.text.TitleMediumText
-import com.mateuszholik.uicomponents.text.TitleSmallText
 
 @Composable
 fun CalendarPermissionScreen(
@@ -94,7 +91,7 @@ fun CalendarPermissionScreen(
                     (uiState as CalendarPermissionUiState.AskForCalendarPermissions).permissions
                 Content(
                     paddingValues = paddingValues,
-                    imageResId = R.drawable.ic_read_calendar,
+                    animationResId = R.raw.calendar_permission_anim,
                     titleResId = R.string.calendar_permission_screen_title,
                     messageResId = R.string.calendar_permission_screen_message,
                     buttonResId = R.string.button_add_permission,
@@ -108,7 +105,7 @@ fun CalendarPermissionScreen(
                     (uiState as CalendarPermissionUiState.ShowRationaleForCalendarPermissions).permissions
                 Content(
                     paddingValues = paddingValues,
-                    imageResId = R.drawable.ic_read_calendar,
+                    animationResId = R.raw.calendar_permission_anim,
                     titleResId = R.string.calendar_permission_screen_title,
                     messageResId = R.string.calendar_permission_screen_rationale_message,
                     buttonResId = R.string.button_add_permission,
@@ -121,7 +118,7 @@ fun CalendarPermissionScreen(
                 val context = LocalContext.current
                 Content(
                     paddingValues = paddingValues,
-                    imageResId = R.drawable.ic_settings,
+                    animationResId = R.raw.calendar_permission_settings_anim,
                     titleResId = R.string.calendar_permission_screen_settings_title,
                     messageResId = R.string.calendar_permission_screen_settings_message,
                     buttonResId = R.string.button_go_to_settings,
@@ -187,7 +184,7 @@ private fun ShimmerContent(paddingValues: PaddingValues) {
 @Composable
 private fun Content(
     paddingValues: PaddingValues,
-    @DrawableRes imageResId: Int,
+    @RawRes animationResId: Int,
     @StringRes titleResId: Int,
     @StringRes messageResId: Int,
     @StringRes buttonResId: Int,
@@ -205,10 +202,12 @@ private fun Content(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            Image(
-                modifier = Modifier.size(MaterialTheme.sizing.extraBig),
-                painter = painterResource(imageResId),
-                contentDescription = null
+            CommonAnimation(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(MaterialTheme.sizing.extraBig),
+                animationResId = animationResId,
+                isLooped = true,
             )
             HeadlineMediumText(
                 modifier = Modifier.padding(top = MaterialTheme.spacing.normal),
@@ -226,7 +225,7 @@ private fun Content(
 
         CommonButton(
             modifier = Modifier
-                .padding(vertical = MaterialTheme.spacing.normal)
+                .padding(top = MaterialTheme.spacing.normal)
                 .fillMaxWidth(),
             textResId = buttonResId,
             onClick = onButtonClicked,
@@ -243,7 +242,7 @@ private fun SmallPhonePreview() {
                 paddingValues = PaddingValues(
                     horizontal = MaterialTheme.spacing.normal
                 ),
-                imageResId = R.drawable.ic_read_calendar,
+                animationResId = R.raw.calendar_permission_anim,
                 titleResId = R.string.calendar_permission_screen_title,
                 messageResId = R.string.calendar_permission_screen_message,
                 buttonResId = R.string.button_add_permission,
@@ -265,7 +264,7 @@ private fun SmallPhoneDarkModePreview() {
                 paddingValues = PaddingValues(
                     horizontal = MaterialTheme.spacing.normal
                 ),
-                imageResId = R.drawable.ic_read_calendar,
+                animationResId = R.raw.calendar_permission_anim,
                 titleResId = R.string.calendar_permission_screen_title,
                 messageResId = R.string.calendar_permission_screen_message,
                 buttonResId = R.string.button_add_permission,
@@ -284,7 +283,7 @@ private fun MediumPhonePreview() {
                 paddingValues = PaddingValues(
                     horizontal = MaterialTheme.spacing.normal
                 ),
-                imageResId = R.drawable.ic_write_calendar,
+                animationResId = R.raw.calendar_permission_anim,
                 titleResId = R.string.calendar_permission_screen_title,
                 messageResId = R.string.calendar_permission_screen_rationale_message,
                 buttonResId = R.string.button_add_permission,
@@ -306,7 +305,7 @@ private fun MediumPhoneDarkModePreview() {
                 paddingValues = PaddingValues(
                     horizontal = MaterialTheme.spacing.normal
                 ),
-                imageResId = R.drawable.ic_write_calendar,
+                animationResId = R.raw.calendar_permission_anim,
                 titleResId = R.string.calendar_permission_screen_title,
                 messageResId = R.string.calendar_permission_screen_rationale_message,
                 buttonResId = R.string.button_add_permission,
@@ -342,7 +341,7 @@ private fun BigPhonePreview() {
                 paddingValues = PaddingValues(
                     horizontal = MaterialTheme.spacing.normal
                 ),
-                imageResId = R.drawable.ic_settings,
+                animationResId = R.raw.calendar_permission_settings_anim,
                 titleResId = R.string.calendar_permission_screen_settings_title,
                 messageResId = R.string.calendar_permission_screen_settings_message,
                 buttonResId = R.string.button_go_to_settings,
@@ -364,7 +363,7 @@ private fun BigPhoneDarkModePreview() {
                 paddingValues = PaddingValues(
                     horizontal = MaterialTheme.spacing.normal
                 ),
-                imageResId = R.drawable.ic_settings,
+                animationResId = R.raw.calendar_permission_settings_anim,
                 titleResId = R.string.calendar_permission_screen_settings_title,
                 messageResId = R.string.calendar_permission_screen_settings_message,
                 buttonResId = R.string.button_go_to_settings,

@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.spacing
-import com.mateuszholik.uicomponents.text.TitleSmallText
+import com.mateuszholik.uicomponents.text.TitleLargeText
 
 @Composable
 fun CommonButton(
@@ -50,7 +50,7 @@ fun CommonButton(
             containerColor = colors.containerColor,
         )
     ) {
-        TitleSmallText(text = text, color = colors.contentColor)
+        TitleLargeText(text = text, color = colors.contentColor)
     }
 }
 

@@ -16,4 +16,5 @@ dependencies {
     // Dependencies
     coreKtx()
     compose()
+    lottie()
 }
