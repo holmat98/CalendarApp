@@ -60,7 +60,7 @@ class CalendarPermissionViewModel @Inject constructor(
         }
 
     private fun observeCalendarPermissionState() {
-        viewModelScope.launch(dispatcherProvider.main()) {
+        viewModelScope.launch(dispatcherProvider.main() + errorHandler) {
             calendarPermissionManager.permissionState.collect { state ->
                 when (state) {
                     is PermissionManager.State.AskForPermissions ->
@@ -85,14 +85,14 @@ class CalendarPermissionViewModel @Inject constructor(
     }
 
     private fun handlePermissionResult(results: Map<String, Boolean>) {
-        viewModelScope.launch(dispatcherProvider.main()) {
+        viewModelScope.launch(dispatcherProvider.main() + errorHandler) {
             _uiState.emit(CalendarPermissionUiState.Loading)
             calendarPermissionManager.handlePermissionsResult(results)
         }
     }
 
     private fun handleReturnBackFromSettings() {
-        viewModelScope.launch(dispatcherProvider.main()) {
+        viewModelScope.launch(dispatcherProvider.main() + errorHandler) {
             _uiState.emit(CalendarPermissionUiState.Loading)
             calendarPermissionManager.handleBackFromSettings()
         }
