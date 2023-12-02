@@ -44,6 +44,10 @@ fun DependencyHandler.timber() {
     implementation(Timber.DEPENDENCY)
 }
 
+fun DependencyHandler.lottie() {
+    implementation(Lottie.DEPENDENCY)
+}
+
 fun DependencyHandler.module(name: String) {
     implementation(project(mapOf("path" to name)))
 }

@@ -20,6 +20,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,7 +51,7 @@ fun CalendarView(
     onDateChanged: (newDate: LocalDate) -> Unit,
     onMonthChanged: (newMonth: YearMonth) -> Unit,
     modifier: Modifier = Modifier,
-    colors: CalendarViewDefaults.Colors = CalendarViewDefaults.defaultColors(),
+    colors: CalendarColors = CalendarViewDefaults.calendarColors(),
 ) {
     val days = CalendarField.createFieldsForMonth(currentMonth).chunked(7)
 
@@ -72,7 +73,6 @@ fun CalendarView(
             )
 
             IconButton(
-                modifier = Modifier.size(MaterialTheme.sizing.normal),
                 onClick = { onMonthChanged(currentMonth.minusMonths(1)) }
             ) {
                 Icon(
@@ -80,11 +80,10 @@ fun CalendarView(
                     imageVector = Icons.Filled.KeyboardArrowLeft,
                     contentDescription = null,
 
-                )
+                    )
             }
 
             IconButton(
-                modifier = Modifier.size(MaterialTheme.sizing.normal),
                 onClick = { onMonthChanged(currentMonth.plusMonths(1)) }
             ) {
                 Icon(
@@ -101,7 +100,8 @@ fun CalendarView(
         ) {
             DayOfWeek.values().forEach {
                 BodyLargeText(
-                    text = it.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault()).take(3),
+                    text = it.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault())
+                        .take(3),
                     color = colors.foregroundColor
                 )
             }
@@ -133,6 +133,7 @@ fun CalendarView(
                                 text = "${it.date.dayOfMonth}",
                                 hasEvent = it.date in daysWithEvents,
                                 textColor = colors.foregroundColor,
+                                eventColor = colors.eventColor,
                                 onClick = { onDateChanged(it.date) }
                             )
                         }
@@ -170,6 +171,7 @@ private fun CalendarText(
     text: String,
     hasEvent: Boolean,
     textColor: Color,
+    eventColor: Color,
     onClick: () -> Unit = {},
 ) {
     Column(
@@ -189,7 +191,7 @@ private fun CalendarText(
                 modifier = Modifier
                     .size(MaterialTheme.sizing.extraTiny)
                     .background(
-                        color = MaterialTheme.colorScheme.tertiaryContainer,
+                        color = eventColor,
                         shape = CircleShape
                     )
             )
@@ -199,24 +201,33 @@ private fun CalendarText(
     }
 }
 
+@Immutable
+data class CalendarColors internal constructor(
+    val backgroundColor: Color,
+    val foregroundColor: Color,
+    val selectedDayColor: Color,
+    val selectedDayTextColor: Color,
+    val eventColor: Color,
+)
+
 object CalendarViewDefaults {
 
     @Composable
     @ReadOnlyComposable
-    fun defaultColors(): Colors =
-        Colors(
-            backgroundColor = MaterialTheme.colorScheme.secondary,
-            foregroundColor = MaterialTheme.colorScheme.onSecondary,
-            selectedDayColor = MaterialTheme.colorScheme.secondaryContainer,
-            selectedDayTextColor = MaterialTheme.colorScheme.onSecondaryContainer
+    fun calendarColors(
+        backgroundColor: Color = MaterialTheme.colorScheme.secondary,
+        foregroundColor: Color = MaterialTheme.colorScheme.onSecondary,
+        selectedDayColor: Color = MaterialTheme.colorScheme.secondaryContainer,
+        selectedDayTextColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
+        eventColor: Color = MaterialTheme.colorScheme.tertiaryContainer,
+    ): CalendarColors =
+        CalendarColors(
+            backgroundColor = backgroundColor,
+            foregroundColor = foregroundColor,
+            selectedDayColor = selectedDayColor,
+            selectedDayTextColor = selectedDayTextColor,
+            eventColor = eventColor,
         )
-
-    data class Colors(
-        val backgroundColor: Color,
-        val foregroundColor: Color,
-        val selectedDayColor: Color,
-        val selectedDayTextColor: Color,
-    )
 }
 
 @SmallPhonePreview

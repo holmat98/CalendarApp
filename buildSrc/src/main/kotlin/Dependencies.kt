@@ -139,3 +139,9 @@ object Timber {
 
     const val DEPENDENCY = "com.jakewharton.timber:timber:$version"
 }
+
+object Lottie {
+    private const val version = "6.2.0"
+
+    const val DEPENDENCY = "com.airbnb.android:lottie-compose:$version"
+}

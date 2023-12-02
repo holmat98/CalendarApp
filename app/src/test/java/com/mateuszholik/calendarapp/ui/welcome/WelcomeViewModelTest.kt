@@ -2,6 +2,7 @@ package com.mateuszholik.calendarapp.ui.welcome
 
 import app.cash.turbine.test
 import com.mateuszholik.calendarapp.TestDispatcherProvider
+import com.mateuszholik.calendarapp.permissions.CalendarPermissionsManager
 import com.mateuszholik.calendarapp.ui.welcome.provider.WelcomeScreenInfoProvider
 import io.mockk.every
 import io.mockk.mockk
@@ -23,6 +24,9 @@ class WelcomeViewModelTest {
     private val welcomeScreenInfoProvider = mockk<WelcomeScreenInfoProvider> {
         every { provide() } returns DEFAULT_UI_STATE_VALUE
     }
+    private val calendarPermissionsManager = mockk<CalendarPermissionsManager> {
+        every { arePermissionsGranted() } returns true
+    }
 
     private lateinit var viewModel: WelcomeViewModel
 
@@ -31,7 +35,8 @@ class WelcomeViewModelTest {
         Dispatchers.setMain(UnconfinedTestDispatcher())
         viewModel = WelcomeViewModel(
             dispatcherProvider = dispatcherProvider,
-            welcomeScreenInfoProvider = welcomeScreenInfoProvider
+            welcomeScreenInfoProvider = welcomeScreenInfoProvider,
+            calendarPermissionsManager = calendarPermissionsManager
         )
     }
 

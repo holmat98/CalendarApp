@@ -14,6 +14,7 @@ android.configure(
 dependencies {
 
     // modules
+    module(name = ":common")
     module(name = ":designsystem")
     module(name = ":domain")
     module(name = ":uicomponents")
