@@ -18,9 +18,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -44,12 +48,14 @@ import com.mateuszholik.uicomponents.buttons.CommonButton
 import com.mateuszholik.uicomponents.extensions.shimmerEffect
 import com.mateuszholik.uicomponents.text.HeadlineMediumText
 import com.mateuszholik.uicomponents.text.TitleMediumText
+import kotlinx.coroutines.launch
 
 @Composable
 fun CalendarPermissionScreen(
     onPermissionGranted: () -> Unit,
     viewModel: CalendarPermissionViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
@@ -67,14 +73,27 @@ fun CalendarPermissionScreen(
             CalendarPermissionUserAction.OnReturnBackFromSettingsUserAction
         )
     }
+    val snackBarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     ObserveAsEvents(flow = viewModel.uiEvent) { uiEvent ->
         when (uiEvent) {
-            CalendarPermissionUiEvent.AllPermissionsGranted -> onPermissionGranted()
+            is CalendarPermissionUiEvent.Error -> {
+                coroutineScope.launch {
+                    snackBarHostState.showSnackbar(
+                        message = context.getString(R.string.error_unknown_text),
+                        withDismissAction = true,
+                    )
+                }
+            }
+            is CalendarPermissionUiEvent.AllPermissionsGranted -> onPermissionGranted()
         }
     }
 
-    Scaffold(containerColor = MaterialTheme.colorScheme.surface) {
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.surface,
+        snackbarHost = { SnackbarHost(snackBarHostState) },
+    ) {
         val paddingValues = PaddingValues(
             top = it.calculateTopPadding(),
             bottom = it.calculateBottomPadding(),
@@ -115,7 +134,6 @@ fun CalendarPermissionScreen(
                 )
             }
             is CalendarPermissionUiState.ShowSettings -> {
-                val context = LocalContext.current
                 Content(
                     paddingValues = paddingValues,
                     animationResId = R.raw.calendar_permission_settings_anim,

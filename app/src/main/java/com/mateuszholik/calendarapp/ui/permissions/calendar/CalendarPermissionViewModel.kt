@@ -12,6 +12,7 @@ import com.mateuszholik.calendarapp.ui.permissions.calendar.CalendarPermissionVi
 import com.mateuszholik.calendarapp.ui.permissions.calendar.CalendarPermissionViewModel.CalendarPermissionUiState
 import com.mateuszholik.calendarapp.ui.permissions.calendar.CalendarPermissionViewModel.CalendarPermissionUserAction
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,6 +38,14 @@ class CalendarPermissionViewModel @Inject constructor(
     private val _uiEvent: MutableSharedFlow<CalendarPermissionUiEvent> = MutableSharedFlow()
     override val uiEvent: SharedFlow<CalendarPermissionUiEvent>
         get() = _uiEvent.asSharedFlow()
+
+    private val errorHandler = CoroutineExceptionHandler { _, throwable ->
+        Timber.e(throwable, "Error on Calendar Permission screen")
+
+        viewModelScope.launch(dispatcherProvider.main()) {
+            _uiEvent.emit(CalendarPermissionUiEvent.Error)
+        }
+    }
 
     init {
         observeCalendarPermissionState()
@@ -106,6 +116,8 @@ class CalendarPermissionViewModel @Inject constructor(
     sealed class CalendarPermissionUiEvent : UiEvent {
 
         data object AllPermissionsGranted : CalendarPermissionUiEvent()
+
+        data object Error : CalendarPermissionUiEvent()
     }
 
     sealed class CalendarPermissionUserAction : UserAction {
