@@ -22,7 +22,7 @@ abstract class PermissionManager(
         get() = _permissionState.asStateFlow()
 
     fun arePermissionsGranted(): Boolean =
-        permissions.all { it.isGranted() }
+        permissions.areAllPermissionsGranted()
 
     suspend fun handlePermissionsResult(result: Map<String, Boolean>) {
         result.forEach { (permissionName, isGranted) ->
