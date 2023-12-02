@@ -50,6 +50,7 @@ import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.CURRENT_DATE
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.DAYS_WITH_EVENTS
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENTS
 import com.mateuszholik.designsystem.CalendarAppTheme
+import com.mateuszholik.designsystem.ChangeSystemBarColors
 import com.mateuszholik.designsystem.cornerRadius
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
@@ -77,6 +78,11 @@ fun CalendarScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+
+    ChangeSystemBarColors(
+        statusBarColor = MaterialTheme.colorScheme.secondary,
+        navigationBarColor = MaterialTheme.colorScheme.secondary,
+    )
 
     ObserveAsEvents(viewModel.uiEvent) { event ->
         when (event) {
