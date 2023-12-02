@@ -35,7 +35,7 @@ internal class StyleProviderImplTest {
             ),
             TestObject(
                 date = LocalDate.of(2023, 3, 7),
-                expectedResult = com.mateuszholik.designsystem.models.StyleType.WINTER
+                expectedResult = com.mateuszholik.designsystem.models.StyleType.SPRING
             ),
             TestObject(
                 date = LocalDate.of(2023, 3, 22),
@@ -59,7 +59,7 @@ internal class StyleProviderImplTest {
             ),
             TestObject(
                 date = LocalDate.of(2023, 6, 11),
-                expectedResult = com.mateuszholik.designsystem.models.StyleType.SPRING
+                expectedResult = com.mateuszholik.designsystem.models.StyleType.SUMMER
             ),
             TestObject(
                 date = LocalDate.of(2023, 6, 23),
@@ -83,7 +83,7 @@ internal class StyleProviderImplTest {
             ),
             TestObject(
                 date = LocalDate.of(2023, 9, 3),
-                expectedResult = com.mateuszholik.designsystem.models.StyleType.SUMMER
+                expectedResult = com.mateuszholik.designsystem.models.StyleType.AUTUMN
             ),
             TestObject(
                 date = LocalDate.of(2023, 9, 24),
@@ -107,7 +107,7 @@ internal class StyleProviderImplTest {
             ),
             TestObject(
                 date = LocalDate.of(2023, 12, 6),
-                expectedResult = com.mateuszholik.designsystem.models.StyleType.AUTUMN
+                expectedResult = com.mateuszholik.designsystem.models.StyleType.WINTER
             ),
             TestObject(
                 date = LocalDate.of(2023, 12, 22),
@@ -122,7 +122,6 @@ internal class StyleProviderImplTest {
                 assertThat(result).isEqualTo(it.expectedResult)
             }
         }
-
 
     private data class TestObject(
         val date: LocalDate,
