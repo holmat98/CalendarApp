@@ -67,7 +67,7 @@ class CalendarPermissionViewModel @Inject constructor(
                                 permissions = state.permissions
                             )
                         )
-                    PermissionManager.State.ShowSettings ->
+                    is PermissionManager.State.ShowSettings ->
                         _uiState.emit(CalendarPermissionUiState.ShowSettings)
                 }
             }

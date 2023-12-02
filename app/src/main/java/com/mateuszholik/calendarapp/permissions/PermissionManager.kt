@@ -10,7 +10,6 @@ import com.mateuszholik.common.read
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 
 abstract class PermissionManager(
     private val context: Context,
@@ -18,63 +17,60 @@ abstract class PermissionManager(
     private val permissions: List<Permission>,
 ) {
 
-    private val _permissionState: MutableStateFlow<State> = MutableStateFlow(getInitialState())
+    private val _permissionState: MutableStateFlow<State> = MutableStateFlow(getState())
     val permissionState: StateFlow<State>
         get() = _permissionState.asStateFlow()
 
     fun arePermissionsGranted(): Boolean =
         permissions.all { it.isGranted() }
 
-    fun handlePermissionsResult(result: Map<String, Boolean>) {
+    suspend fun handlePermissionsResult(result: Map<String, Boolean>) {
         result.forEach { (permissionName, isGranted) ->
             permissions.find { it.name == permissionName }?.let { permission ->
-                val nextState = permission.toPermissionState().nextPermissionState(isGranted)
+                val nextState = permission
+                    .toPermissionState()
+                    .nextPermissionState(isGranted, permission.isOptional)
+
                 preferenceAssistant.write(permissionName, nextState.name)
             }
         }
 
-        _permissionState.update { currentState ->
-            getNextStateFor(currentState)
-        }
+        _permissionState.emit(getState())
     }
 
-    fun handleBackFromSettings() {
+    suspend fun handleBackFromSettings() {
         permissions.forEach {
             val isGranted = it.isGranted()
-            val nextState = it.toPermissionState().nextPermissionState(isGranted)
+            val nextState = it
+                .toPermissionState()
+                .nextPermissionState(isGranted, it.isOptional)
+
             preferenceAssistant.write(it.name, nextState.name)
         }
 
-        _permissionState.update { currentState ->
+        _permissionState.emit(
             if (permissions.areAllPermissionsGranted()) {
                 State.PermissionsGranted
             } else {
-                currentState
+                State.ShowSettings()
             }
-        }
+        )
     }
 
-    private fun getNextStateFor(currentState: State): State {
-        val permissionsToShowRationale = permissions
-            .filter { it.toPermissionState() == PermissionState.SHOW_RATIONALE }
-
-        if (currentState is State.AskForPermissions && permissionsToShowRationale.isNotEmpty()) {
-            return State.ShowRationale(permissionsToShowRationale.map { it.name })
-        }
-
-        val shouldShowSettings = permissions
-            .any { it.toPermissionState() == PermissionState.SHOW_SETTINGS }
-
-        if (currentState is State.ShowRationale && shouldShowSettings) {
-            return State.ShowSettings
-        }
-
-        return State.PermissionsGranted
-    }
-
-    private fun getInitialState(): State {
+    private fun getState(): State {
         if (permissions.areAllPermissionsGranted()) {
             return State.PermissionsGranted
+        }
+
+        val permissionsToShowRationale = permissions
+            .filter {
+                val permissionState = it.toPermissionState()
+
+                permissionState == PermissionState.SHOW_RATIONALE || permissionState == PermissionState.REMOVED_IN_SETTINGS
+            }
+
+        if (permissionsToShowRationale.isNotEmpty()) {
+            return State.ShowRationale(permissionsToShowRationale.map { it.name })
         }
 
         val permissionsToAsk = permissions
@@ -84,29 +80,23 @@ abstract class PermissionManager(
             return State.AskForPermissions(permissionsToAsk.map { it.name })
         }
 
-        val permissionsToShowRationale = permissions
-            .filter { it.toPermissionState() == PermissionState.SHOW_RATIONALE }
-
-        if (permissionsToShowRationale.isNotEmpty()) {
-            return State.ShowRationale(permissionsToShowRationale.map { it.name })
-        }
-
-        return State.ShowSettings
+        return State.ShowSettings()
     }
 
     private fun List<Permission>.areAllPermissionsGranted(): Boolean =
-        this.map {
+        map {
             val state = it.toPermissionState()
             when {
                 Build.VERSION.SDK_INT < it.minSdk -> PermissionState.GRANTED
                 state == PermissionState.GRANTED && !it.isGranted() -> {
-                    preferenceAssistant.write(it.name, PermissionState.NOT_ASKED.name)
+                    preferenceAssistant.write(it.name, PermissionState.REMOVED_IN_SETTINGS.name)
 
                     PermissionState.NOT_ASKED
                 }
                 else -> state
             }
-        }.all { it == PermissionState.GRANTED }
+        }
+            .all { it == PermissionState.GRANTED }
 
     private fun Permission.toPermissionState(): PermissionState =
         PermissionState.entries.find {
@@ -115,14 +105,14 @@ abstract class PermissionManager(
 
     private fun Permission.isGranted(): Boolean =
         Build.VERSION.SDK_INT < minSdk ||
-                ContextCompat.checkSelfPermission(
-                    context,
-                    name
-                ) == PackageManager.PERMISSION_GRANTED
+                ContextCompat.checkSelfPermission(context, name) == PackageManager.PERMISSION_GRANTED
 
-    private fun PermissionState.nextPermissionState(isGranted: Boolean): PermissionState =
+    private fun PermissionState.nextPermissionState(
+        isGranted: Boolean,
+        isOptional: Boolean,
+    ): PermissionState =
         when {
-            isGranted -> PermissionState.GRANTED
+            isGranted || (this == PermissionState.NOT_ASKED && isOptional) -> PermissionState.GRANTED
             this == PermissionState.NOT_ASKED -> PermissionState.SHOW_RATIONALE
             else -> PermissionState.SHOW_SETTINGS
         }
@@ -130,7 +120,7 @@ abstract class PermissionManager(
 
     data class Permission(
         val name: String,
-        val isRequired: Boolean,
+        val isOptional: Boolean,
         val minSdk: Int = Build.VERSION_CODES.BASE,
     )
 
@@ -138,7 +128,7 @@ abstract class PermissionManager(
         data class AskForPermissions(val permissions: List<String>) : State()
         data class ShowRationale(val permissions: List<String>) : State()
 
-        data object ShowSettings : State()
+        class ShowSettings : State()
 
         data object PermissionsGranted : State()
     }
@@ -147,6 +137,7 @@ abstract class PermissionManager(
         NOT_ASKED,
         SHOW_RATIONALE,
         SHOW_SETTINGS,
+        REMOVED_IN_SETTINGS,
         GRANTED
     }
 }
@@ -160,12 +151,12 @@ class CalendarPermissionsManager(
     permissions = listOf(
         Permission(
             name = Manifest.permission.READ_CALENDAR,
-            isRequired = true,
+            isOptional = false,
             minSdk = Build.VERSION_CODES.ICE_CREAM_SANDWICH,
         ),
         Permission(
             name = Manifest.permission.WRITE_CALENDAR,
-            isRequired = true,
+            isOptional = false,
             minSdk = Build.VERSION_CODES.ICE_CREAM_SANDWICH,
         )
     )
