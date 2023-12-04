@@ -3,7 +3,7 @@ package com.mateuszholik.calendarapp.ui.permissions.calendar
 import androidx.lifecycle.viewModelScope
 import com.mateuszholik.calendarapp.permissions.CalendarPermissionsManager
 import com.mateuszholik.calendarapp.permissions.PermissionManager
-import com.mateuszholik.calendarapp.provider.DispatcherProvider
+import com.mateuszholik.common.provider.DispatcherProvider
 import com.mateuszholik.calendarapp.ui.base.BaseViewModel
 import com.mateuszholik.calendarapp.ui.base.UiEvent
 import com.mateuszholik.calendarapp.ui.base.UiState

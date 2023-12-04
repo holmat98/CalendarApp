@@ -1,6 +1,6 @@
 package com.mateuszholik.calendarapp
 
-import com.mateuszholik.calendarapp.provider.DispatcherProvider
+import com.mateuszholik.common.provider.DispatcherProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 

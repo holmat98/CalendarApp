@@ -9,6 +9,10 @@ android.configure(namespace = "com.mateuszholik.data")
 
 dependencies {
 
+    // modules
+    module(name = ":common")
+
+    // dependencies
     coreKtx()
     hilt()
     unitTesting()
