@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -77,12 +78,13 @@ private fun Content(
         )
         Image(
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(
                     top = MaterialTheme.spacing.normal,
                     start = MaterialTheme.spacing.normal,
                     end = MaterialTheme.spacing.normal,
-                ),
+                )
+                .fillMaxWidth()
+                .aspectRatio(1f),
             painter = painterResource(image),
             contentScale = ContentScale.Inside,
             contentDescription = null
@@ -92,7 +94,7 @@ private fun Content(
 
 @SmallPhonePreview
 @Composable
-fun Preview() {
+private fun SmallPhonePreview() {
     CalendarAppTheme(styleType = StyleType.AUTUMN) {
         Content(
             text = R.string.welcome_screen_hello_november,
@@ -103,7 +105,7 @@ fun Preview() {
 
 @MediumPhonePreview
 @Composable
-fun Preview2() {
+private fun MediumPhonePreview() {
     CalendarAppTheme(styleType = StyleType.SPRING) {
         Content(
             text = R.string.welcome_screen_hello_spring,
@@ -112,9 +114,20 @@ fun Preview2() {
     }
 }
 
+@MediumPhonePreview
+@Composable
+private fun MediumPhonePreview2() {
+    CalendarAppTheme(styleType = StyleType.WINTER) {
+        Content(
+            text = R.string.welcome_screen_hello_santa,
+            image = R.drawable.ic_santa_claus
+        )
+    }
+}
+
 @BigPhonePreview
 @Composable
-fun Preview3() {
+private fun BigPhonePreview() {
     CalendarAppTheme(styleType = StyleType.SUMMER) {
         Content(
             text = R.string.welcome_screen_hello_summer,
