@@ -1,5 +1,7 @@
 package com.mateuszholik.domain.di
 
+import com.mateuszholik.domain.usecases.GetCalendarsUseCase
+import com.mateuszholik.domain.usecases.GetCalendarsUseCaseImpl
 import com.mateuszholik.domain.usecases.GetDaysWithEventsForMonthUseCase
 import com.mateuszholik.domain.usecases.GetDaysWithEventsForMonthUseCaseImpl
 import com.mateuszholik.domain.usecases.GetEventsForDayUseCase
@@ -25,4 +27,10 @@ internal abstract class UseCaseModule {
     abstract fun bindsGetEventsForDayUseCase(
         getEventsForDayUseCaseImpl: GetEventsForDayUseCaseImpl
     ): GetEventsForDayUseCase
+
+    @ViewModelScoped
+    @Binds
+    abstract fun bindsGetCalendarsUseCase(
+        getCalendarUseCaseImpl: GetCalendarsUseCaseImpl,
+    ): GetCalendarsUseCase
 }
