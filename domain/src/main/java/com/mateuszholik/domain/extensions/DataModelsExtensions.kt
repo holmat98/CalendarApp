@@ -1,9 +1,14 @@
 package com.mateuszholik.domain.extensions
 
+import com.mateuszholik.domain.models.Calendar
+import com.mateuszholik.data.repositories.models.Calendar as DataCalendar
 import com.mateuszholik.data.repositories.models.Event as DataEvent
 import com.mateuszholik.domain.models.Event
 
 internal fun List<DataEvent>.toCommonModelList(): List<Event> =
+    this.map { it.toCommonModel() }
+
+internal fun List<DataCalendar>.toCommonModelList(): List<Calendar> =
     this.map { it.toCommonModel() }
 
 internal fun DataEvent.toCommonModel(): Event =
@@ -14,4 +19,12 @@ internal fun DataEvent.toCommonModel(): Event =
         endDate = endDate,
         color = color,
         allDay = allDay,
+    )
+
+internal fun DataCalendar.toCommonModel(): Calendar =
+    Calendar(
+        id = id,
+        accountName = accountName,
+        calendarName = calendarName,
+        isVisible = isVisible
     )
