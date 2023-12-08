@@ -1,7 +1,7 @@
 package com.mateuszholik.domain.usecases
 
 import com.mateuszholik.data.repositories.EventsRepository
-import com.mateuszholik.domain.extensions.toCommonModelList
+import com.mateuszholik.domain.extensions.toCommonModel
 import com.mateuszholik.domain.models.Event
 import com.mateuszholik.domain.usecases.base.ParameterizedUseCase
 import java.time.LocalDate
@@ -14,5 +14,5 @@ internal class GetEventsForDayUseCaseImpl @Inject constructor(
 ) : GetEventsForDayUseCase {
 
     override suspend fun invoke(param: LocalDate): List<Event> =
-        eventsRepository.getEventsForDay(param).toCommonModelList()
+        eventsRepository.getEventsForDay(param).map { it.toCommonModel() }
 }

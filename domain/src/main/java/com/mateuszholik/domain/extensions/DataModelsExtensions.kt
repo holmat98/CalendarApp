@@ -5,12 +5,6 @@ import com.mateuszholik.data.repositories.models.Calendar as DataCalendar
 import com.mateuszholik.data.repositories.models.Event as DataEvent
 import com.mateuszholik.domain.models.Event
 
-internal fun List<DataEvent>.toCommonModelList(): List<Event> =
-    this.map { it.toCommonModel() }
-
-internal fun List<DataCalendar>.toCommonModelList(): List<Calendar> =
-    this.map { it.toCommonModel() }
-
 internal fun DataEvent.toCommonModel(): Event =
     Event(
         id = id,
