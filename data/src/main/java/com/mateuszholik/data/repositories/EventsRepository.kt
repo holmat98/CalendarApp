@@ -29,47 +29,47 @@ internal class EventsRepositoryImpl @Inject constructor(
 
     private val contentResolver by lazy { context.contentResolver }
 
-    override suspend fun getEventsForDay(day: LocalDate): List<Event> =
-        withContext(dispatcherProvider.io()) {
+    override suspend fun getEventsForDay(day: LocalDate): List<Event> {
+        val queryData = eventsContentProviderQueryFactory.createForEventsFromDay(day)
 
-            val queryData = eventsContentProviderQueryFactory.createForEventsFromDay(day)
-
-            val cursor = contentResolver.query(
+        val cursor = withContext(dispatcherProvider.io()) {
+            contentResolver.query(
                 queryData.uri,
                 queryData.projection,
                 queryData.selection,
                 queryData.selectionArgs,
                 null
             )
-
-            val events = cursor
-                ?.let { cursorToEventsMapper.map(it) }
-                .orEmpty()
-
-            cursor?.close()
-
-            events
         }
 
-    override suspend fun getDaysWithEventsForMonth(yearMonth: YearMonth): List<LocalDate> =
-        withContext(dispatcherProvider.io()) {
-            val queryData = eventsContentProviderQueryFactory.createForEventsFromMonth(yearMonth)
+        val events = cursor
+            ?.let { cursorToEventsMapper.map(it) }
+            .orEmpty()
 
-            val cursor =
-                contentResolver.query(
-                    queryData.uri,
-                    queryData.projection,
-                    queryData.selection,
-                    queryData.selectionArgs,
-                    null
-                )
+        cursor?.close()
 
-            val days = cursor
-                ?.let { cursorToListOfDaysMapper.map(it) }
-                .orEmpty()
+        return events
+    }
 
-            cursor?.close()
+    override suspend fun getDaysWithEventsForMonth(yearMonth: YearMonth): List<LocalDate> {
+        val queryData = eventsContentProviderQueryFactory.createForEventsFromMonth(yearMonth)
 
-            days
+        val cursor = withContext(dispatcherProvider.io()) {
+            contentResolver.query(
+                queryData.uri,
+                queryData.projection,
+                queryData.selection,
+                queryData.selectionArgs,
+                null
+            )
         }
+
+        val days = cursor
+            ?.let { cursorToListOfDaysMapper.map(it) }
+            .orEmpty()
+
+        cursor?.close()
+
+        return days
+    }
 }
