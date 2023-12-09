@@ -1,4 +1,4 @@
-package com.mateuszholik.calendarapp.provider
+package com.mateuszholik.common.provider
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -11,7 +11,7 @@ interface DispatcherProvider {
     fun main(): CoroutineDispatcher
 }
 
-class DispatcherProviderImpl @Inject constructor() : DispatcherProvider {
+internal class DispatcherProviderImpl @Inject constructor() : DispatcherProvider {
 
     override fun io(): CoroutineDispatcher = Dispatchers.IO
 

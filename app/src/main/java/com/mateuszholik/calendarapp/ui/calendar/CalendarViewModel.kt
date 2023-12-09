@@ -3,7 +3,7 @@ package com.mateuszholik.calendarapp.ui.calendar
 import androidx.lifecycle.viewModelScope
 import com.mateuszholik.calendarapp.extensions.toYearMonth
 import com.mateuszholik.calendarapp.provider.CurrentDateProvider
-import com.mateuszholik.calendarapp.provider.DispatcherProvider
+import com.mateuszholik.common.provider.DispatcherProvider
 import com.mateuszholik.calendarapp.ui.base.BaseViewModel
 import com.mateuszholik.calendarapp.ui.base.UiEvent
 import com.mateuszholik.calendarapp.ui.base.UiState
@@ -71,7 +71,7 @@ class CalendarViewModel @Inject constructor(
     }
 
     private fun setInitialUiState() {
-        viewModelScope.launch(dispatcherProvider.io() + exceptionHandler) {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             val currentDate = currentDateProvider.provide()
             val currentMonth = currentDate.toYearMonth()
 
@@ -90,7 +90,7 @@ class CalendarViewModel @Inject constructor(
     }
 
     private fun handleSelectedDateChangedAction(newDate: LocalDate) {
-        viewModelScope.launch(dispatcherProvider.io() + exceptionHandler) {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             _uiState.update { currentState ->
                 if (currentState is CalendarUiState.CalendarInfo) {
                     currentState.copy(
@@ -105,7 +105,7 @@ class CalendarViewModel @Inject constructor(
     }
 
     private fun handleCurrentMonthChangedAction(yearMonth: YearMonth) {
-        viewModelScope.launch(dispatcherProvider.io() + exceptionHandler) {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             _uiState.update { currentState ->
                 if (currentState is CalendarUiState.CalendarInfo) {
                     currentState.copy(
