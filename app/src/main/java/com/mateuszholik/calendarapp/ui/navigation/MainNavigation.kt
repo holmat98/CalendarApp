@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.mateuszholik.calendarapp.ui.calendar.CalendarScreen
+import com.mateuszholik.calendarapp.ui.calendarprofiles.CalendarProfilesScreen
 import com.mateuszholik.calendarapp.ui.permissions.calendar.CalendarPermissionScreen
 import com.mateuszholik.calendarapp.ui.welcome.WelcomeScreen
 
@@ -14,12 +15,14 @@ object MainNavigation {
     private const val WELCOME_SCREEN = "$ROOT/WELCOME_SCREEN"
     private const val CALENDAR_PERMISSIONS_SCREEN = "$ROOT/CALENDAR_PERMISSIONS_SCREEN"
     private const val CALENDAR_SCREEN = "$ROOT/CALENDAR_SCREEN"
+    private const val CALENDAR_PROFILES_SCREEN = "$ROOT/CALENDAR_PROFILES_SCREEN"
 
     fun NavGraphBuilder.mainNavigationGraph(navController: NavController) {
         navigation(startDestination = WELCOME_SCREEN, route = ROOT) {
             welcomeScreen(navController)
             calendarPermissionsScreen(navController)
-            calendarScreen()
+            calendarScreen(navController)
+            calendarProfilesScreen(navController)
         }
     }
 
@@ -32,12 +35,19 @@ object MainNavigation {
         }
     }
 
-    private fun NavGraphBuilder.calendarScreen() {
+    private fun NavGraphBuilder.calendarScreen(navController: NavController) {
         composable(CALENDAR_SCREEN) {
             CalendarScreen(
                 onAddEventClicked = {},
-                onEventClicked = {}
+                onEventClicked = {},
+                onProfileClicked = { navController.navigateToCalendarProfileScreen() }
             )
+        }
+    }
+
+    private fun NavGraphBuilder.calendarProfilesScreen(navController: NavController) {
+        composable(CALENDAR_PROFILES_SCREEN) {
+            CalendarProfilesScreen(onBackPressed = { navController.navigateUp() })
         }
     }
 
@@ -58,4 +68,7 @@ object MainNavigation {
         navigate(CALENDAR_SCREEN) {
             popUpTo(ROOT) { inclusive = true }
         }
+
+    private fun NavController.navigateToCalendarProfileScreen() =
+        navigate(CALENDAR_PROFILES_SCREEN)
 }

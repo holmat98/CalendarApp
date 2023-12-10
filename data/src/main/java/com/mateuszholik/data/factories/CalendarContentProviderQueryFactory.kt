@@ -11,7 +11,7 @@ internal interface CalendarContentProviderQueryFactory {
     companion object {
         const val CALENDAR_ID_INDEX = 0
         const val CALENDAR_NAME_INDEX = 1
-        const val CALENDAR_DISPLAY_NAME_INDEX = 2
+        const val CALENDAR_ACCOUNT_NAME_INDEX = 2
         const val CALENDAR_VISIBLE_INDEX = 3
     }
 }
@@ -23,7 +23,7 @@ internal class CalendarContentProviderQueryFactoryImpl @Inject constructor() :
         val projection = arrayOf(
             CalendarContract.Calendars._ID,
             CalendarContract.Calendars.NAME,
-            CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
+            CalendarContract.Calendars.ACCOUNT_NAME,
             CalendarContract.Calendars.VISIBLE
         )
 

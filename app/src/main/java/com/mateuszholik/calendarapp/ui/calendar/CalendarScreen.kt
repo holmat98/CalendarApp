@@ -12,14 +12,19 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -39,12 +44,14 @@ import com.mateuszholik.calendarapp.extensions.toYearMonth
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent.Error
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent.NavigateToAddEvent
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent.NavigateToEvent
+import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent.NavigateToCalendarProfiles
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiState.CalendarInfo
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiState.Loading
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.CurrentMonthChanged
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.AddEventClicked
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.EventClicked
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.SelectedDateChanged
+import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.CalendarProfilesClicked
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.CURRENT_DATE
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.DAYS_WITH_EVENTS
@@ -68,10 +75,12 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarScreen(
     onAddEventClicked: () -> Unit,
     onEventClicked: (eventId: Long) -> Unit,
+    onProfileClicked: () -> Unit,
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -96,12 +105,31 @@ fun CalendarScreen(
             }
             is NavigateToAddEvent -> onAddEventClicked()
             is NavigateToEvent -> onEventClicked(event.eventId)
+            is NavigateToCalendarProfiles -> onProfileClicked()
         }
     }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.secondary,
         snackbarHost = { SnackbarHost(snackBarHostState) },
+        topBar = {
+            TopAppBar(
+                title = {},
+                actions = {
+                    IconButton(
+                        onClick = {
+                            viewModel.performUserAction(CalendarProfilesClicked)
+                        }
+                    ) {
+                        Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = null)
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onSecondary
+                )
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,

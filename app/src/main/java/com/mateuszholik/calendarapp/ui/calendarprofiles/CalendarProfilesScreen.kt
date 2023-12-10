@@ -1,6 +1,6 @@
 package com.mateuszholik.calendarapp.ui.calendarprofiles
 
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,11 +13,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -33,6 +39,7 @@ import com.mateuszholik.calendarapp.ui.calendarprofiles.CalendarProfilesViewMode
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.CALENDARS
 import com.mateuszholik.designsystem.CalendarAppTheme
+import com.mateuszholik.designsystem.ChangeSystemBarColors
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
 import com.mateuszholik.designsystem.previews.MediumPhonePreview
@@ -46,6 +53,7 @@ import com.mateuszholik.uicomponents.text.HeadlineLargeText
 import com.mateuszholik.uicomponents.text.TitleLargeText
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarProfilesScreen(
     onBackPressed: () -> Unit,
@@ -56,6 +64,12 @@ fun CalendarProfilesScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    ChangeSystemBarColors(
+        statusBarColor = MaterialTheme.colorScheme.surface,
+        navigationBarColor = MaterialTheme.colorScheme.surface,
+        darkTheme = !isSystemInDarkTheme()
+    )
 
     ObserveAsEvents(viewModel.uiEvent) { event ->
         when (event) {
@@ -75,6 +89,20 @@ fun CalendarProfilesScreen(
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.surface,
         snackbarHost = { SnackbarHost(snackBarHostState) },
+        topBar = {
+            TopAppBar(
+                title = {},
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            viewModel.performUserAction(CalendarProfilesUserAction.OnCalendarsConfirmed)
+                        }
+                    ) {
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
+                    }
+                }
+            )
+        }
     ) {
         val paddingValues = PaddingValues(
             top = it.calculateTopPadding(),
@@ -145,7 +173,6 @@ private fun ShimmerContent(paddingValues: PaddingValues) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Content(
     paddingValues: PaddingValues,
@@ -165,7 +192,7 @@ private fun Content(
         }
 
         calendars.forEach { (accountName, calendars) ->
-            stickyHeader {
+            item {
                 TitleLargeText(
                     modifier = Modifier.padding(top = MaterialTheme.spacing.small),
                     text = accountName,

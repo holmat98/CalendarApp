@@ -19,7 +19,7 @@ import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.spacing
-import com.mateuszholik.uicomponents.text.TitleLargeText
+import com.mateuszholik.uicomponents.text.TitleSmallText
 
 @Composable
 fun CommonCheckbox(
@@ -45,7 +45,7 @@ fun CommonCheckbox(
             )
         )
 
-        TitleLargeText(text = text, color = colors.textColor)
+        TitleSmallText(text = text, color = colors.textColor)
     }
 }
 
