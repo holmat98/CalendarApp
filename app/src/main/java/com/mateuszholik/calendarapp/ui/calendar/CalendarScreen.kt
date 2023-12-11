@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -65,6 +64,7 @@ import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
+import com.mateuszholik.uicomponents.buttons.CommonIconButton
 import com.mateuszholik.uicomponents.calendar.CalendarShimmerView
 import com.mateuszholik.uicomponents.calendar.CalendarView
 import com.mateuszholik.uicomponents.event.EventItem
@@ -116,11 +116,10 @@ fun CalendarScreen(
             TopAppBar(
                 title = {},
                 actions = {
-                    IconButton(
+                    CommonIconButton(
+                        imageVector = Icons.Filled.AccountCircle,
                         onClick = { viewModel.performUserAction(ProfileClicked) }
-                    ) {
-                        Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = null)
-                    }
+                    )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.secondary,

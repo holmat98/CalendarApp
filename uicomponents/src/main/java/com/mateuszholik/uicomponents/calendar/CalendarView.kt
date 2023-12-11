@@ -79,8 +79,7 @@ fun CalendarView(
                     modifier = Modifier.size(MaterialTheme.sizing.normal),
                     imageVector = Icons.Filled.KeyboardArrowLeft,
                     contentDescription = null,
-
-                    )
+                )
             }
 
             IconButton(

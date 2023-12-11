@@ -16,8 +16,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -47,6 +45,7 @@ import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.domain.models.Calendar
+import com.mateuszholik.uicomponents.buttons.CommonIconButton
 import com.mateuszholik.uicomponents.checkbox.CommonCheckbox
 import com.mateuszholik.uicomponents.extensions.shimmerEffect
 import com.mateuszholik.uicomponents.text.HeadlineLargeText
@@ -57,7 +56,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun CalendarsSelectionScreen(
     onBackPressed: () -> Unit,
-    modifier: Modifier = Modifier,
     viewModel: CalendarsSelectionViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -86,20 +84,16 @@ fun CalendarsSelectionScreen(
     }
 
     Scaffold(
-        modifier = modifier,
         containerColor = MaterialTheme.colorScheme.surface,
         snackbarHost = { SnackbarHost(snackBarHostState) },
         topBar = {
             TopAppBar(
                 title = {},
                 navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            viewModel.performUserAction(CalendarProfilesUserAction.OnCalendarsConfirmed)
-                        }
-                    ) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
-                    }
+                    CommonIconButton(
+                        imageVector = Icons.Default.ArrowBack,
+                        onClick = { viewModel.performUserAction(CalendarProfilesUserAction.OnCalendarsConfirmed) }
+                    )
                 }
             )
         }
