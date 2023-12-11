@@ -14,16 +14,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -69,13 +65,14 @@ import com.mateuszholik.uicomponents.calendar.CalendarShimmerView
 import com.mateuszholik.uicomponents.calendar.CalendarView
 import com.mateuszholik.uicomponents.event.EventItem
 import com.mateuszholik.uicomponents.extensions.shimmerEffect
+import com.mateuszholik.uicomponents.scaffold.CommonScaffold
+import com.mateuszholik.uicomponents.scaffold.CommonScaffoldDefaults
 import com.mateuszholik.uicomponents.text.HeadlineSmallText
 import com.mateuszholik.uicomponents.text.TitleSmallText
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarScreen(
     onAddEventClicked: () -> Unit,
@@ -109,22 +106,17 @@ fun CalendarScreen(
         }
     }
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.secondary,
+    CommonScaffold(
+        colors = CommonScaffoldDefaults.colors(
+            containerColor = MaterialTheme.colorScheme.secondary,
+            topBarContainerColor = MaterialTheme.colorScheme.secondary,
+            topBarContentColor = MaterialTheme.colorScheme.onSecondary
+        ),
         snackbarHost = { SnackbarHost(snackBarHostState) },
-        topBar = {
-            TopAppBar(
-                title = {},
-                actions = {
-                    CommonIconButton(
-                        imageVector = Icons.Filled.AccountCircle,
-                        onClick = { viewModel.performUserAction(ProfileClicked) }
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    actionIconContentColor = MaterialTheme.colorScheme.onSecondary
-                )
+        actions = {
+            CommonIconButton(
+                imageVector = Icons.Filled.AccountCircle,
+                onClick = { viewModel.performUserAction(ProfileClicked) }
             )
         },
         floatingActionButton = {
@@ -163,7 +155,6 @@ fun CalendarScreen(
             }
             Loading -> ShimmerContent(paddingValues = paddingValues)
         }
-
     }
 }
 

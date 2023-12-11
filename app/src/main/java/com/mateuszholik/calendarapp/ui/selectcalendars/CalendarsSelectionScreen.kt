@@ -17,11 +17,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -48,11 +46,11 @@ import com.mateuszholik.domain.models.Calendar
 import com.mateuszholik.uicomponents.buttons.CommonIconButton
 import com.mateuszholik.uicomponents.checkbox.CommonCheckbox
 import com.mateuszholik.uicomponents.extensions.shimmerEffect
+import com.mateuszholik.uicomponents.scaffold.CommonScaffold
 import com.mateuszholik.uicomponents.text.HeadlineLargeText
 import com.mateuszholik.uicomponents.text.TitleLargeText
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarsSelectionScreen(
     onBackPressed: () -> Unit,
@@ -83,20 +81,14 @@ fun CalendarsSelectionScreen(
         }
     }
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.surface,
-        snackbarHost = { SnackbarHost(snackBarHostState) },
-        topBar = {
-            TopAppBar(
-                title = {},
-                navigationIcon = {
-                    CommonIconButton(
-                        imageVector = Icons.Default.ArrowBack,
-                        onClick = { viewModel.performUserAction(CalendarProfilesUserAction.OnCalendarsConfirmed) }
-                    )
-                }
+    CommonScaffold(
+        navigationIcon = {
+            CommonIconButton(
+                imageVector = Icons.Default.ArrowBack,
+                onClick = { viewModel.performUserAction(CalendarProfilesUserAction.OnCalendarsConfirmed) }
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(snackBarHostState) }
     ) {
         val paddingValues = PaddingValues(
             top = it.calculateTopPadding(),

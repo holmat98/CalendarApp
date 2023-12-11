@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -48,6 +47,7 @@ import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.uicomponents.animations.CommonAnimation
 import com.mateuszholik.uicomponents.buttons.CommonButton
 import com.mateuszholik.uicomponents.extensions.shimmerEffect
+import com.mateuszholik.uicomponents.scaffold.CommonScaffold
 import com.mateuszholik.uicomponents.text.HeadlineMediumText
 import com.mateuszholik.uicomponents.text.TitleMediumText
 import kotlinx.coroutines.launch
@@ -98,10 +98,7 @@ fun CalendarPermissionScreen(
         }
     }
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.surface,
-        snackbarHost = { SnackbarHost(snackBarHostState) },
-    ) {
+    CommonScaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) {
         val paddingValues = PaddingValues(
             top = it.calculateTopPadding(),
             bottom = it.calculateBottomPadding(),
