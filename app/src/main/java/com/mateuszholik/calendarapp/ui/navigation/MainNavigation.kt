@@ -5,7 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.mateuszholik.calendarapp.ui.calendar.CalendarScreen
-import com.mateuszholik.calendarapp.ui.calendarprofiles.CalendarProfilesScreen
+import com.mateuszholik.calendarapp.ui.selectcalendars.CalendarsSelectionScreen
 import com.mateuszholik.calendarapp.ui.permissions.calendar.CalendarPermissionScreen
 import com.mateuszholik.calendarapp.ui.welcome.WelcomeScreen
 
@@ -22,7 +22,7 @@ object MainNavigation {
             welcomeScreen(navController)
             calendarPermissionsScreen(navController)
             calendarScreen(navController)
-            calendarProfilesScreen(navController)
+            calendarsSelectionScreen(navController)
         }
     }
 
@@ -40,14 +40,14 @@ object MainNavigation {
             CalendarScreen(
                 onAddEventClicked = {},
                 onEventClicked = {},
-                onProfileClicked = { navController.navigateToCalendarProfileScreen() }
+                onProfileClicked = { navController.navigateToCalendarsSelectionScreen() }
             )
         }
     }
 
-    private fun NavGraphBuilder.calendarProfilesScreen(navController: NavController) {
+    private fun NavGraphBuilder.calendarsSelectionScreen(navController: NavController) {
         composable(CALENDAR_PROFILES_SCREEN) {
-            CalendarProfilesScreen(onBackPressed = { navController.navigateUp() })
+            CalendarsSelectionScreen(onBackPressed = { navController.navigateUp() })
         }
     }
 
@@ -69,6 +69,6 @@ object MainNavigation {
             popUpTo(ROOT) { inclusive = true }
         }
 
-    private fun NavController.navigateToCalendarProfileScreen() =
+    private fun NavController.navigateToCalendarsSelectionScreen() =
         navigate(CALENDAR_PROFILES_SCREEN)
 }

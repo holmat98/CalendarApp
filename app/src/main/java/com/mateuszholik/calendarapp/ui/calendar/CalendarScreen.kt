@@ -44,14 +44,14 @@ import com.mateuszholik.calendarapp.extensions.toYearMonth
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent.Error
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent.NavigateToAddEvent
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent.NavigateToEvent
-import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent.NavigateToCalendarProfiles
+import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent.NavigateToCalendarsSelection
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiState.CalendarInfo
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiState.Loading
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.CurrentMonthChanged
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.AddEventClicked
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.EventClicked
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.SelectedDateChanged
-import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.CalendarProfilesClicked
+import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.ProfileClicked
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.CURRENT_DATE
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.DAYS_WITH_EVENTS
@@ -105,7 +105,7 @@ fun CalendarScreen(
             }
             is NavigateToAddEvent -> onAddEventClicked()
             is NavigateToEvent -> onEventClicked(event.eventId)
-            is NavigateToCalendarProfiles -> onProfileClicked()
+            is NavigateToCalendarsSelection -> onProfileClicked()
         }
     }
 
@@ -117,9 +117,7 @@ fun CalendarScreen(
                 title = {},
                 actions = {
                     IconButton(
-                        onClick = {
-                            viewModel.performUserAction(CalendarProfilesClicked)
-                        }
+                        onClick = { viewModel.performUserAction(ProfileClicked) }
                     ) {
                         Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = null)
                     }

@@ -1,13 +1,13 @@
-package com.mateuszholik.calendarapp.ui.calendarprofiles
+package com.mateuszholik.calendarapp.ui.selectcalendars
 
 import androidx.lifecycle.viewModelScope
 import com.mateuszholik.calendarapp.ui.base.BaseViewModel
 import com.mateuszholik.calendarapp.ui.base.UiEvent
 import com.mateuszholik.calendarapp.ui.base.UiState
 import com.mateuszholik.calendarapp.ui.base.UserAction
-import com.mateuszholik.calendarapp.ui.calendarprofiles.CalendarProfilesViewModel.CalendarProfilesUserAction
-import com.mateuszholik.calendarapp.ui.calendarprofiles.CalendarProfilesViewModel.CalendarProfilesUiState
-import com.mateuszholik.calendarapp.ui.calendarprofiles.CalendarProfilesViewModel.CalendarProfilesUiEvent
+import com.mateuszholik.calendarapp.ui.selectcalendars.CalendarsSelectionViewModel.CalendarProfilesUserAction
+import com.mateuszholik.calendarapp.ui.selectcalendars.CalendarsSelectionViewModel.CalendarProfilesUiState
+import com.mateuszholik.calendarapp.ui.selectcalendars.CalendarsSelectionViewModel.CalendarProfilesUiEvent
 import com.mateuszholik.common.provider.DispatcherProvider
 import com.mateuszholik.domain.models.Calendar
 import com.mateuszholik.domain.usecases.GetCalendarsUseCase
@@ -24,7 +24,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class CalendarProfilesViewModel @Inject constructor(
+class CalendarsSelectionViewModel @Inject constructor(
     private val getCalendarsUseCase: GetCalendarsUseCase,
     private val dispatcherProvider: DispatcherProvider,
 ) : BaseViewModel<CalendarProfilesUiState, CalendarProfilesUserAction, CalendarProfilesUiEvent>() {

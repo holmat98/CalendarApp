@@ -1,4 +1,4 @@
-package com.mateuszholik.calendarapp.ui.calendarprofiles
+package com.mateuszholik.calendarapp.ui.selectcalendars
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -33,9 +33,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
-import com.mateuszholik.calendarapp.ui.calendarprofiles.CalendarProfilesViewModel.CalendarProfilesUserAction
-import com.mateuszholik.calendarapp.ui.calendarprofiles.CalendarProfilesViewModel.CalendarProfilesUiState
-import com.mateuszholik.calendarapp.ui.calendarprofiles.CalendarProfilesViewModel.CalendarProfilesUiEvent
+import com.mateuszholik.calendarapp.ui.selectcalendars.CalendarsSelectionViewModel.CalendarProfilesUserAction
+import com.mateuszholik.calendarapp.ui.selectcalendars.CalendarsSelectionViewModel.CalendarProfilesUiState
+import com.mateuszholik.calendarapp.ui.selectcalendars.CalendarsSelectionViewModel.CalendarProfilesUiEvent
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.CALENDARS
 import com.mateuszholik.designsystem.CalendarAppTheme
@@ -55,10 +55,10 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CalendarProfilesScreen(
+fun CalendarsSelectionScreen(
     onBackPressed: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CalendarProfilesViewModel = hiltViewModel(),
+    viewModel: CalendarsSelectionViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val snackBarHostState = remember { SnackbarHostState() }
