@@ -109,6 +109,7 @@ fun CalendarScreen(
     CommonScaffold(
         colors = CommonScaffoldDefaults.colors(
             containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = MaterialTheme.colorScheme.onSecondary,
             topBarContainerColor = MaterialTheme.colorScheme.secondary,
             topBarContentColor = MaterialTheme.colorScheme.onSecondary
         ),
