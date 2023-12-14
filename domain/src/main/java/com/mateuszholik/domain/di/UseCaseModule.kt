@@ -30,13 +30,11 @@ internal abstract class UseCaseModule {
         getEventsForDayUseCaseImpl: GetEventsForDayUseCaseImpl
     ): GetEventsForDayUseCase
 
-    @ViewModelScoped
     @Binds
     abstract fun bindsGetCalendarsUseCase(
         getCalendarUseCaseImpl: GetCalendarsUseCaseImpl,
     ): GetCalendarsUseCase
 
-    @ViewModelScoped
     @Binds
     abstract fun bindsUpdateCalendarVisibilityUseCase(
         updateCalendarsUseCaseImpl: UpdateCalendarVisibilityUseCaseImpl
