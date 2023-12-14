@@ -7,7 +7,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RawRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -52,6 +52,7 @@ import com.mateuszholik.uicomponents.text.HeadlineMediumText
 import com.mateuszholik.uicomponents.text.TitleMediumText
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarPermissionScreen(
     onPermissionGranted: () -> Unit,
@@ -78,11 +79,7 @@ fun CalendarPermissionScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-    ChangeSystemBarColors(
-        statusBarColor = MaterialTheme.colorScheme.surface,
-        navigationBarColor = MaterialTheme.colorScheme.surface,
-        darkTheme = !isSystemInDarkTheme()
-    )
+    ChangeSystemBarColors()
 
     ObserveAsEvents(flow = viewModel.uiEvent) { uiEvent ->
         when (uiEvent) {

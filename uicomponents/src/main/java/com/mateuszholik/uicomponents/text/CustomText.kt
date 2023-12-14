@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -23,8 +24,8 @@ import com.mateuszholik.designsystem.previews.SmallPhonePreview
 @Composable
 fun DisplayLargeText(
     @StringRes textResId: Int,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -42,8 +43,8 @@ fun DisplayLargeText(
 @Composable
 fun DisplayLargeText(
     text: String,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -62,8 +63,8 @@ fun DisplayLargeText(
 @Composable
 fun DisplayMediumText(
     @StringRes textResId: Int,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -81,8 +82,8 @@ fun DisplayMediumText(
 @Composable
 fun DisplayMediumText(
     text: String,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -101,8 +102,8 @@ fun DisplayMediumText(
 @Composable
 fun DisplaySmallText(
     @StringRes textResId: Int,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -120,8 +121,8 @@ fun DisplaySmallText(
 @Composable
 fun DisplaySmallText(
     text: String,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -140,8 +141,8 @@ fun DisplaySmallText(
 @Composable
 fun HeadlineLargeText(
     @StringRes textResId: Int,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -159,8 +160,8 @@ fun HeadlineLargeText(
 @Composable
 fun HeadlineLargeText(
     text: String,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -179,8 +180,8 @@ fun HeadlineLargeText(
 @Composable
 fun HeadlineMediumText(
     @StringRes textResId: Int,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -198,8 +199,8 @@ fun HeadlineMediumText(
 @Composable
 fun HeadlineMediumText(
     text: String,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -218,8 +219,8 @@ fun HeadlineMediumText(
 @Composable
 fun HeadlineSmallText(
     @StringRes textResId: Int,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -237,8 +238,8 @@ fun HeadlineSmallText(
 @Composable
 fun HeadlineSmallText(
     text: String,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -257,8 +258,8 @@ fun HeadlineSmallText(
 @Composable
 fun TitleLargeText(
     @StringRes textResId: Int,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -276,8 +277,8 @@ fun TitleLargeText(
 @Composable
 fun TitleLargeText(
     text: String,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -296,8 +297,8 @@ fun TitleLargeText(
 @Composable
 fun TitleMediumText(
     @StringRes textResId: Int,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -315,8 +316,8 @@ fun TitleMediumText(
 @Composable
 fun TitleMediumText(
     text: String,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -335,8 +336,8 @@ fun TitleMediumText(
 @Composable
 fun TitleSmallText(
     @StringRes textResId: Int,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -354,8 +355,8 @@ fun TitleSmallText(
 @Composable
 fun TitleSmallText(
     text: String,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -374,8 +375,8 @@ fun TitleSmallText(
 @Composable
 fun BodyLargeText(
     @StringRes textResId: Int,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -393,8 +394,8 @@ fun BodyLargeText(
 @Composable
 fun BodyLargeText(
     text: String,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -413,8 +414,8 @@ fun BodyLargeText(
 @Composable
 fun BodyMediumText(
     @StringRes textResId: Int,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -432,8 +433,8 @@ fun BodyMediumText(
 @Composable
 fun BodyMediumText(
     text: String,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -452,8 +453,8 @@ fun BodyMediumText(
 @Composable
 fun BodySmallText(
     @StringRes textResId: Int,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -471,8 +472,8 @@ fun BodySmallText(
 @Composable
 fun BodySmallText(
     text: String,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -491,8 +492,8 @@ fun BodySmallText(
 @Composable
 fun LabelLargeText(
     @StringRes textResId: Int,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -510,8 +511,8 @@ fun LabelLargeText(
 @Composable
 fun LabelLargeText(
     text: String,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -530,8 +531,8 @@ fun LabelLargeText(
 @Composable
 fun LabelMediumText(
     @StringRes textResId: Int,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -549,8 +550,8 @@ fun LabelMediumText(
 @Composable
 fun LabelMediumText(
     text: String,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -569,8 +570,8 @@ fun LabelMediumText(
 @Composable
 fun LabelSmallText(
     @StringRes textResId: Int,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
@@ -588,8 +589,8 @@ fun LabelSmallText(
 @Composable
 fun LabelSmallText(
     text: String,
-    color: Color,
     modifier: Modifier = Modifier,
+    color: Color = LocalContentColor.current,
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,

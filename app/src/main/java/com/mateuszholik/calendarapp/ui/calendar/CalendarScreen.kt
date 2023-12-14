@@ -1,6 +1,7 @@
 package com.mateuszholik.calendarapp.ui.calendar
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -73,6 +75,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarScreen(
     onAddEventClicked: () -> Unit,
@@ -85,10 +88,7 @@ fun CalendarScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-    ChangeSystemBarColors(
-        statusBarColor = MaterialTheme.colorScheme.secondary,
-        navigationBarColor = MaterialTheme.colorScheme.secondary,
-    )
+    ChangeSystemBarColors(areIconsDark = isSystemInDarkTheme())
 
     ObserveAsEvents(viewModel.uiEvent) { event ->
         when (event) {

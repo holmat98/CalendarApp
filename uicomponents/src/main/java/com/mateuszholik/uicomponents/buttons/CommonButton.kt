@@ -50,7 +50,7 @@ fun CommonButton(
             containerColor = colors.containerColor,
         )
     ) {
-        TitleLargeText(text = text, color = colors.contentColor)
+        TitleLargeText(text = text)
     }
 }
 

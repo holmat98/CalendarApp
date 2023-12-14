@@ -1,6 +1,5 @@
 package com.mateuszholik.calendarapp.ui.selectcalendars
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,8 +21,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,9 +49,10 @@ import com.mateuszholik.uicomponents.checkbox.CommonCheckbox
 import com.mateuszholik.uicomponents.extensions.shimmerEffect
 import com.mateuszholik.uicomponents.scaffold.CommonScaffold
 import com.mateuszholik.uicomponents.text.HeadlineLargeText
-import com.mateuszholik.uicomponents.text.TitleLargeText
+import com.mateuszholik.uicomponents.text.TitleMediumText
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarsSelectionScreen(
     onBackPressed: () -> Unit,
@@ -61,11 +63,7 @@ fun CalendarsSelectionScreen(
     val coroutineScope = rememberCoroutineScope()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    ChangeSystemBarColors(
-        statusBarColor = MaterialTheme.colorScheme.surface,
-        navigationBarColor = MaterialTheme.colorScheme.surface,
-        darkTheme = !isSystemInDarkTheme()
-    )
+    ChangeSystemBarColors()
 
     ObserveAsEvents(viewModel.uiEvent) { event ->
         when (event) {
@@ -171,18 +169,14 @@ private fun Content(
             .fillMaxSize()
     ) {
         item {
-            HeadlineLargeText(
-                textResId = R.string.calendar_profile_header,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            HeadlineLargeText(textResId = R.string.calendar_profile_header,)
         }
 
         calendars.forEach { (accountName, calendars) ->
             item {
-                TitleLargeText(
+                TitleMediumText(
                     modifier = Modifier.padding(top = MaterialTheme.spacing.small),
                     text = accountName,
-                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -190,13 +184,18 @@ private fun Content(
                 items = calendars,
                 key = { it.id }
             ) { calendar ->
+                var isChecked by remember { mutableStateOf(calendar.isVisible) }
+
                 CommonCheckbox(
                     modifier = Modifier
                         .padding(top = MaterialTheme.spacing.small)
                         .fillMaxWidth(),
-                    isChecked = calendar.isVisible,
+                    isChecked = isChecked,
                     text = calendar.calendarName,
-                    onChecked = { onCalendarChecked(calendar.id, it) }
+                    onChecked = {
+                        isChecked = it
+                        onCalendarChecked(calendar.id, it)
+                    }
                 )
             }
         }
@@ -207,7 +206,10 @@ private fun Content(
 @Composable
 private fun SmallPhonePreview() {
     CalendarAppTheme(styleType = StyleType.WINTER) {
-        Surface(color = MaterialTheme.colorScheme.surface) {
+        Surface(
+            color = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+        ) {
             Content(
                 paddingValues = PaddingValues(MaterialTheme.spacing.normal),
                 calendars = CALENDARS,
@@ -221,7 +223,10 @@ private fun SmallPhonePreview() {
 @Composable
 private fun ShimmerEffectPreview() {
     CalendarAppTheme(styleType = StyleType.SPRING, darkTheme = true) {
-        Surface(color = MaterialTheme.colorScheme.surface) {
+        Surface(
+            color = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+        ) {
             ShimmerContent(paddingValues = PaddingValues(MaterialTheme.spacing.normal))
         }
     }
@@ -231,7 +236,10 @@ private fun ShimmerEffectPreview() {
 @Composable
 private fun MediumPhonePreview() {
     CalendarAppTheme(styleType = StyleType.SPRING) {
-        Surface(color = MaterialTheme.colorScheme.surface) {
+        Surface(
+            color = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+        ) {
             Content(
                 paddingValues = PaddingValues(MaterialTheme.spacing.normal),
                 calendars = CALENDARS,
@@ -245,7 +253,10 @@ private fun MediumPhonePreview() {
 @Composable
 private fun BigPhonePreview() {
     CalendarAppTheme(styleType = StyleType.SUMMER) {
-        Surface(color = MaterialTheme.colorScheme.surface) {
+        Surface(
+            color = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+        ) {
             Content(
                 paddingValues = PaddingValues(MaterialTheme.spacing.normal),
                 calendars = CALENDARS,

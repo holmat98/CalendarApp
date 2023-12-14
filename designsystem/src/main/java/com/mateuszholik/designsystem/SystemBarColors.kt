@@ -11,19 +11,19 @@ import androidx.core.view.WindowCompat
 
 @Composable
 fun ChangeSystemBarColors(
-    statusBarColor: Color,
-    navigationBarColor: Color,
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    navigationBarColor: Color = Color.Transparent,
+    areIconsDark: Boolean = !isSystemInDarkTheme(),
 ) {
     val view = LocalView.current
 
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = statusBarColor.toArgb()
+            window.statusBarColor = Color.Transparent.toArgb()
             window.navigationBarColor = navigationBarColor.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
-            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = darkTheme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = areIconsDark
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = areIconsDark
+            WindowCompat.setDecorFitsSystemWindows(window, false)
         }
     }
 }
