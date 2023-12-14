@@ -1,5 +1,7 @@
 package com.mateuszholik.data.di
 
+import com.mateuszholik.data.mappers.CursorToCalendarsMapper
+import com.mateuszholik.data.mappers.CursorToCalendarsMapperImpl
 import com.mateuszholik.data.mappers.CursorToEventsMapper
 import com.mateuszholik.data.mappers.CursorToEventsMapperImpl
 import com.mateuszholik.data.mappers.CursorToListOfDaysMapper
@@ -25,4 +27,10 @@ internal abstract class MappersModule {
     abstract fun bindsCursorToListOfDaysMapper(
         cursorToListOfDaysMapperImpl: CursorToListOfDaysMapperImpl
     ): CursorToListOfDaysMapper
+
+    @Singleton
+    @Binds
+    abstract fun bindsCursorToCalendarMapper(
+        cursorToCalendarsMapperImpl: CursorToCalendarsMapperImpl
+    ): CursorToCalendarsMapper
 }

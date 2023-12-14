@@ -2,8 +2,8 @@ package com.mateuszholik.data.mappers
 
 import android.database.Cursor
 import com.mateuszholik.data.extensions.toLocalDate
-import com.mateuszholik.data.factories.EventsContentProviderQueryFactoryImpl.Companion.DAYS_WITH_EVENTS_DATE_START_INDEX
-import com.mateuszholik.data.factories.EventsContentProviderQueryFactoryImpl.Companion.DAYS_WITH_EVENTS_TIMEZONE_INDEX
+import com.mateuszholik.data.factories.EventsContentProviderQueryFactory.Companion.DAYS_WITH_EVENTS_DATE_START_INDEX
+import com.mateuszholik.data.factories.EventsContentProviderQueryFactory.Companion.DAYS_WITH_EVENTS_TIMEZONE_INDEX
 import com.mateuszholik.data.mappers.base.Mapper
 import java.time.LocalDate
 import javax.inject.Inject

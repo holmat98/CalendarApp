@@ -67,6 +67,8 @@ class CalendarViewModel @Inject constructor(
                 handleEventClickedAction(action.eventId)
             is CalendarUserAction.AddEventClicked ->
                 handleAddEventClickedAction()
+            is CalendarUserAction.ProfileClicked ->
+                handleCalendarProfilesClicked()
         }
     }
 
@@ -131,6 +133,12 @@ class CalendarViewModel @Inject constructor(
         }
     }
 
+    private fun handleCalendarProfilesClicked() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiEvent.emit(CalendarUiEvent.NavigateToCalendarsSelection)
+        }
+    }
+
     sealed class CalendarUiState : UiState {
 
         data object Loading : CalendarUiState()
@@ -150,6 +158,8 @@ class CalendarViewModel @Inject constructor(
         data object NavigateToAddEvent : CalendarUiEvent()
 
         data object Error : CalendarUiEvent()
+
+        data object NavigateToCalendarsSelection : CalendarUiEvent()
     }
 
     sealed class CalendarUserAction : UserAction {
@@ -161,5 +171,7 @@ class CalendarViewModel @Inject constructor(
         data class EventClicked(val eventId: Long) : CalendarUserAction()
 
         data object AddEventClicked : CalendarUserAction()
+
+        data object ProfileClicked : CalendarUserAction()
     }
 }

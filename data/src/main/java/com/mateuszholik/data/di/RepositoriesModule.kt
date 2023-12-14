@@ -1,5 +1,7 @@
 package com.mateuszholik.data.di
 
+import com.mateuszholik.data.repositories.CalendarRepository
+import com.mateuszholik.data.repositories.CalendarRepositoryImpl
 import com.mateuszholik.data.repositories.EventsRepository
 import com.mateuszholik.data.repositories.EventsRepositoryImpl
 import dagger.Binds
@@ -17,4 +19,10 @@ internal abstract class RepositoriesModule {
     abstract fun bindsEventsRepository(
         eventsRepositoryImpl: EventsRepositoryImpl
     ): EventsRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindsCalendarRepository(
+        calendarRepositoryImpl: CalendarRepositoryImpl,
+    ): CalendarRepository
 }

@@ -40,10 +40,7 @@ fun WelcomeScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    ChangeSystemBarColors(
-        statusBarColor = MaterialTheme.colorScheme.primary,
-        navigationBarColor = MaterialTheme.colorScheme.primary,
-    )
+    ChangeSystemBarColors(navigationBarColor = MaterialTheme.colorScheme.primary)
 
     ObserveAsEvents(viewModel.uiEvent) { uiEvent ->
         when (uiEvent) {

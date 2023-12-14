@@ -1,6 +1,7 @@
 package com.mateuszholik.calendarapp.ui.calendar
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,11 +13,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -39,12 +41,14 @@ import com.mateuszholik.calendarapp.extensions.toYearMonth
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent.Error
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent.NavigateToAddEvent
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent.NavigateToEvent
+import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent.NavigateToCalendarsSelection
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiState.CalendarInfo
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiState.Loading
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.CurrentMonthChanged
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.AddEventClicked
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.EventClicked
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.SelectedDateChanged
+import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.ProfileClicked
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.CURRENT_DATE
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.DAYS_WITH_EVENTS
@@ -58,20 +62,25 @@ import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
+import com.mateuszholik.uicomponents.buttons.CommonIconButton
 import com.mateuszholik.uicomponents.calendar.CalendarShimmerView
 import com.mateuszholik.uicomponents.calendar.CalendarView
 import com.mateuszholik.uicomponents.event.EventItem
 import com.mateuszholik.uicomponents.extensions.shimmerEffect
+import com.mateuszholik.uicomponents.scaffold.CommonScaffold
+import com.mateuszholik.uicomponents.scaffold.CommonScaffoldDefaults
 import com.mateuszholik.uicomponents.text.HeadlineSmallText
 import com.mateuszholik.uicomponents.text.TitleSmallText
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarScreen(
     onAddEventClicked: () -> Unit,
     onEventClicked: (eventId: Long) -> Unit,
+    onProfileClicked: () -> Unit,
     viewModel: CalendarViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -79,10 +88,7 @@ fun CalendarScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-    ChangeSystemBarColors(
-        statusBarColor = MaterialTheme.colorScheme.secondary,
-        navigationBarColor = MaterialTheme.colorScheme.secondary,
-    )
+    ChangeSystemBarColors(areIconsDark = isSystemInDarkTheme())
 
     ObserveAsEvents(viewModel.uiEvent) { event ->
         when (event) {
@@ -96,12 +102,24 @@ fun CalendarScreen(
             }
             is NavigateToAddEvent -> onAddEventClicked()
             is NavigateToEvent -> onEventClicked(event.eventId)
+            is NavigateToCalendarsSelection -> onProfileClicked()
         }
     }
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.secondary,
+    CommonScaffold(
+        colors = CommonScaffoldDefaults.colors(
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = MaterialTheme.colorScheme.onSecondary,
+            topBarContainerColor = MaterialTheme.colorScheme.secondary,
+            topBarContentColor = MaterialTheme.colorScheme.onSecondary
+        ),
         snackbarHost = { SnackbarHost(snackBarHostState) },
+        actions = {
+            CommonIconButton(
+                imageVector = Icons.Filled.AccountCircle,
+                onClick = { viewModel.performUserAction(ProfileClicked) }
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -138,7 +156,6 @@ fun CalendarScreen(
             }
             Loading -> ShimmerContent(paddingValues = paddingValues)
         }
-
     }
 }
 

@@ -5,8 +5,8 @@ import android.net.Uri
 internal data class QueryData(
     val uri: Uri,
     val projection: Array<String>,
-    val selection: String,
-    val selectionArgs: Array<String>
+    val selection: String?,
+    val selectionArgs: Array<String>?
 ) {
 
     override fun equals(other: Any?): Boolean {

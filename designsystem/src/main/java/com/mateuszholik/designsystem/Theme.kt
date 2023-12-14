@@ -28,10 +28,7 @@ fun CalendarAppTheme(
         styleType.lightMode()
     }
 
-    ChangeSystemBarColors(
-        statusBarColor = colorScheme.surface,
-        navigationBarColor = colorScheme.surface,
-    )
+    ChangeSystemBarColors(navigationBarColor = colorScheme.surface)
     val windowSizeInfo = rememberWindowSizeInfo()
 
     CompositionLocalProvider(
