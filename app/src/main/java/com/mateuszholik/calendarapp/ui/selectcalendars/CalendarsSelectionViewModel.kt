@@ -11,6 +11,8 @@ import com.mateuszholik.calendarapp.ui.selectcalendars.CalendarsSelectionViewMod
 import com.mateuszholik.common.provider.DispatcherProvider
 import com.mateuszholik.domain.models.Calendar
 import com.mateuszholik.domain.usecases.GetCalendarsUseCase
+import com.mateuszholik.domain.usecases.UpdateCalendarVisibilityUseCase
+import com.mateuszholik.domain.usecases.UpdateCalendarVisibilityUseCase.Param
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -27,6 +29,7 @@ import javax.inject.Inject
 class CalendarsSelectionViewModel @Inject constructor(
     private val getCalendarsUseCase: GetCalendarsUseCase,
     private val dispatcherProvider: DispatcherProvider,
+    private val updateCalendarVisibilityUseCase: UpdateCalendarVisibilityUseCase,
 ) : BaseViewModel<CalendarProfilesUiState, CalendarProfilesUserAction, CalendarProfilesUiEvent>() {
 
     private val _uiState: MutableStateFlow<CalendarProfilesUiState> =
@@ -68,7 +71,14 @@ class CalendarsSelectionViewModel @Inject constructor(
     }
 
     private fun handleOnCalendarSelectionChanged(calendarId: Long, isVisible: Boolean) {
-
+        viewModelScope.launch(dispatcherProvider.main() + handler) {
+            updateCalendarVisibilityUseCase(
+                param = Param(
+                    calendarId = calendarId,
+                    isVisible = isVisible
+                )
+            )
+        }
     }
 
     private fun handleOnCalendarsConfirmed() {

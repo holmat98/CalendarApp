@@ -1,3 +1,9 @@
 package com.mateuszholik.data.factories.models
 
-data class UpdateData()
+import android.content.ContentValues
+import android.net.Uri
+
+data class UpdateData(
+    val uri: Uri,
+    val values: ContentValues,
+)

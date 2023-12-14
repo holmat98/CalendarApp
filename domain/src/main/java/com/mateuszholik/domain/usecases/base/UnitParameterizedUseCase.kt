@@ -1,4 +1,6 @@
 package com.mateuszholik.domain.usecases.base
 
-interface UnitUseCase {
+interface UnitParameterizedUseCase<TInput> {
+
+    suspend operator fun invoke(param: TInput)
 }

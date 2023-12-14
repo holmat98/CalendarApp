@@ -12,6 +12,11 @@ import javax.inject.Inject
 interface CalendarRepository {
 
     suspend fun getCalendars(): List<Calendar>
+
+    suspend fun changeCalendarVisibility(
+        calendarId: Long,
+        isVisible: Boolean,
+    )
 }
 
 internal class CalendarRepositoryImpl @Inject constructor(
@@ -43,5 +48,16 @@ internal class CalendarRepositoryImpl @Inject constructor(
         cursor?.close()
 
         return calendars
+    }
+
+    override suspend fun changeCalendarVisibility(calendarId: Long, isVisible: Boolean) {
+        withContext(dispatcherProvider.io()) {
+            val updateData = calendarContentProviderQueryFactory.createForUpdateCalendarVisibility(
+                calendarId = calendarId,
+                isVisible = isVisible
+            )
+
+            contentResolver.update(updateData.uri, updateData.values, null, null)
+        }
     }
 }

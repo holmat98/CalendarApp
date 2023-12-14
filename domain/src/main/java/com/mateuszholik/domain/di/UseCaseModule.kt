@@ -6,6 +6,8 @@ import com.mateuszholik.domain.usecases.GetDaysWithEventsForMonthUseCase
 import com.mateuszholik.domain.usecases.GetDaysWithEventsForMonthUseCaseImpl
 import com.mateuszholik.domain.usecases.GetEventsForDayUseCase
 import com.mateuszholik.domain.usecases.GetEventsForDayUseCaseImpl
+import com.mateuszholik.domain.usecases.UpdateCalendarVisibilityUseCase
+import com.mateuszholik.domain.usecases.UpdateCalendarVisibilityUseCaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -33,4 +35,10 @@ internal abstract class UseCaseModule {
     abstract fun bindsGetCalendarsUseCase(
         getCalendarUseCaseImpl: GetCalendarsUseCaseImpl,
     ): GetCalendarsUseCase
+
+    @ViewModelScoped
+    @Binds
+    abstract fun bindsUpdateCalendarVisibilityUseCase(
+        updateCalendarsUseCaseImpl: UpdateCalendarVisibilityUseCaseImpl
+    ): UpdateCalendarVisibilityUseCase
 }

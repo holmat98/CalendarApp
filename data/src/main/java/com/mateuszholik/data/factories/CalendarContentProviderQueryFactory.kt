@@ -1,12 +1,20 @@
 package com.mateuszholik.data.factories
 
+import android.content.ContentUris
+import android.content.ContentValues
 import android.provider.CalendarContract
 import com.mateuszholik.data.factories.models.QueryData
+import com.mateuszholik.data.factories.models.UpdateData
 import javax.inject.Inject
 
 internal interface CalendarContentProviderQueryFactory {
 
     suspend fun createForCalendars(): QueryData
+
+    suspend fun createForUpdateCalendarVisibility(
+        calendarId: Long,
+        isVisible: Boolean,
+    ): UpdateData
 
     companion object {
         const val CALENDAR_ID_INDEX = 0
@@ -34,4 +42,21 @@ internal class CalendarContentProviderQueryFactoryImpl @Inject constructor() :
             selectionArgs = null
         )
     }
+
+    override suspend fun createForUpdateCalendarVisibility(
+        calendarId: Long,
+        isVisible: Boolean,
+    ): UpdateData = UpdateData(
+        uri = ContentUris.withAppendedId(CalendarContract.Calendars.CONTENT_URI, calendarId),
+        values = ContentValues().apply {
+            put(CalendarContract.Calendars.VISIBLE, isVisible.asInt())
+        }
+    )
+
+    private fun Boolean.asInt(): Int =
+        if (this) {
+            1
+        } else {
+            0
+        }
 }
