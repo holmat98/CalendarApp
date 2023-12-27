@@ -2,7 +2,9 @@ package com.mateuszholik.data.repositories
 
 import android.content.Context
 import com.mateuszholik.common.provider.DispatcherProvider
+import com.mateuszholik.data.factories.CalendarContentProviderQueryFactory
 import com.mateuszholik.data.factories.EventsContentProviderQueryFactory
+import com.mateuszholik.data.mappers.CursorToCalendarIdsMapper
 import com.mateuszholik.data.mappers.CursorToEventsMapper
 import com.mateuszholik.data.mappers.CursorToListOfDaysMapper
 import com.mateuszholik.data.repositories.models.Event
@@ -21,8 +23,10 @@ interface EventsRepository {
 
 internal class EventsRepositoryImpl @Inject constructor(
     private val eventsContentProviderQueryFactory: EventsContentProviderQueryFactory,
+    private val calendarContentProviderQueryFactory: CalendarContentProviderQueryFactory,
     private val cursorToEventsMapper: CursorToEventsMapper,
     private val cursorToListOfDaysMapper: CursorToListOfDaysMapper,
+    private val cursorToCalendarIdsMapper: CursorToCalendarIdsMapper,
     private val dispatcherProvider: DispatcherProvider,
     @ApplicationContext private val context: Context,
 ) : EventsRepository {
@@ -30,7 +34,11 @@ internal class EventsRepositoryImpl @Inject constructor(
     private val contentResolver by lazy { context.contentResolver }
 
     override suspend fun getEventsForDay(day: LocalDate): List<Event> {
-        val queryData = eventsContentProviderQueryFactory.createForEventsFromDay(day)
+        val calendarIds = getSelectedCalendarIds()
+        val queryData = eventsContentProviderQueryFactory.createForEventsFromDay(
+                day = day,
+                calendarIds = calendarIds
+            )
 
         val cursor = withContext(dispatcherProvider.io()) {
             contentResolver.query(
@@ -52,7 +60,10 @@ internal class EventsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getDaysWithEventsForMonth(yearMonth: YearMonth): List<LocalDate> {
-        val queryData = eventsContentProviderQueryFactory.createForEventsFromMonth(yearMonth)
+        val queryData = eventsContentProviderQueryFactory.createForEventsFromMonth(
+            yearMonth = yearMonth,
+            calendarIds = getSelectedCalendarIds()
+        )
 
         val cursor = withContext(dispatcherProvider.io()) {
             contentResolver.query(
@@ -71,5 +82,27 @@ internal class EventsRepositoryImpl @Inject constructor(
         cursor?.close()
 
         return days
+    }
+
+    private suspend fun getSelectedCalendarIds(): List<Long> {
+        val queryData = calendarContentProviderQueryFactory.createForSelectedCalendarsIds()
+
+        val cursor = withContext(dispatcherProvider.io()) {
+            contentResolver.query(
+                queryData.uri,
+                queryData.projection,
+                queryData.selection,
+                queryData.selectionArgs,
+                null
+            )
+        }
+
+        val ids = cursor
+            ?.let { cursorToCalendarIdsMapper.map(it) }
+            .orEmpty()
+
+        cursor?.close()
+
+        return ids
     }
 }

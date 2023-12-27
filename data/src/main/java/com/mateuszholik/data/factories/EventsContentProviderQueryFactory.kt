@@ -9,9 +9,9 @@ import javax.inject.Inject
 
 internal interface EventsContentProviderQueryFactory {
 
-    suspend fun createForEventsFromDay(day: LocalDate): QueryData
+    suspend fun createForEventsFromDay(day: LocalDate, calendarIds: List<Long>): QueryData
 
-    suspend fun createForEventsFromMonth(yearMonth: YearMonth): QueryData
+    suspend fun createForEventsFromMonth(yearMonth: YearMonth, calendarIds: List<Long>): QueryData
 
     companion object {
         const val TODAY_EVENTS_ID_INDEX = 0
@@ -29,7 +29,10 @@ internal interface EventsContentProviderQueryFactory {
 internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
     EventsContentProviderQueryFactory {
 
-    override suspend fun createForEventsFromDay(day: LocalDate): QueryData {
+    override suspend fun createForEventsFromDay(
+        day: LocalDate,
+        calendarIds: List<Long>,
+    ): QueryData {
         val dayAtStart = day.atStartOfDay()
         val dayAtEnd = day.plusDays(1).atStartOfDay()
 
@@ -38,8 +41,13 @@ internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
         val dayAtEndEpochMillis = dayAtEnd.atZone(zoneId).toInstant().toEpochMilli()
 
         val selection =
-            "((${CalendarContract.Events.DTSTART} >= ?) AND (${CalendarContract.Events.DTSTART} < ?))"
-        val selectionArgs = arrayOf("$dayAtStartEpochMillis", "$dayAtEndEpochMillis")
+            "((${CalendarContract.Events.DTSTART} >= ?) AND (${CalendarContract.Events.DTSTART} < ?) ${calendarIds.asInSelection()})"
+
+        val selectionArgs = arrayOf(
+            "$dayAtStartEpochMillis",
+            "$dayAtEndEpochMillis",
+        ) + calendarIds.map { "$it" }.toTypedArray()
+
         val projection = arrayOf(
             CalendarContract.Events._ID,
             CalendarContract.Events.TITLE,
@@ -58,7 +66,10 @@ internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
         )
     }
 
-    override suspend fun createForEventsFromMonth(yearMonth: YearMonth): QueryData {
+    override suspend fun createForEventsFromMonth(
+        yearMonth: YearMonth,
+        calendarIds: List<Long>,
+    ): QueryData {
         val firstDay = yearMonth.atDay(1).atStartOfDay()
         val lastDay = yearMonth.plusMonths(1).atDay(1).atStartOfDay()
 
@@ -67,8 +78,11 @@ internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
         val dayAtEndEpochMillis = lastDay.atZone(zoneId).toInstant().toEpochMilli()
 
         val selection =
-            "((${CalendarContract.Events.DTSTART} >= ?) AND (${CalendarContract.Events.DTSTART} < ?))"
-        val selectionArgs = arrayOf("$dayAtStartEpochMillis", "$dayAtEndEpochMillis")
+            "((${CalendarContract.Events.DTSTART} >= ?) AND (${CalendarContract.Events.DTSTART} < ?) ${calendarIds.asInSelection()})"
+        val selectionArgs = arrayOf(
+            "$dayAtStartEpochMillis",
+            "$dayAtEndEpochMillis"
+        ) + calendarIds.map { "$it" }.toTypedArray()
         val projection = arrayOf(
             CalendarContract.Events.DTSTART,
             CalendarContract.Events.EVENT_TIMEZONE
@@ -80,5 +94,22 @@ internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
             selectionArgs = selectionArgs,
             projection = projection
         )
+    }
+
+    private fun List<Long>.asInSelection(): String {
+        if (isEmpty()) {
+            return ""
+        }
+
+        return StringBuilder().apply {
+            append("AND (${CalendarContract.Events.CALENDAR_ID} IN (")
+            this@asInSelection.forEachIndexed { index, _ ->
+                append("?")
+                if (index != this@asInSelection.lastIndex) {
+                    append(",")
+                }
+            }
+            append("))")
+        }.toString()
     }
 }
