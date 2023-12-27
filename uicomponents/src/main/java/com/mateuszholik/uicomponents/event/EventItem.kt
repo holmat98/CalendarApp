@@ -15,9 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.cornerRadius
 import com.mateuszholik.designsystem.models.StyleType
@@ -27,8 +25,8 @@ import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.uicomponents.extensions.asTimeString
-import com.mateuszholik.uicomponents.text.HeadlineSmallText
 import com.mateuszholik.uicomponents.text.TitleMediumText
+import com.mateuszholik.uicomponents.text.TitleSmallText
 import java.time.LocalDateTime
 
 @Composable
@@ -45,11 +43,11 @@ fun EventItem(
 ) {
     Row(
         modifier = modifier
+            .clickable { onEventClicked() }
             .background(
                 color = backgroundColor,
                 shape = RoundedCornerShape(MaterialTheme.cornerRadius.normal)
-            )
-            .clickable { onEventClicked() },
+            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
@@ -62,7 +60,7 @@ fun EventItem(
                 )
         )
         if (allDay) {
-            HeadlineSmallText(
+            TitleMediumText(
                 modifier = Modifier.padding(
                     horizontal = MaterialTheme.spacing.normal,
                     vertical = MaterialTheme.spacing.small,
@@ -74,7 +72,7 @@ fun EventItem(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.Start
             ) {
-                HeadlineSmallText(
+                TitleMediumText(
                     modifier = Modifier.padding(
                         start = MaterialTheme.spacing.normal,
                         end = MaterialTheme.spacing.normal,
@@ -82,7 +80,7 @@ fun EventItem(
                     ),
                     text = title, color = contentColor
                 )
-                TitleMediumText(
+                TitleSmallText(
                     modifier = Modifier.padding(
                         start = MaterialTheme.spacing.normal,
                         bottom = MaterialTheme.spacing.small
@@ -99,7 +97,7 @@ fun EventItem(
 @SmallPhonePreview
 @Composable
 private fun SmallPhonePreview() {
-    CalendarAppTheme(styleType = StyleType.SPRING) {
+    CalendarAppTheme(styleType = StyleType.SUMMER) {
         EventItem(
             modifier = Modifier.fillMaxWidth(),
             title = "Event 1",
@@ -115,7 +113,7 @@ private fun SmallPhonePreview() {
 @MediumPhonePreview
 @Composable
 private fun MediumPhonePreview() {
-    CalendarAppTheme(styleType = StyleType.SPRING) {
+    CalendarAppTheme(styleType = StyleType.WINTER) {
         EventItem(
             modifier = Modifier.fillMaxWidth(),
             title = "Event 2",
@@ -131,7 +129,7 @@ private fun MediumPhonePreview() {
 @BigPhonePreview
 @Composable
 private fun BigPhonePreview() {
-    CalendarAppTheme(styleType = StyleType.SPRING) {
+    CalendarAppTheme(styleType = StyleType.SPRING, darkTheme = true) {
         EventItem(
             modifier = Modifier.fillMaxWidth(),
             title = "Event 3",
