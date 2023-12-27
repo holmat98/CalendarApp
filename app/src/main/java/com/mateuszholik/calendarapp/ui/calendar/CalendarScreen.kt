@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -113,6 +114,7 @@ fun CalendarScreen(
             topBarContainerColor = MaterialTheme.colorScheme.secondary,
             topBarContentColor = MaterialTheme.colorScheme.onSecondary
         ),
+        topAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
         snackbarHost = { SnackbarHost(snackBarHostState) },
         actions = {
             CommonIconButton(
