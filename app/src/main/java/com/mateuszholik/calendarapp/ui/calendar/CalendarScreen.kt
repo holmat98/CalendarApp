@@ -50,7 +50,9 @@ import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAc
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.EventClicked
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.SelectedDateChanged
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.ProfileClicked
+import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction.RefreshScreen
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
+import com.mateuszholik.calendarapp.ui.observers.ObserveResumeLifecycleState
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.CURRENT_DATE
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.DAYS_WITH_EVENTS
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENTS
@@ -90,6 +92,10 @@ fun CalendarScreen(
     val coroutineScope = rememberCoroutineScope()
 
     ChangeSystemBarColors(areIconsDark = isSystemInDarkTheme())
+
+    ObserveResumeLifecycleState {
+        viewModel.performUserAction(RefreshScreen)
+    }
 
     ObserveAsEvents(viewModel.uiEvent) { event ->
         when (event) {

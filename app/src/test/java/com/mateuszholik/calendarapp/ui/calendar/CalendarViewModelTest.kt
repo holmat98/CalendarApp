@@ -60,8 +60,18 @@ internal class CalendarViewModelTest {
     }
 
     @Test
-    fun `After creating CalendarViewModel uiState initial values are set to CalendarInfo`() =
+    fun `After creating CalendarViewModel uiState initial value are set to Loading`() =
         runTest {
+            assertThat(viewModel.uiState.value).isEqualTo(
+                CalendarUiState.Loading
+            )
+        }
+
+    @Test
+    fun `After creating CalendarViewModel and calling RefreshScreen user action uiState value is equal to CalendarInfo`() =
+        runTest {
+            viewModel.performUserAction(CalendarUserAction.RefreshScreen)
+
             assertThat(viewModel.uiState.value).isEqualTo(
                 CalendarUiState.CalendarInfo(
                     currentDate = CURRENT_DATE,
@@ -79,6 +89,7 @@ internal class CalendarViewModelTest {
     @Test
     fun `When SelectedDateChanged user action is performed uiState emits new value`() =
         runTest {
+            viewModel.performUserAction(CalendarUserAction.RefreshScreen)
             coEvery { getEventsForDayUseCase(NEW_DATE) } returns EVENTS
 
             viewModel.performUserAction(CalendarUserAction.SelectedDateChanged(NEW_DATE))
@@ -98,6 +109,7 @@ internal class CalendarViewModelTest {
     @Test
     fun `When SelectedDateChanged user action is performed and error occurred then uiEvent emits Error value`() =
         runTest {
+            viewModel.performUserAction(CalendarUserAction.RefreshScreen)
             coEvery { getEventsForDayUseCase(NEW_DATE) } throws Exception("Something went wrong")
 
             viewModel.uiEvent.test {
@@ -114,6 +126,7 @@ internal class CalendarViewModelTest {
     @Test
     fun `When CurrentMonthChanged user action is performed uiState emits new value`() =
         runTest {
+            viewModel.performUserAction(CalendarUserAction.RefreshScreen)
             coEvery { getDaysWithEventsForMonthUseCase(NEW_MONTH) } returns DAYS_WITH_EVENTS
 
             viewModel.performUserAction(CalendarUserAction.CurrentMonthChanged(NEW_MONTH))
@@ -133,6 +146,7 @@ internal class CalendarViewModelTest {
     @Test
     fun `When CurrentMonthChanged user action is performed and error occurred then uiEvent emits Error value`() =
         runTest {
+            viewModel.performUserAction(CalendarUserAction.RefreshScreen)
             coEvery { getDaysWithEventsForMonthUseCase(NEW_MONTH) } throws Exception("Something went wrong")
 
             viewModel.uiEvent.test {
