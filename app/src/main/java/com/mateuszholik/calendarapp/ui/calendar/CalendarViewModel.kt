@@ -53,41 +53,20 @@ class CalendarViewModel @Inject constructor(
         }
     }
 
-    init {
-        setInitialUiState()
-    }
-
     override fun performUserAction(action: CalendarUserAction) {
         when (action) {
             is CalendarUserAction.SelectedDateChanged ->
                 handleSelectedDateChangedAction(action.newDate)
             is CalendarUserAction.CurrentMonthChanged ->
                 handleCurrentMonthChangedAction(action.newMonth)
+            is CalendarUserAction.RefreshScreen ->
+                handleRefreshScreenAction()
             is CalendarUserAction.EventClicked ->
                 handleEventClickedAction(action.eventId)
             is CalendarUserAction.AddEventClicked ->
                 handleAddEventClickedAction()
             is CalendarUserAction.ProfileClicked ->
                 handleCalendarProfilesClicked()
-        }
-    }
-
-    private fun setInitialUiState() {
-        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
-            val currentDate = currentDateProvider.provide()
-            val currentMonth = currentDate.toYearMonth()
-
-            val daysWithEvents = getDaysWithEventsForMonthUseCase(currentMonth)
-            val events = getEventsForDayUseCase(currentDate)
-
-            _uiState.emit(
-                CalendarUiState.CalendarInfo(
-                    currentDate = currentDate,
-                    currentMonth = currentMonth,
-                    events = events,
-                    daysWithEvents = daysWithEvents
-                )
-            )
         }
     }
 
@@ -121,6 +100,20 @@ class CalendarViewModel @Inject constructor(
         }
     }
 
+    private fun handleRefreshScreenAction() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiState.update {
+                if (it is CalendarUiState.Loading) {
+                    getInitialUiState()
+                } else {
+                    val calendarInfo = it as CalendarUiState.CalendarInfo
+
+                    getUpdatedUiState(calendarInfo.currentMonth, calendarInfo.currentDate)
+                }
+            }
+        }
+    }
+
     private fun handleEventClickedAction(eventId: Long) {
         viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             _uiEvent.emit(CalendarUiEvent.NavigateToEvent(eventId))
@@ -137,6 +130,36 @@ class CalendarViewModel @Inject constructor(
         viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             _uiEvent.emit(CalendarUiEvent.NavigateToCalendarsSelection)
         }
+    }
+
+    private suspend fun getInitialUiState(): CalendarUiState {
+        val currentDate = currentDateProvider.provide()
+        val currentMonth = currentDate.toYearMonth()
+
+        val daysWithEvents = getDaysWithEventsForMonthUseCase(currentMonth)
+        val events = getEventsForDayUseCase(currentDate)
+
+        return CalendarUiState.CalendarInfo(
+            currentDate = currentDate,
+            currentMonth = currentMonth,
+            events = events,
+            daysWithEvents = daysWithEvents
+        )
+    }
+
+    private suspend fun getUpdatedUiState(
+        currentMonth: YearMonth,
+        currentDate: LocalDate,
+    ): CalendarUiState {
+        val daysWithEvents = getDaysWithEventsForMonthUseCase(currentMonth)
+        val events = getEventsForDayUseCase(currentDate)
+
+        return CalendarUiState.CalendarInfo(
+            currentDate = currentDate,
+            currentMonth = currentMonth,
+            events = events,
+            daysWithEvents = daysWithEvents
+        )
     }
 
     sealed class CalendarUiState : UiState {
@@ -167,6 +190,8 @@ class CalendarViewModel @Inject constructor(
         data class SelectedDateChanged(val newDate: LocalDate) : CalendarUserAction()
 
         data class CurrentMonthChanged(val newMonth: YearMonth) : CalendarUserAction()
+
+        data object RefreshScreen : CalendarUserAction()
 
         data class EventClicked(val eventId: Long) : CalendarUserAction()
 
