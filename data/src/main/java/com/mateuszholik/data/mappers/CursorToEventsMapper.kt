@@ -14,14 +14,14 @@ import com.mateuszholik.data.mappers.base.Mapper
 import com.mateuszholik.data.repositories.models.Event
 import javax.inject.Inject
 
-internal interface CursorToEventsMapper : Mapper<Cursor, List<Event>>
+internal interface CursorToEventsMapper : Mapper<List<Event>>
 
 internal class CursorToEventsMapperImpl @Inject constructor() : CursorToEventsMapper {
 
-    override suspend fun map(param: Cursor): List<Event> =
-        List(param.count) {
-            param.moveToPosition(it)
-            param.toEvent()
+    override suspend fun map(cursor: Cursor): List<Event> =
+        List(cursor.count) {
+            cursor.moveToPosition(it)
+            cursor.toEvent()
         }.distinct()
 
     private fun Cursor.toEvent(): Event {
