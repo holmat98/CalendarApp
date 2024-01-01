@@ -19,6 +19,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommonScaffold(
+    modifier: Modifier = Modifier,
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     title: @Composable () -> Unit = {},
@@ -26,7 +27,6 @@ fun CommonScaffold(
     snackbarHost: @Composable () -> Unit = {},
     floatingActionButton: @Composable () -> Unit = {},
     floatingActionButtonPosition: FabPosition = FabPosition.End,
-    modifier: Modifier = Modifier,
     colors: CommonScaffoldColors = CommonScaffoldDefaults.colors(),
     content: @Composable (PaddingValues) -> Unit,
 ) {
@@ -39,7 +39,7 @@ fun CommonScaffold(
                 title = title,
                 actions = actions,
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = colors.containerColor,
+                    containerColor = colors.topBarContainerColor,
                     navigationIconContentColor = colors.topBarContentColor,
                     titleContentColor = colors.topBarContentColor,
                     actionIconContentColor = colors.topBarContentColor,

@@ -169,7 +169,7 @@ private fun Content(
             .fillMaxSize()
     ) {
         item {
-            HeadlineLargeText(textResId = R.string.calendar_profile_header,)
+            HeadlineLargeText(textResId = R.string.calendar_selection_header,)
         }
 
         calendars.forEach { (accountName, calendars) ->

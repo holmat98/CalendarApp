@@ -7,9 +7,16 @@
     <string name="calendar_permission_screen_rationale_message">This permission is required for this application to read, delete, add or update your calendar events. Without that you CAN NOT go further.</string>
     <string name="calendar_permission_screen_settings_title">Grant permission in the system settings</string>
     <string name="calendar_permission_screen_settings_message">This permission is required for this application to read, delete, add or update your calendar events. Without that you can not go further. Press the button and grant permission in the SYSTEM SETTINGS.</string>
+    <string name="calendar_selection_header">Select calendars</string>
     <string name="calendar_screen_no_events_title">No events found</string>
     <string name="calendar_screen_no_events_message">You don\'t have any scheduled events today</string>
     <string name="error_unknown_text">Something went wrong</string>
+    <string name="event_details_alerts">Alerts</string>
+    <plurals name="event_details_guests">
+        <item quantity="one">%1$s guest</item>
+        <item quantity="other">%1$s guests</item>
+    </plurals>
+    <string name="event_details_organizer">Organizer: %1$s</string>
     <string name="welcome_screen_hello_spring">Hello\nSpring!</string>
     <string name="welcome_screen_hello_summer">Hello\nSummer!</string>
     <string name="welcome_screen_hello_autumn">Hello\nAutumn!</string>
@@ -33,5 +40,4 @@
     <string name="welcome_screen_hello_vacation">Happy\nVacation!</string>
     <string name="welcome_screen_hello_school">Welcome\nSchool!</string>
     <string name="welcome_screen_hello_new_year">Happy\nNew Year!</string>
-    <string name="calendar_profile_header">Select calendars</string>
 </resources>

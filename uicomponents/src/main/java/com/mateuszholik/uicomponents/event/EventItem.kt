@@ -24,6 +24,7 @@ import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
+import com.mateuszholik.uicomponents.date.EventDate
 import com.mateuszholik.uicomponents.extensions.asTimeString
 import com.mateuszholik.uicomponents.text.TitleMediumText
 import com.mateuszholik.uicomponents.text.TitleSmallText
@@ -55,7 +56,8 @@ fun EventItem(
                 .padding(start = MaterialTheme.spacing.normal)
                 .size(MaterialTheme.sizing.extraTiny)
                 .background(
-                    color = color?.let { Color(it) } ?: MaterialTheme.colorScheme.secondaryContainer,
+                    color = color?.let { Color(it) }
+                        ?: MaterialTheme.colorScheme.secondaryContainer,
                     shape = CircleShape
                 )
         )
@@ -80,15 +82,16 @@ fun EventItem(
                     ),
                     text = title, color = contentColor
                 )
-                TitleSmallText(
+                EventDate(
                     modifier = Modifier.padding(
                         start = MaterialTheme.spacing.normal,
                         bottom = MaterialTheme.spacing.small
                     ),
-                    text = "${startTime.asTimeString()} - ${endTime.asTimeString()}",
-                    color = contentColor
+                    color = contentColor,
+                    startDate = startTime,
+                    endDate = endTime,
+                    allDay = false
                 )
-
             }
         }
     }
