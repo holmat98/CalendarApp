@@ -10,10 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.outlined.Face
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
@@ -46,7 +47,7 @@ fun AttendeeItem(
     ) {
         Box(
             modifier = Modifier
-                .size(MaterialTheme.sizing.small)
+                .size(MaterialTheme.sizing.normal)
                 .background(
                     color = MaterialTheme.colorScheme.tertiaryContainer,
                     shape = CircleShape,
@@ -63,15 +64,18 @@ fun AttendeeItem(
                 modifier = Modifier
                     .size(MaterialTheme.sizing.tiny)
                     .background(
-                        color = status.toContainerColor(),
+                        color = MaterialTheme.colorScheme.tertiaryContainer,
                         shape = CircleShape,
                     )
                     .align(alignment = Alignment.BottomEnd)
             ) {
                 Icon(
+                    modifier = Modifier
+                        .padding(1.dp)
+                        .fillMaxSize(),
                     imageVector = status.toIcon(),
                     contentDescription = null,
-                    tint = status.toContentColor()
+                    tint = status.toColor()
                 )
             }
         }
@@ -88,31 +92,20 @@ private fun Status.toIcon(): ImageVector =
     when (this) {
         Status.TENTATIVE,
         Status.INVITED,
-        Status.NONE -> Icons.Outlined.Info
-        Status.ACCEPTED -> Icons.Default.Done
-        Status.DECLINED -> Icons.Default.Close
+        Status.NONE -> Icons.Filled.Info
+        Status.ACCEPTED -> Icons.Filled.CheckCircle
+        Status.DECLINED -> Icons.Filled.Close
     }
 
 @Composable
 @ReadOnlyComposable
-private fun Status.toContainerColor(): Color =
+private fun Status.toColor(): Color =
     when (this) {
         Status.TENTATIVE,
         Status.NONE -> MaterialTheme.colorScheme.surfaceVariant
         Status.ACCEPTED -> Color(0xFF3EF7B1)
         Status.DECLINED -> MaterialTheme.colorScheme.error
-        Status.INVITED -> Color(0xFFF7E63E)
-    }
-
-@Composable
-@ReadOnlyComposable
-private fun Status.toContentColor(): Color =
-    when (this) {
-        Status.TENTATIVE,
-        Status.NONE -> MaterialTheme.colorScheme.onSurfaceVariant
-        Status.ACCEPTED -> Color(0xFF28A072)
-        Status.DECLINED -> MaterialTheme.colorScheme.onError
-        Status.INVITED -> Color(0xFFA09428)
+        Status.INVITED -> Color(0xFFE2D339)
     }
 
 enum class Status {

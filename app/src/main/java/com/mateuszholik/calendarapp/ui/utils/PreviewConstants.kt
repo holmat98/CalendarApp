@@ -1,7 +1,16 @@
 package com.mateuszholik.calendarapp.ui.utils
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import com.mateuszholik.domain.models.Alert
+import com.mateuszholik.domain.models.Attendee
+import com.mateuszholik.domain.models.AttendeeStatus
+import com.mateuszholik.domain.models.Availability
 import com.mateuszholik.domain.models.Calendar
+import com.mateuszholik.domain.models.Description
 import com.mateuszholik.domain.models.Event
+import com.mateuszholik.domain.models.EventDetails
+import com.mateuszholik.domain.models.GoogleMeet
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -68,5 +77,47 @@ internal object PreviewConstants {
     val CALENDARS = mapOf(
         "Account 1" to listOf(CALENDAR_1, CALENDAR_2),
         "Account 2" to listOf(CALENDAR_3, CALENDAR_4),
+    )
+    val EVENT_DETAILS = EventDetails(
+        id = 1L,
+        title = "Event title",
+        description = GoogleMeet(
+            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mollis erat in libero posuere mattis. Aenean dapibus risus consequat, faucibus est at, vestibulum ipsum. Phasellus a elit id nisl euismod rhoncus. Aenean accumsan eget ante et dignissim. Proin non purus vel lacus facilisis facilisis.",
+            originalDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mollis erat in libero posuere mattis. Aenean dapibus risus consequat, faucibus est at, vestibulum ipsum. Phasellus a elit id nisl euismod rhoncus. Aenean accumsan eget ante et dignissim. Proin non purus vel lacus facilisis facilisis.",
+            meetingUrl = "https://meet.google.com",
+            otherUrls = listOf(
+                "https://www.youtube.com",
+                "https://www.facebook.com"
+            )
+        ),
+        alerts = listOf(Alert("30")),
+        allDay = false,
+        dateStart = LocalDateTime.of(2023, 12, 31, 12, 0, 0),
+        dateEnd = LocalDateTime.of(2023, 12, 31, 13, 30, 0),
+        attendees = listOf(
+            Attendee(
+                1,
+                name = "Attendee 1",
+                email = "email",
+                status = AttendeeStatus.ACCEPTED
+            ),
+            Attendee(
+                2,
+                name = "Attendee 2",
+                email = "email",
+                status = AttendeeStatus.DECLINED
+            ),
+            Attendee(
+                3,
+                name = "Attendee 3",
+                email = "email",
+                status = AttendeeStatus.INVITED
+            ),
+        ),
+        availability = Availability.FREE,
+        canModify = true,
+        eventColor = Color.Green.toArgb(),
+        location = "Zabrze",
+        organizer = "Organizer",
     )
 }

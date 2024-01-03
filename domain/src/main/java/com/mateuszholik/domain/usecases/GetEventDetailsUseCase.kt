@@ -1,5 +1,6 @@
 package com.mateuszholik.domain.usecases
 
+import android.util.Log
 import com.mateuszholik.data.repositories.AlertRepository
 import com.mateuszholik.data.repositories.AttendeesRepository
 import com.mateuszholik.data.repositories.EventsRepository
@@ -36,6 +37,8 @@ internal class GetEventDetailsUseCaseImpl @Inject constructor(
         } else {
             emptyList()
         }
+
+        Log.d("Testowanie", event?.description.orEmpty())
 
         return event.asResult {
             this.toCommonModel(

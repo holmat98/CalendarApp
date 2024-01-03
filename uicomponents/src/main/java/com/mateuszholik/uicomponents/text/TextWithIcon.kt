@@ -3,6 +3,7 @@ package com.mateuszholik.uicomponents.text
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Icon
@@ -17,6 +18,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
+import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
 
 @Composable
@@ -31,7 +33,9 @@ fun TextWithIcon(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            modifier = Modifier.padding(end = MaterialTheme.spacing.normal),
+            modifier = Modifier
+                .padding(end = MaterialTheme.spacing.normal)
+                .size(MaterialTheme.sizing.small),
             imageVector = icon,
             contentDescription = null,
             tint = contentColor,

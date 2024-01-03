@@ -1,5 +1,8 @@
 package com.mateuszholik.calendarapp.ui.eventdetails
 
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +12,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.outlined.Call
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Person
@@ -20,20 +25,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.DeleteEvent
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.EnterEditMode
+import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS
 import com.mateuszholik.designsystem.CalendarAppTheme
+import com.mateuszholik.designsystem.ChangeSystemBarColors
 import com.mateuszholik.designsystem.models.StyleType
+import com.mateuszholik.designsystem.previews.BigPhonePreview
+import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.spacing
-import com.mateuszholik.domain.models.Alert
-import com.mateuszholik.domain.models.Attendee
-import com.mateuszholik.domain.models.AttendeeStatus
-import com.mateuszholik.domain.models.Availability
 import com.mateuszholik.domain.models.EventDetails
+import com.mateuszholik.domain.models.GoogleMeet
 import com.mateuszholik.uicomponents.Section
 import com.mateuszholik.uicomponents.attendee.AttendeeItem
 import com.mateuszholik.uicomponents.attendee.Status
@@ -45,15 +54,24 @@ import com.mateuszholik.uicomponents.text.TextWithIcon
 import com.mateuszholik.uicomponents.text.TitleLargeText
 import com.mateuszholik.uicomponents.text.TitleMediumText
 import com.mateuszholik.uicomponents.text.TitleSmallText
-import java.time.LocalDateTime
 
 @Composable
 fun EventDetailsScreen(
     onBackPressed: () -> Unit,
     viewModel: EventDetailsViewModel = hiltViewModel(),
 ) {
-
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    ChangeSystemBarColors()
+
+    if (uiState is EventDetailsViewModel.EventDetailsUiState.ViewMode) {
+        ViewModeContent(
+            eventDetails = (uiState as EventDetailsViewModel.EventDetailsUiState.ViewMode).eventDetails,
+            onBackPressed = onBackPressed,
+            onEditPressed = { viewModel.performUserAction(EnterEditMode) },
+            onDeletePressed = { viewModel.performUserAction(DeleteEvent) }
+        )
+    }
 
     /*when (uiState) {
         is EventDetailsViewModel.EventDetailsUiState.EditMode -> TODO()
@@ -71,6 +89,8 @@ fun ViewModeContent(
     onEditPressed: () -> Unit,
     onDeletePressed: () -> Unit,
 ) {
+    val context = LocalContext.current
+
     CommonScaffold(
         navigationIcon = {
             CommonIconButton(imageVector = Icons.Default.Close, onClick = onBackPressed)
@@ -78,8 +98,8 @@ fun ViewModeContent(
         actions = {
             if (eventDetails.canModify) {
                 CommonIconButton(imageVector = Icons.Default.Edit, onClick = onEditPressed)
+                CommonIconButton(imageVector = Icons.Default.Delete, onClick = onDeletePressed)
             }
-            CommonIconButton(imageVector = Icons.Default.Delete, onClick = onDeletePressed)
         },
         colors = CommonScaffoldDefaults.colors(
             topBarContainerColor = eventDetails.eventColor?.let { Color(it) }
@@ -101,9 +121,40 @@ fun ViewModeContent(
         ) {
             item { TitleLargeText(text = eventDetails.title) }
 
-            eventDetails.description?.let { description ->
+            if (eventDetails.description.description.isNotEmpty()) {
                 item {
-                    TitleMediumText(text = description)
+                    TitleMediumText(text = eventDetails.description.description)
+                }
+
+                if (eventDetails.description is GoogleMeet) {
+                    val googleMeetDescription = eventDetails.description as GoogleMeet
+
+                    item {
+                        TextWithIcon(
+                            modifier = Modifier.clickable {
+                                context.startActivity(getUrlIntent(googleMeetDescription.meetingUrl))
+                            },
+                            text = stringResource(R.string.event_details_join_in_google_meets),
+                            icon = Icons.Outlined.Call
+                        )
+                    }
+
+                    if (googleMeetDescription.otherUrls.isNotEmpty()) {
+                        item {
+                            Section(
+                                sectionIcon = Icons.Outlined.Info,
+                                sectionTitle = stringResource(R.string.event_details_urls),
+                                items = googleMeetDescription.otherUrls
+                            ) { url ->
+                                TitleSmallText(
+                                    modifier = Modifier
+                                        .padding(top = MaterialTheme.spacing.small)
+                                        .clickable { context.startActivity(getUrlIntent(url)) },
+                                    text = url
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
@@ -117,10 +168,10 @@ fun ViewModeContent(
                 Divider()
             }
 
-            eventDetails.location?.let { location ->
+            if (eventDetails.location.isNotEmpty()) {
                 item {
                     TextWithIcon(
-                        text = location,
+                        text = eventDetails.location,
                         icon = Icons.Outlined.LocationOn
                     )
                 }
@@ -135,17 +186,27 @@ fun ViewModeContent(
                     ) { alert ->
                         TitleMediumText(
                             modifier = Modifier.padding(top = MaterialTheme.spacing.small),
-                            text = alert.minutesBefore
+                            text = pluralStringResource(
+                                id = R.plurals.event_details_alert_minutes_before,
+                                count = alert.minutesBefore.toInt(),
+                                alert.minutesBefore
+                            )
                         )
                     }
                 }
             }
 
             item {
-                TextWithIcon(
-                    text = stringResource(R.string.event_details_organizer, eventDetails.organizer),
-                    icon = Icons.Outlined.Person
-                )
+                Section(
+                    sectionIcon = Icons.Outlined.Person,
+                    sectionTitle = stringResource(R.string.event_details_organizer),
+                    items = listOf(eventDetails.organizer)
+                ) { organizer ->
+                    TitleMediumText(
+                        modifier = Modifier.padding(top = MaterialTheme.spacing.small),
+                        text = organizer
+                    )
+                }
             }
 
             if (eventDetails.attendees.isNotEmpty()) {
@@ -161,7 +222,7 @@ fun ViewModeContent(
                     ) { attendee ->
                         AttendeeItem(
                             modifier = Modifier.padding(top = MaterialTheme.spacing.small),
-                            name = attendee.name,
+                            name = attendee.email,
                             status = Status.valueOf(attendee.status.name)
                         )
                     }
@@ -171,45 +232,43 @@ fun ViewModeContent(
     }
 }
 
+private fun getUrlIntent(url: String): Intent =
+    Intent(Intent.ACTION_VIEW).apply {
+        data = Uri.parse(url)
+    }
+
 @SmallPhonePreview
 @Composable
 private fun ViewModePreview() {
     CalendarAppTheme(styleType = StyleType.WINTER) {
         ViewModeContent(
-            eventDetails = EventDetails(
-                id = 1L,
-                title = "Event title",
-                description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mollis erat in libero posuere mattis. Aenean dapibus risus consequat, faucibus est at, vestibulum ipsum. Phasellus a elit id nisl euismod rhoncus. Aenean accumsan eget ante et dignissim. Proin non purus vel lacus facilisis facilisis.",
-                alerts = listOf(Alert("30")),
-                allDay = false,
-                dateStart = LocalDateTime.of(2023, 12, 31, 12, 0, 0),
-                dateEnd = LocalDateTime.of(2023, 12, 31, 13, 30, 0),
-                attendees = listOf(
-                    Attendee(
-                        1,
-                        name = "Attendee 1",
-                        email = "email",
-                        status = AttendeeStatus.ACCEPTED
-                    ),
-                    Attendee(
-                        2,
-                        name = "Attendee 2",
-                        email = "email",
-                        status = AttendeeStatus.DECLINED
-                    ),
-                    Attendee(
-                        3,
-                        name = "Attendee 3",
-                        email = "email",
-                        status = AttendeeStatus.INVITED
-                    ),
-                ),
-                availability = Availability.FREE,
-                canModify = true,
-                eventColor = Color.Green.toArgb(),
-                location = "Zabrze",
-                organizer = "Organizer",
-            ),
+            eventDetails = EVENT_DETAILS,
+            onBackPressed = {},
+            onEditPressed = {},
+            onDeletePressed = {}
+        )
+    }
+}
+
+@MediumPhonePreview
+@Composable
+private fun ViewModePreview2() {
+    CalendarAppTheme(styleType = StyleType.SPRING) {
+        ViewModeContent(
+            eventDetails = EVENT_DETAILS.copy(eventColor = null),
+            onBackPressed = {},
+            onEditPressed = {},
+            onDeletePressed = {}
+        )
+    }
+}
+
+@BigPhonePreview
+@Composable
+private fun ViewModePreview3() {
+    CalendarAppTheme(styleType = StyleType.SUMMER, darkTheme = true) {
+        ViewModeContent(
+            eventDetails = EVENT_DETAILS.copy(eventColor = Color.Yellow.toArgb(), canModify = false),
             onBackPressed = {},
             onEditPressed = {},
             onDeletePressed = {}

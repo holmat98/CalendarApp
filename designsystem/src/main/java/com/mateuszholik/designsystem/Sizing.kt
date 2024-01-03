@@ -17,7 +17,7 @@ enum class Sizing(
 ) {
     SMALL(
         extraTiny = 5.dp,
-        tiny = 10.dp,
+        tiny = 15.dp,
         small = 20.dp,
         normal = 30.dp,
         big = 60.dp,
@@ -25,7 +25,7 @@ enum class Sizing(
     ),
     MEDIUM(
         extraTiny = 7.dp,
-        tiny = 13.dp,
+        tiny = 18.dp,
         small = 26.dp,
         normal = 40.dp,
         big = 80.dp,
@@ -33,7 +33,7 @@ enum class Sizing(
     ),
     BIG(
         extraTiny = 10.dp,
-        tiny = 20.dp,
+        tiny = 30.dp,
         small = 40.dp,
         normal = 60.dp,
         big = 120.dp,
