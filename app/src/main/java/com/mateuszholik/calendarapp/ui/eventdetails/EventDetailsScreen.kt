@@ -43,7 +43,7 @@ import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.domain.models.EventDetails
 import com.mateuszholik.domain.models.GoogleMeet
-import com.mateuszholik.uicomponents.Section
+import com.mateuszholik.uicomponents.section.Section
 import com.mateuszholik.uicomponents.attendee.AttendeeItem
 import com.mateuszholik.uicomponents.attendee.Status
 import com.mateuszholik.uicomponents.buttons.CommonIconButton
@@ -118,6 +118,7 @@ fun ViewModeContent(
                 )
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.normal),
+            contentPadding = PaddingValues(vertical = MaterialTheme.spacing.normal)
         ) {
             item { TitleLargeText(text = eventDetails.title) }
 
@@ -171,6 +172,11 @@ fun ViewModeContent(
             if (eventDetails.location.isNotEmpty()) {
                 item {
                     TextWithIcon(
+                        modifier = Modifier.clickable {
+                            context.startActivity(
+                                getMapsIntent(eventDetails.location)
+                            )
+                        },
                         text = eventDetails.location,
                         icon = Icons.Outlined.LocationOn
                     )
@@ -237,6 +243,11 @@ private fun getUrlIntent(url: String): Intent =
         data = Uri.parse(url)
     }
 
+private fun getMapsIntent(location: String): Intent =
+    Intent(Intent.ACTION_VIEW).apply {
+        data = Uri.parse("http://maps.google.co.in/maps?q=$location")
+    }
+
 @SmallPhonePreview
 @Composable
 private fun ViewModePreview() {
@@ -268,7 +279,10 @@ private fun ViewModePreview2() {
 private fun ViewModePreview3() {
     CalendarAppTheme(styleType = StyleType.SUMMER, darkTheme = true) {
         ViewModeContent(
-            eventDetails = EVENT_DETAILS.copy(eventColor = Color.Yellow.toArgb(), canModify = false),
+            eventDetails = EVENT_DETAILS.copy(
+                eventColor = Color.Yellow.toArgb(),
+                canModify = false
+            ),
             onBackPressed = {},
             onEditPressed = {},
             onDeletePressed = {}

@@ -1,4 +1,4 @@
-package com.mateuszholik.uicomponents
+package com.mateuszholik.uicomponents.section
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,7 +33,7 @@ fun <T> Section(
         Icon(
             modifier = Modifier
                 .padding(
-                    top = 3.dp,
+                    top = MaterialTheme.spacing.tiny,
                     end = MaterialTheme.spacing.normal
                 )
                 .size(MaterialTheme.sizing.small),
