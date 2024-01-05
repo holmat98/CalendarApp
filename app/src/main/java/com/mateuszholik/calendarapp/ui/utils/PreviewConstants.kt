@@ -10,6 +10,7 @@ import com.mateuszholik.domain.models.Calendar
 import com.mateuszholik.domain.models.Description
 import com.mateuszholik.domain.models.Event
 import com.mateuszholik.domain.models.EventDetails
+import com.mateuszholik.domain.models.Generic
 import com.mateuszholik.domain.models.GoogleMeet
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -119,5 +120,13 @@ internal object PreviewConstants {
         eventColor = Color.Green.toArgb(),
         location = "Zabrze",
         organizer = "Organizer",
+    )
+    val EVENT_DETAILS_GENERIC_DESCRIPTION = EVENT_DETAILS.copy(
+        description = Generic(
+            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mollis erat in libero posuere mattis. Aenean dapibus risus consequat, faucibus est at, vestibulum ipsum. Phasellus a elit id nisl euismod rhoncus. Aenean accumsan eget ante et dignissim. Proin non purus vel lacus facilisis facilisis."
+        )
+    )
+    val EVENT_DETAILS_EMPTY_DESCRIPTION = EVENT_DETAILS.copy(
+        description = Generic("")
     )
 }

@@ -6,14 +6,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.outlined.Call
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Person
@@ -34,6 +33,8 @@ import com.mateuszholik.calendarapp.R
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.DeleteEvent
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.EnterEditMode
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS
+import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS_EMPTY_DESCRIPTION
+import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS_GENERIC_DESCRIPTION
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.ChangeSystemBarColors
 import com.mateuszholik.designsystem.models.StyleType
@@ -42,18 +43,19 @@ import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.domain.models.EventDetails
+import com.mateuszholik.domain.models.Generic
 import com.mateuszholik.domain.models.GoogleMeet
 import com.mateuszholik.uicomponents.section.Section
 import com.mateuszholik.uicomponents.attendee.AttendeeItem
 import com.mateuszholik.uicomponents.attendee.Status
 import com.mateuszholik.uicomponents.buttons.CommonIconButton
-import com.mateuszholik.uicomponents.date.EventDate
+import com.mateuszholik.uicomponents.cards.CardWithImage
+import com.mateuszholik.uicomponents.cards.EventCard
+import com.mateuszholik.uicomponents.cards.EventWithMeetingCard
 import com.mateuszholik.uicomponents.scaffold.CommonScaffold
 import com.mateuszholik.uicomponents.scaffold.CommonScaffoldDefaults
 import com.mateuszholik.uicomponents.text.TextWithIcon
-import com.mateuszholik.uicomponents.text.TitleLargeText
 import com.mateuszholik.uicomponents.text.TitleMediumText
-import com.mateuszholik.uicomponents.text.TitleSmallText
 
 @Composable
 fun EventDetailsScreen(
@@ -120,68 +122,55 @@ fun ViewModeContent(
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.normal),
             contentPadding = PaddingValues(vertical = MaterialTheme.spacing.normal)
         ) {
-            item { TitleLargeText(text = eventDetails.title) }
-
-            if (eventDetails.description.description.isNotEmpty()) {
-                item {
-                    TitleMediumText(text = eventDetails.description.description)
+            when (eventDetails.description) {
+                is Generic -> {
+                    item {
+                        EventCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            title = eventDetails.title,
+                            description = eventDetails.description.description,
+                            eventStart = eventDetails.dateStart,
+                            eventEnd = eventDetails.dateEnd,
+                            allDay = eventDetails.allDay,
+                        )
+                    }
                 }
-
-                if (eventDetails.description is GoogleMeet) {
+                is GoogleMeet -> {
                     val googleMeetDescription = eventDetails.description as GoogleMeet
 
                     item {
-                        TextWithIcon(
-                            modifier = Modifier.clickable {
+                        EventWithMeetingCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            title = eventDetails.title,
+                            description = eventDetails.description.description,
+                            eventStart = eventDetails.dateStart,
+                            eventEnd = eventDetails.dateEnd,
+                            allDay = eventDetails.allDay,
+                            joinMeetingButtonText = stringResource(R.string.event_details_join_in_google_meets),
+                            onJoinMeetingButtonClick = {
                                 context.startActivity(getUrlIntent(googleMeetDescription.meetingUrl))
-                            },
-                            text = stringResource(R.string.event_details_join_in_google_meets),
-                            icon = Icons.Outlined.Call
+                            }
                         )
                     }
-
-                    if (googleMeetDescription.otherUrls.isNotEmpty()) {
-                        item {
-                            Section(
-                                sectionIcon = Icons.Outlined.Info,
-                                sectionTitle = stringResource(R.string.event_details_urls),
-                                items = googleMeetDescription.otherUrls
-                            ) { url ->
-                                TitleSmallText(
-                                    modifier = Modifier
-                                        .padding(top = MaterialTheme.spacing.small)
-                                        .clickable { context.startActivity(getUrlIntent(url)) },
-                                    text = url
-                                )
-                            }
-                        }
-                    }
                 }
-            }
-
-            item {
-                EventDate(
-                    modifier = Modifier.padding(bottom = MaterialTheme.spacing.normal),
-                    startDate = eventDetails.dateStart,
-                    endDate = eventDetails.dateEnd,
-                    allDay = eventDetails.allDay,
-                )
-                Divider()
             }
 
             if (eventDetails.location.isNotEmpty()) {
                 item {
-                    TextWithIcon(
+                    CardWithImage(
                         modifier = Modifier.clickable {
                             context.startActivity(
                                 getMapsIntent(eventDetails.location)
                             )
                         },
                         text = eventDetails.location,
-                        icon = Icons.Outlined.LocationOn
+                        image = R.drawable.location_background,
+                        smallIcon = Icons.Outlined.LocationOn
                     )
                 }
             }
+
+            item { Divider() }
 
             if (eventDetails.alerts.isNotEmpty()) {
                 item {
@@ -274,12 +263,25 @@ private fun ViewModePreview2() {
     }
 }
 
-@BigPhonePreview
+@MediumPhonePreview
 @Composable
 private fun ViewModePreview3() {
+    CalendarAppTheme(styleType = StyleType.WINTER) {
+        ViewModeContent(
+            eventDetails = EVENT_DETAILS_GENERIC_DESCRIPTION.copy(eventColor = null),
+            onBackPressed = {},
+            onEditPressed = {},
+            onDeletePressed = {}
+        )
+    }
+}
+
+@BigPhonePreview
+@Composable
+private fun ViewModePreview4() {
     CalendarAppTheme(styleType = StyleType.SUMMER, darkTheme = true) {
         ViewModeContent(
-            eventDetails = EVENT_DETAILS.copy(
+            eventDetails = EVENT_DETAILS_EMPTY_DESCRIPTION.copy(
                 eventColor = Color.Yellow.toArgb(),
                 canModify = false
             ),
