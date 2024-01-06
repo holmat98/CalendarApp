@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
@@ -39,7 +40,7 @@ fun AttendeeItem(
     name: String,
     status: Status,
     modifier: Modifier = Modifier,
-    textColor: Color = LocalContentColor.current,
+    colors: AttendeeItemColors = AttendeeItemDefaults.colors(),
 ) {
     Row(
         modifier = modifier,
@@ -49,7 +50,7 @@ fun AttendeeItem(
             modifier = Modifier
                 .size(MaterialTheme.sizing.normal)
                 .background(
-                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                    color = colors.iconContainerColor,
                     shape = CircleShape,
                 )
         ) {
@@ -57,14 +58,14 @@ fun AttendeeItem(
                 modifier = Modifier.fillMaxSize(),
                 imageVector = Icons.Outlined.Face,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onTertiaryContainer
+                tint = colors.iconContentColor
             )
 
             Box(
                 modifier = Modifier
                     .size(MaterialTheme.sizing.tiny)
                     .background(
-                        color = MaterialTheme.colorScheme.tertiaryContainer,
+                        color = colors.iconContainerColor,
                         shape = CircleShape,
                     )
                     .align(alignment = Alignment.BottomEnd)
@@ -83,9 +84,31 @@ fun AttendeeItem(
         TitleMediumText(
             modifier = Modifier.padding(start = MaterialTheme.spacing.normal),
             text = name,
-            color = textColor
+            color = colors.textColor
         )
     }
+}
+
+data class AttendeeItemColors internal constructor(
+    val iconContainerColor: Color,
+    val iconContentColor: Color,
+    val textColor: Color,
+)
+
+object AttendeeItemDefaults {
+
+    @Composable
+    @ReadOnlyComposable
+    fun colors(
+        iconContainerColor: Color = LocalContentColor.current,
+        iconContentColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+        textColor: Color = LocalContentColor.current,
+    ): AttendeeItemColors =
+        AttendeeItemColors(
+            iconContainerColor = iconContainerColor,
+            iconContentColor = iconContentColor,
+            textColor = textColor
+        )
 }
 
 private fun Status.toIcon(): ImageVector =
@@ -102,7 +125,8 @@ private fun Status.toIcon(): ImageVector =
 private fun Status.toColor(): Color =
     when (this) {
         Status.TENTATIVE,
-        Status.NONE -> MaterialTheme.colorScheme.surfaceVariant
+        Status.NONE,
+        -> MaterialTheme.colorScheme.outline
         Status.ACCEPTED -> Color(0xFF3EF7B1)
         Status.DECLINED -> MaterialTheme.colorScheme.error
         Status.INVITED -> Color(0xFFE2D339)
@@ -132,7 +156,15 @@ fun SmallPhonePreview() {
                     name = "Piotr Nowak",
                     status = Status.ACCEPTED
                 )
-                AttendeeItem(name = "Mateusz Holik", status = Status.DECLINED)
+                AttendeeItem(
+                    name = "Piotr Nowak",
+                    status = Status.TENTATIVE
+                )
+                AttendeeItem(
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.normal),
+                    name = "Mateusz Holik",
+                    status = Status.DECLINED
+                )
             }
         }
     }
@@ -154,7 +186,13 @@ fun MediumPhonePreview() {
                     name = "Piotr Nowak",
                     status = Status.ACCEPTED
                 )
-                AttendeeItem(name = "Mateusz Holik", status = Status.DECLINED)
+                AttendeeItem(
+                    name = "Piotr Nowak",
+                    status = Status.TENTATIVE
+                )
+                AttendeeItem(
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.normal),
+                    name = "Mateusz Holik", status = Status.DECLINED)
             }
         }
     }
@@ -176,7 +214,15 @@ fun MediumPhonePreviewDarkTheme() {
                     name = "Piotr Nowak",
                     status = Status.ACCEPTED
                 )
-                AttendeeItem(name = "Mateusz Holik", status = Status.DECLINED)
+                AttendeeItem(
+                    name = "Piotr Nowak",
+                    status = Status.TENTATIVE
+                )
+                AttendeeItem(
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.normal),
+                    name = "Mateusz Holik",
+                    status = Status.DECLINED
+                )
             }
         }
     }
@@ -198,7 +244,15 @@ fun BigPhonePreview() {
                     name = "Piotr Nowak",
                     status = Status.ACCEPTED
                 )
-                AttendeeItem(name = "Mateusz Holik", status = Status.DECLINED)
+                AttendeeItem(
+                    name = "Piotr Nowak",
+                    status = Status.TENTATIVE
+                )
+                AttendeeItem(
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.normal),
+                    name = "Mateusz Holik",
+                    status = Status.DECLINED
+                )
             }
         }
     }

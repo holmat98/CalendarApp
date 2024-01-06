@@ -11,18 +11,18 @@
     <string name="calendar_screen_no_events_title">No events found</string>
     <string name="calendar_screen_no_events_message">You don\'t have any scheduled events today</string>
     <string name="error_unknown_text">Something went wrong</string>
-    <string name="event_details_alerts">Alerts:</string>
+    <string name="event_details_alerts">Alerts</string>
     <plurals name="event_details_alert_minutes_before">
         <item quantity="zero">At the time of the event</item>
         <item quantity="other">%1$s minutes before</item>
     </plurals>
     <plurals name="event_details_guests">
-        <item quantity="one">%1$s guest</item>
-        <item quantity="other">%1$s guests</item>
+        <item quantity="one">%1$s Guest</item>
+        <item quantity="other">%1$s Guests</item>
     </plurals>
     <string name="event_details_join_in_google_meets">Join in Google Meets</string>
-    <string name="event_details_organizer">Organizer:</string>
-    <string name="event_details_urls">Links:</string>
+    <string name="event_details_organizer">Organizer</string>
+    <string name="event_details_urls">Other links</string>
     <string name="welcome_screen_hello_spring">Hello\nSpring!</string>
     <string name="welcome_screen_hello_summer">Hello\nSummer!</string>
     <string name="welcome_screen_hello_autumn">Hello\nAutumn!</string>

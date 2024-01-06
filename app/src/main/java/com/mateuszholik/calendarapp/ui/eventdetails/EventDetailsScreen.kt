@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,6 +14,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Person
@@ -21,12 +25,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
@@ -45,16 +51,16 @@ import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.domain.models.EventDetails
 import com.mateuszholik.domain.models.Generic
 import com.mateuszholik.domain.models.GoogleMeet
-import com.mateuszholik.uicomponents.section.Section
+import com.mateuszholik.uicomponents.cards.SectionCard
 import com.mateuszholik.uicomponents.attendee.AttendeeItem
 import com.mateuszholik.uicomponents.attendee.Status
 import com.mateuszholik.uicomponents.buttons.CommonIconButton
+import com.mateuszholik.uicomponents.buttons.CommonIconButtonDefaults
 import com.mateuszholik.uicomponents.cards.CardWithImage
 import com.mateuszholik.uicomponents.cards.EventCard
 import com.mateuszholik.uicomponents.cards.EventWithMeetingCard
 import com.mateuszholik.uicomponents.scaffold.CommonScaffold
-import com.mateuszholik.uicomponents.scaffold.CommonScaffoldDefaults
-import com.mateuszholik.uicomponents.text.TextWithIcon
+import com.mateuszholik.uicomponents.text.BodyMediumText
 import com.mateuszholik.uicomponents.text.TitleMediumText
 
 @Composable
@@ -103,10 +109,6 @@ fun ViewModeContent(
                 CommonIconButton(imageVector = Icons.Default.Delete, onClick = onDeletePressed)
             }
         },
-        colors = CommonScaffoldDefaults.colors(
-            topBarContainerColor = eventDetails.eventColor?.let { Color(it) }
-                ?: MaterialTheme.colorScheme.surface,
-        )
     ) {
         LazyColumn(
             modifier = Modifier
@@ -132,6 +134,7 @@ fun ViewModeContent(
                             eventStart = eventDetails.dateStart,
                             eventEnd = eventDetails.dateEnd,
                             allDay = eventDetails.allDay,
+                            eventColor = eventDetails.eventColor?.let { color -> Color(color) },
                         )
                     }
                 }
@@ -146,11 +149,38 @@ fun ViewModeContent(
                             eventStart = eventDetails.dateStart,
                             eventEnd = eventDetails.dateEnd,
                             allDay = eventDetails.allDay,
+                            eventColor = eventDetails.eventColor?.let { color -> Color(color) },
                             joinMeetingButtonText = stringResource(R.string.event_details_join_in_google_meets),
                             onJoinMeetingButtonClick = {
                                 context.startActivity(getUrlIntent(googleMeetDescription.meetingUrl))
                             }
                         )
+                    }
+
+                    item {
+                        SectionCard(
+                            sectionIcon = Icons.Outlined.Info,
+                            sectionTitle = stringResource(R.string.event_details_urls),
+                            items = googleMeetDescription.otherUrls,
+                        ) { url, modifier ->
+
+                            Row(
+                                modifier = modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            ) {
+                                BodyMediumText(
+                                    modifier = Modifier.weight(1f),
+                                    text = url,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                CommonIconButton(
+                                    imageVector = Icons.Default.ExitToApp,
+                                    onClick = { context.startActivity(getUrlIntent(url)) }
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -174,13 +204,13 @@ fun ViewModeContent(
 
             if (eventDetails.alerts.isNotEmpty()) {
                 item {
-                    Section(
+                    SectionCard(
                         sectionIcon = Icons.Outlined.Notifications,
                         sectionTitle = stringResource(R.string.event_details_alerts),
                         items = eventDetails.alerts
-                    ) { alert ->
+                    ) { alert, modifier ->
                         TitleMediumText(
-                            modifier = Modifier.padding(top = MaterialTheme.spacing.small),
+                            modifier = modifier,
                             text = pluralStringResource(
                                 id = R.plurals.event_details_alert_minutes_before,
                                 count = alert.minutesBefore.toInt(),
@@ -192,21 +222,18 @@ fun ViewModeContent(
             }
 
             item {
-                Section(
+                SectionCard(
                     sectionIcon = Icons.Outlined.Person,
                     sectionTitle = stringResource(R.string.event_details_organizer),
                     items = listOf(eventDetails.organizer)
-                ) { organizer ->
-                    TitleMediumText(
-                        modifier = Modifier.padding(top = MaterialTheme.spacing.small),
-                        text = organizer
-                    )
+                ) { organizer, modifier ->
+                    TitleMediumText(modifier = modifier, text = organizer)
                 }
             }
 
             if (eventDetails.attendees.isNotEmpty()) {
                 item {
-                    Section(
+                    SectionCard(
                         sectionIcon = Icons.Outlined.Person,
                         sectionTitle = pluralStringResource(
                             R.plurals.event_details_guests,
@@ -214,9 +241,9 @@ fun ViewModeContent(
                             eventDetails.attendees.size
                         ),
                         items = eventDetails.attendees
-                    ) { attendee ->
+                    ) { attendee, modifier ->
                         AttendeeItem(
-                            modifier = Modifier.padding(top = MaterialTheme.spacing.small),
+                            modifier = modifier,
                             name = attendee.email,
                             status = Status.valueOf(attendee.status.name)
                         )

@@ -1,7 +1,13 @@
 package com.mateuszholik.uicomponents.cards
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material3.Card
@@ -10,11 +16,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
 import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
+import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.uicomponents.buttons.CommonButtonDefaults
 import com.mateuszholik.uicomponents.buttons.CommonOutlinedButton
@@ -33,16 +42,30 @@ fun EventWithMeetingCard(
     joinMeetingButtonText: String,
     onJoinMeetingButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
+    eventColor: Color? = null,
 ) {
     Card(modifier = modifier) {
-        TitleLargeText(
+        Row(
             modifier = Modifier.padding(
                 top = MaterialTheme.spacing.small,
                 start = MaterialTheme.spacing.small,
                 end = MaterialTheme.spacing.small,
             ),
-            text = title
-        )
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            eventColor?.let {
+                Box(
+                    modifier = Modifier
+                        .padding(end = MaterialTheme.spacing.small)
+                        .size(MaterialTheme.sizing.small)
+                        .background(
+                            color = it,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                )
+            }
+            TitleLargeText(text = title)
+        }
         if (description.isNotEmpty()) {
             TitleMediumText(
                 modifier = Modifier.padding(
@@ -93,6 +116,7 @@ private fun SmallPhonePreview() {
                 eventStart = LocalDateTime.of(2023, 12, 31, 12, 0, 0),
                 eventEnd = LocalDateTime.of(2023, 12, 31, 13, 30, 0),
                 joinMeetingButtonText = "Join in Google Meets",
+                eventColor = Color.Yellow,
                 onJoinMeetingButtonClick = { }
             )
         }

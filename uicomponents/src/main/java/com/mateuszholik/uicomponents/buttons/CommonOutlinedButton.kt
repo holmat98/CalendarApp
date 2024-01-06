@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.spacing
+import com.mateuszholik.uicomponents.text.BodySmallText
 import com.mateuszholik.uicomponents.text.TitleMediumText
 
 @Composable
@@ -46,7 +47,7 @@ fun CommonOutlinedButton(
                 contentDescription = null
             )
         }
-        TitleMediumText(
+        BodySmallText(
             text = text,
             textAlign = TextAlign.Center,
         )
