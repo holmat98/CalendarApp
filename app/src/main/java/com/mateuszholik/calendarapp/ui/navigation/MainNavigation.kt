@@ -2,9 +2,12 @@ package com.mateuszholik.calendarapp.ui.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.mateuszholik.calendarapp.ui.calendar.CalendarScreen
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsScreen
 import com.mateuszholik.calendarapp.ui.selectcalendars.CalendarsSelectionScreen
 import com.mateuszholik.calendarapp.ui.permissions.calendar.CalendarPermissionScreen
 import com.mateuszholik.calendarapp.ui.welcome.WelcomeScreen
@@ -16,6 +19,9 @@ object MainNavigation {
     private const val CALENDAR_PERMISSIONS_SCREEN = "$ROOT/CALENDAR_PERMISSIONS_SCREEN"
     private const val CALENDAR_SCREEN = "$ROOT/CALENDAR_SCREEN"
     private const val CALENDAR_PROFILES_SCREEN = "$ROOT/CALENDAR_PROFILES_SCREEN"
+    private const val EVENT_DETAILS_SCREEN = "$ROOT/EVENT_DETAILS_SCREEN"
+
+    internal const val EVENT_ID_ARGUMENT = "EVENT_ID_KEY"
 
     fun NavGraphBuilder.mainNavigationGraph(navController: NavController) {
         navigation(startDestination = WELCOME_SCREEN, route = ROOT) {
@@ -23,6 +29,7 @@ object MainNavigation {
             calendarPermissionsScreen(navController)
             calendarScreen(navController)
             calendarsSelectionScreen(navController)
+            eventDetailsScreen(navController)
         }
     }
 
@@ -39,7 +46,7 @@ object MainNavigation {
         composable(CALENDAR_SCREEN) {
             CalendarScreen(
                 onAddEventClicked = {},
-                onEventClicked = {},
+                onEventClicked = { navController.navigateToEventDetails(it) },
                 onProfileClicked = { navController.navigateToCalendarsSelectionScreen() }
             )
         }
@@ -59,6 +66,17 @@ object MainNavigation {
         }
     }
 
+    private fun NavGraphBuilder.eventDetailsScreen(navController: NavController) {
+        composable(
+            route = "$EVENT_DETAILS_SCREEN/${EVENT_ID_ARGUMENT}={$EVENT_ID_ARGUMENT}",
+            arguments = listOf(
+                navArgument(EVENT_ID_ARGUMENT) { type = NavType.LongType }
+            )
+        ) {
+            EventDetailsScreen(onBackPressed = { navController.navigateUp() })
+        }
+    }
+
     private fun NavController.navigateToCalendarPermissionsScreen() =
         navigate(CALENDAR_PERMISSIONS_SCREEN) {
             popUpTo(ROOT) { inclusive = true }
@@ -71,4 +89,7 @@ object MainNavigation {
 
     private fun NavController.navigateToCalendarsSelectionScreen() =
         navigate(CALENDAR_PROFILES_SCREEN)
+
+    private fun NavController.navigateToEventDetails(eventId: Long) =
+        navigate("$EVENT_DETAILS_SCREEN/$EVENT_ID_ARGUMENT=$eventId")
 }

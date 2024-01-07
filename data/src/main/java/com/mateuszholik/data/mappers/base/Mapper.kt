@@ -1,6 +1,8 @@
 package com.mateuszholik.data.mappers.base
 
-internal interface Mapper<TInput, TOutput> {
+import android.database.Cursor
 
-    suspend fun map(param: TInput): TOutput
+internal interface Mapper<TOutput> {
+
+    suspend fun map(cursor: Cursor): TOutput
 }

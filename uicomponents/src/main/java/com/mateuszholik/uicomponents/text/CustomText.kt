@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
@@ -29,6 +30,10 @@ fun DisplayLargeText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     DisplayLargeText(
         text = stringResource(textResId),
@@ -37,6 +42,10 @@ fun DisplayLargeText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
     )
 }
 
@@ -48,6 +57,10 @@ fun DisplayLargeText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     Text(
         modifier = modifier,
@@ -57,6 +70,11 @@ fun DisplayLargeText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        lineHeight = MaterialTheme.typography.displayLarge.lineHeight,
     )
 }
 
@@ -68,6 +86,10 @@ fun DisplayMediumText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     DisplayMediumText(
         text = stringResource(textResId),
@@ -76,6 +98,10 @@ fun DisplayMediumText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
     )
 }
 
@@ -87,6 +113,10 @@ fun DisplayMediumText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     Text(
         modifier = modifier,
@@ -96,6 +126,11 @@ fun DisplayMediumText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        lineHeight = MaterialTheme.typography.displayMedium.lineHeight,
     )
 }
 
@@ -107,6 +142,10 @@ fun DisplaySmallText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     DisplaySmallText(
         text = stringResource(textResId),
@@ -115,6 +154,10 @@ fun DisplaySmallText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
     )
 }
 
@@ -126,6 +169,10 @@ fun DisplaySmallText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     Text(
         modifier = modifier,
@@ -135,6 +182,11 @@ fun DisplaySmallText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        lineHeight = MaterialTheme.typography.displaySmall.lineHeight,
     )
 }
 
@@ -146,6 +198,10 @@ fun HeadlineLargeText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     HeadlineLargeText(
         text = stringResource(textResId),
@@ -154,6 +210,10 @@ fun HeadlineLargeText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
     )
 }
 
@@ -165,6 +225,10 @@ fun HeadlineLargeText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     Text(
         modifier = modifier,
@@ -174,6 +238,11 @@ fun HeadlineLargeText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        lineHeight = MaterialTheme.typography.headlineLarge.lineHeight,
     )
 }
 
@@ -185,6 +254,10 @@ fun HeadlineMediumText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     HeadlineMediumText(
         text = stringResource(textResId),
@@ -193,6 +266,10 @@ fun HeadlineMediumText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
     )
 }
 
@@ -204,6 +281,10 @@ fun HeadlineMediumText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     Text(
         modifier = modifier,
@@ -213,6 +294,11 @@ fun HeadlineMediumText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        lineHeight = MaterialTheme.typography.headlineMedium.lineHeight,
     )
 }
 
@@ -224,6 +310,10 @@ fun HeadlineSmallText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     HeadlineSmallText(
         text = stringResource(textResId),
@@ -232,6 +322,10 @@ fun HeadlineSmallText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
     )
 }
 
@@ -243,6 +337,10 @@ fun HeadlineSmallText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     Text(
         modifier = modifier,
@@ -252,6 +350,11 @@ fun HeadlineSmallText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        lineHeight = MaterialTheme.typography.headlineSmall.lineHeight,
     )
 }
 
@@ -263,6 +366,10 @@ fun TitleLargeText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     TitleLargeText(
         text = stringResource(textResId),
@@ -271,6 +378,10 @@ fun TitleLargeText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
     )
 }
 
@@ -282,6 +393,10 @@ fun TitleLargeText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     Text(
         modifier = modifier,
@@ -291,6 +406,11 @@ fun TitleLargeText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        lineHeight = MaterialTheme.typography.titleLarge.lineHeight,
     )
 }
 
@@ -302,6 +422,10 @@ fun TitleMediumText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     TitleMediumText(
         text = stringResource(textResId),
@@ -310,6 +434,10 @@ fun TitleMediumText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
     )
 }
 
@@ -321,6 +449,10 @@ fun TitleMediumText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     Text(
         modifier = modifier,
@@ -330,6 +462,11 @@ fun TitleMediumText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        lineHeight = MaterialTheme.typography.titleMedium.lineHeight,
     )
 }
 
@@ -341,6 +478,10 @@ fun TitleSmallText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     TitleSmallText(
         text = stringResource(textResId),
@@ -349,6 +490,10 @@ fun TitleSmallText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
     )
 }
 
@@ -360,6 +505,10 @@ fun TitleSmallText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     Text(
         modifier = modifier,
@@ -369,6 +518,11 @@ fun TitleSmallText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        lineHeight = MaterialTheme.typography.titleSmall.lineHeight,
     )
 }
 
@@ -380,6 +534,10 @@ fun BodyLargeText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     BodyLargeText(
         text = stringResource(textResId),
@@ -388,6 +546,10 @@ fun BodyLargeText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
     )
 }
 
@@ -399,6 +561,10 @@ fun BodyLargeText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     Text(
         modifier = modifier,
@@ -408,6 +574,11 @@ fun BodyLargeText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
     )
 }
 
@@ -419,6 +590,10 @@ fun BodyMediumText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     BodyLargeText(
         text = stringResource(textResId),
@@ -427,6 +602,10 @@ fun BodyMediumText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
     )
 }
 
@@ -438,6 +617,10 @@ fun BodyMediumText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     Text(
         modifier = modifier,
@@ -447,6 +630,11 @@ fun BodyMediumText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        lineHeight = MaterialTheme.typography.bodyMedium.lineHeight,
     )
 }
 
@@ -458,6 +646,10 @@ fun BodySmallText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     BodySmallText(
         text = stringResource(textResId),
@@ -466,6 +658,10 @@ fun BodySmallText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
     )
 }
 
@@ -477,6 +673,10 @@ fun BodySmallText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     Text(
         modifier = modifier,
@@ -486,6 +686,11 @@ fun BodySmallText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
     )
 }
 
@@ -497,6 +702,10 @@ fun LabelLargeText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     LabelLargeText(
         text = stringResource(textResId),
@@ -505,6 +714,10 @@ fun LabelLargeText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
     )
 }
 
@@ -516,6 +729,10 @@ fun LabelLargeText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     Text(
         modifier = modifier,
@@ -525,6 +742,11 @@ fun LabelLargeText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        lineHeight = MaterialTheme.typography.labelLarge.lineHeight,
     )
 }
 
@@ -536,6 +758,10 @@ fun LabelMediumText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     LabelMediumText(
         text = stringResource(textResId),
@@ -544,6 +770,10 @@ fun LabelMediumText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
     )
 }
 
@@ -555,6 +785,10 @@ fun LabelMediumText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     Text(
         modifier = modifier,
@@ -564,6 +798,11 @@ fun LabelMediumText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        lineHeight = MaterialTheme.typography.labelMedium.lineHeight,
     )
 }
 
@@ -575,6 +814,10 @@ fun LabelSmallText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     LabelSmallText(
         text = stringResource(textResId),
@@ -583,6 +826,10 @@ fun LabelSmallText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
     )
 }
 
@@ -594,6 +841,10 @@ fun LabelSmallText(
     fontWeight: FontWeight = FontWeight.Normal,
     textDecoration: TextDecoration = TextDecoration.None,
     textAlign: TextAlign = TextAlign.Start,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
     Text(
         modifier = modifier,
@@ -603,6 +854,11 @@ fun LabelSmallText(
         fontWeight = fontWeight,
         textDecoration = textDecoration,
         textAlign = textAlign,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        minLines = minLines,
+        lineHeight = MaterialTheme.typography.labelSmall.lineHeight,
     )
 }
 

@@ -11,6 +11,8 @@ internal interface EventsContentProviderQueryFactory {
 
     suspend fun createForEventsFromDay(day: LocalDate, calendarIds: List<Long>): QueryData
 
+    suspend fun createForEvent(eventId: Long): QueryData
+
     suspend fun createForEventsFromMonth(yearMonth: YearMonth, calendarIds: List<Long>): QueryData
 
     companion object {
@@ -23,6 +25,21 @@ internal interface EventsContentProviderQueryFactory {
         const val TODAY_EVENTS_ALL_DAY_INDEX = 6
         const val DAYS_WITH_EVENTS_DATE_START_INDEX = 0
         const val DAYS_WITH_EVENTS_TIMEZONE_INDEX = 1
+        const val EVENT_ID_INDEX = 0
+        const val EVENT_TITLE_INDEX = 1
+        const val EVENT_DESCRIPTION_INDEX = 2
+        const val EVENT_DATE_START_INDEX = 3
+        const val EVENT_DATE_END_INDEX = 4
+        const val EVENT_TIMEZONE_INDEX = 5
+        const val EVENT_ALL_DAY_INDEX = 6
+        const val EVENT_COLOR_INDEX = 7
+        const val EVENT_AVAILABILITY_INDEX = 8
+        const val EVENT_LOCATION_INDEX = 9
+        const val EVENT_ORGANIZER_INDEX = 10
+        const val EVENT_HAS_ALARM_INDEX = 11
+        const val EVENT_IS_ORGANIZER_INDEX = 12
+        const val EVENT_CAN_MODIFY_INDEX = 13
+        const val EVENT_CAN_SEE_GUESTS_INDEX = 14
     }
 }
 
@@ -65,6 +82,30 @@ internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
             projection = projection
         )
     }
+
+    override suspend fun createForEvent(eventId: Long): QueryData =
+        QueryData(
+            uri = CalendarContract.Events.CONTENT_URI,
+            projection = arrayOf(
+                CalendarContract.Events._ID,
+                CalendarContract.Events.TITLE,
+                CalendarContract.Events.DESCRIPTION,
+                CalendarContract.Events.DTSTART,
+                CalendarContract.Events.DTEND,
+                CalendarContract.Events.EVENT_TIMEZONE,
+                CalendarContract.Events.ALL_DAY,
+                CalendarContract.Events.EVENT_COLOR,
+                CalendarContract.Events.AVAILABILITY,
+                CalendarContract.Events.EVENT_LOCATION,
+                CalendarContract.Events.ORGANIZER,
+                CalendarContract.Events.HAS_ALARM,
+                CalendarContract.Events.IS_ORGANIZER,
+                CalendarContract.Events.GUESTS_CAN_MODIFY,
+                CalendarContract.Events.GUESTS_CAN_SEE_GUESTS
+            ),
+            selection = "(${CalendarContract.Events._ID} = ?)",
+            selectionArgs = arrayOf("$eventId")
+        )
 
     override suspend fun createForEventsFromMonth(
         yearMonth: YearMonth,

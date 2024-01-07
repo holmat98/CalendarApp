@@ -4,6 +4,8 @@ import com.mateuszholik.domain.usecases.GetCalendarsUseCase
 import com.mateuszholik.domain.usecases.GetCalendarsUseCaseImpl
 import com.mateuszholik.domain.usecases.GetDaysWithEventsForMonthUseCase
 import com.mateuszholik.domain.usecases.GetDaysWithEventsForMonthUseCaseImpl
+import com.mateuszholik.domain.usecases.GetEventDetailsUseCase
+import com.mateuszholik.domain.usecases.GetEventDetailsUseCaseImpl
 import com.mateuszholik.domain.usecases.GetEventsForDayUseCase
 import com.mateuszholik.domain.usecases.GetEventsForDayUseCaseImpl
 import com.mateuszholik.domain.usecases.UpdateCalendarVisibilityUseCase
@@ -18,6 +20,11 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @InstallIn(ViewModelComponent::class)
 internal abstract class UseCaseModule {
 
+    @Binds
+    abstract fun bindsGetCalendarsUseCase(
+        getCalendarUseCaseImpl: GetCalendarsUseCaseImpl,
+    ): GetCalendarsUseCase
+
     @ViewModelScoped
     @Binds
     abstract fun bindsGetDaysWithEventsForMonthUseCase(
@@ -26,14 +33,15 @@ internal abstract class UseCaseModule {
 
     @ViewModelScoped
     @Binds
+    abstract fun bindsGetEventDetailsUseCase(
+        getEventDetailsUseCaseImpl: GetEventDetailsUseCaseImpl,
+    ): GetEventDetailsUseCase
+
+    @ViewModelScoped
+    @Binds
     abstract fun bindsGetEventsForDayUseCase(
         getEventsForDayUseCaseImpl: GetEventsForDayUseCaseImpl
     ): GetEventsForDayUseCase
-
-    @Binds
-    abstract fun bindsGetCalendarsUseCase(
-        getCalendarUseCaseImpl: GetCalendarsUseCaseImpl,
-    ): GetCalendarsUseCase
 
     @Binds
     abstract fun bindsUpdateCalendarVisibilityUseCase(

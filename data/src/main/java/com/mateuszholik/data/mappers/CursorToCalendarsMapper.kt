@@ -9,14 +9,14 @@ import com.mateuszholik.data.mappers.base.Mapper
 import com.mateuszholik.data.repositories.models.Calendar
 import javax.inject.Inject
 
-internal interface CursorToCalendarsMapper : Mapper<Cursor, List<Calendar>>
+internal interface CursorToCalendarsMapper : Mapper<List<Calendar>>
 
 internal class CursorToCalendarsMapperImpl @Inject constructor() : CursorToCalendarsMapper {
 
-    override suspend fun map(param: Cursor): List<Calendar> =
-        List(param.count) {
-            param.moveToPosition(it)
-            param.toCalendar()
+    override suspend fun map(cursor: Cursor): List<Calendar> =
+        List(cursor.count) {
+            cursor.moveToPosition(it)
+            cursor.toCalendar()
         }
 
     private fun Cursor.toCalendar(): Calendar =

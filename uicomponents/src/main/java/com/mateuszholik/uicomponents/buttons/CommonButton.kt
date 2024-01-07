@@ -7,10 +7,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.mateuszholik.designsystem.CalendarAppTheme
@@ -41,9 +38,7 @@ fun CommonButton(
     colors: CommonButtonColors = CommonButtonDefaults.commonButtonColors(),
 ) {
     Button(
-        modifier = modifier
-            .padding(vertical = MaterialTheme.spacing.normal)
-            .fillMaxWidth(),
+        modifier = modifier,
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             contentColor = colors.contentColor,
@@ -52,26 +47,6 @@ fun CommonButton(
     ) {
         TitleLargeText(text = text)
     }
-}
-
-@Immutable
-data class CommonButtonColors internal constructor(
-    val containerColor: Color,
-    val contentColor: Color,
-)
-
-object CommonButtonDefaults {
-
-    @Composable
-    @ReadOnlyComposable
-    fun commonButtonColors(
-        containerColor: Color = MaterialTheme.colorScheme.primary,
-        contentColor: Color = MaterialTheme.colorScheme.onPrimary,
-    ): CommonButtonColors =
-        CommonButtonColors(
-            containerColor = containerColor,
-            contentColor = contentColor,
-        )
 }
 
 @Preview
