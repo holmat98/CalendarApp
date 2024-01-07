@@ -64,6 +64,7 @@ import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS_EMPT
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS_GENERIC_DESCRIPTION
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.ChangeSystemBarColors
+import com.mateuszholik.designsystem.cornerRadius
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
 import com.mateuszholik.designsystem.previews.MediumPhonePreview
@@ -192,7 +193,7 @@ private fun LoadingContent(onBackPressed: () -> Unit) {
                     .padding(vertical = MaterialTheme.spacing.normal)
                     .fillMaxWidth()
                     .height(MaterialTheme.sizing.extraBig)
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(MaterialTheme.cornerRadius.cardRadius))
                     .shimmerEffect()
             )
 
@@ -200,7 +201,7 @@ private fun LoadingContent(onBackPressed: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(MaterialTheme.sizing.big)
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(MaterialTheme.cornerRadius.cardRadius))
                     .shimmerEffect()
             )
 
@@ -210,7 +211,7 @@ private fun LoadingContent(onBackPressed: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(MaterialTheme.sizing.normal)
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(MaterialTheme.cornerRadius.cardRadius))
                     .shimmerEffect()
             )
 
@@ -219,7 +220,7 @@ private fun LoadingContent(onBackPressed: () -> Unit) {
                     .padding(vertical = MaterialTheme.spacing.normal)
                     .fillMaxWidth()
                     .height(MaterialTheme.sizing.normal)
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(MaterialTheme.cornerRadius.cardRadius))
                     .shimmerEffect()
             )
         }

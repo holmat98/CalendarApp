@@ -48,6 +48,7 @@ class EventDetailsViewModel @Inject constructor(
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Timber.e(throwable, "Error on Calendar screen")
+
         viewModelScope.launch(dispatcherProvider.main()) {
             _uiEvent.emit(EventDetailsUiEvent.Error)
         }

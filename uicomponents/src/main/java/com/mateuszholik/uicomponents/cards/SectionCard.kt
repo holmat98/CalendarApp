@@ -43,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mateuszholik.designsystem.CalendarAppTheme
+import com.mateuszholik.designsystem.cornerRadius
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.uicomponents.buttons.CommonIconButton
@@ -96,8 +97,8 @@ fun <T> SectionCard(
                 .background(
                     color = cardColors.headerContainerColor,
                     shape = RoundedCornerShape(
-                        bottomStart = 12.dp,
-                        bottomEnd = 12.dp,
+                        bottomStart = MaterialTheme.cornerRadius.cardRadius,
+                        bottomEnd = MaterialTheme.cornerRadius.cardRadius,
                     ),
                 )
                 .zIndex(1f),
