@@ -6,7 +6,6 @@ import com.mateuszholik.calendarapp.ui.base.BaseViewModel
 import com.mateuszholik.calendarapp.ui.base.UiEvent
 import com.mateuszholik.calendarapp.ui.base.UiState
 import com.mateuszholik.calendarapp.ui.base.UserAction
-import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiEvent
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiState
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction
@@ -56,13 +55,7 @@ class EventDetailsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
-            val details = getEventDetailsUseCase(eventId)
-
-            if (details is Result.Success) {
-                _uiState.emit(EventDetailsUiState.ViewMode(eventDetails = details.data))
-            } else {
-                Timber.d("Testowanie: There is no event")
-            }
+            getEventDetails()
         }
     }
 
@@ -77,6 +70,8 @@ class EventDetailsViewModel @Inject constructor(
             is EventDetailsUserAction.DeleteEventConfirmed -> Unit
             is EventDetailsUserAction.EnterEditMode -> Unit
             is EventDetailsUserAction.NavigateBack -> Unit
+            is EventDetailsUserAction.RetryGetEventDetailsPressed ->
+                handleRetryGetEventDetailsPressed()
         }
 
     private fun handleAttendeeDismissedUserAction() {
@@ -88,6 +83,24 @@ class EventDetailsViewModel @Inject constructor(
     private fun handleAttendeeSelectedUserAction(attendee: Attendee) {
         viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             _uiEvent.emit(EventDetailsUiEvent.ShowAttendee(attendee))
+        }
+    }
+
+    private fun handleRetryGetEventDetailsPressed() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiState.emit(EventDetailsUiState.Loading)
+
+            getEventDetails()
+        }
+    }
+
+    private suspend fun getEventDetails() {
+        val details = getEventDetailsUseCase(eventId)
+
+        if (details is Result.Success) {
+            _uiState.emit(EventDetailsUiState.ViewMode(eventDetails = details.data))
+        } else {
+            _uiState.emit(EventDetailsUiState.NoData)
         }
     }
 
@@ -126,5 +139,7 @@ class EventDetailsViewModel @Inject constructor(
         data class AttendeeSelected(val attendee: Attendee) : EventDetailsUserAction()
 
         data object AttendeeDismissed : EventDetailsUserAction()
+
+        data object RetryGetEventDetailsPressed : EventDetailsUserAction()
     }
 }

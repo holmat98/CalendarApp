@@ -2,15 +2,20 @@ package com.mateuszholik.calendarapp.ui.eventdetails
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
@@ -33,13 +38,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
@@ -48,6 +57,7 @@ import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventD
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.AttendeeSelected
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.DeleteEvent
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.EnterEditMode
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.RetryGetEventDetailsPressed
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS_EMPTY_DESCRIPTION
@@ -73,6 +83,7 @@ import com.mateuszholik.uicomponents.buttons.CommonOutlinedButton
 import com.mateuszholik.uicomponents.cards.CardWithImage
 import com.mateuszholik.uicomponents.cards.EventCard
 import com.mateuszholik.uicomponents.cards.EventWithMeetingCard
+import com.mateuszholik.uicomponents.extensions.shimmerEffect
 import com.mateuszholik.uicomponents.scaffold.CommonScaffold
 import com.mateuszholik.uicomponents.text.BodyMediumText
 import com.mateuszholik.uicomponents.text.TitleMediumText
@@ -100,14 +111,28 @@ fun EventDetailsScreen(
         }
     }
 
-    if (uiState is EventDetailsViewModel.EventDetailsUiState.ViewMode) {
-        ViewModeContent(
-            eventDetails = (uiState as EventDetailsViewModel.EventDetailsUiState.ViewMode).eventDetails,
-            onBackPressed = onBackPressed,
-            onEditPressed = { viewModel.performUserAction(EnterEditMode) },
-            onDeletePressed = { viewModel.performUserAction(DeleteEvent) },
-            onAttendeePressed = { viewModel.performUserAction(AttendeeSelected(it)) }
-        )
+    when (uiState) {
+        is EventDetailsViewModel.EventDetailsUiState.EditMode -> {
+
+        }
+        is EventDetailsViewModel.EventDetailsUiState.Loading -> {
+            LoadingContent(onBackPressed = onBackPressed)
+        }
+        is EventDetailsViewModel.EventDetailsUiState.NoData -> {
+            NoDataContent(
+                onBackPressed = onBackPressed,
+                onTryAgainPressed = { viewModel.performUserAction(RetryGetEventDetailsPressed) }
+            )
+        }
+        is EventDetailsViewModel.EventDetailsUiState.ViewMode -> {
+            ViewModeContent(
+                eventDetails = (uiState as EventDetailsViewModel.EventDetailsUiState.ViewMode).eventDetails,
+                onBackPressed = onBackPressed,
+                onEditPressed = { viewModel.performUserAction(EnterEditMode) },
+                onDeletePressed = { viewModel.performUserAction(DeleteEvent) },
+                onAttendeePressed = { viewModel.performUserAction(AttendeeSelected(it)) }
+            )
+        }
     }
 
     selectedAttendee?.let { attendee ->
@@ -139,18 +164,117 @@ fun EventDetailsScreen(
             )
         }
     }
-
-    /*when (uiState) {
-        is EventDetailsViewModel.EventDetailsUiState.EditMode -> TODO()
-        is EventDetailsViewModel.EventDetailsUiState.Loading -> TODO()
-        is EventDetailsViewModel.EventDetailsUiState.NoData -> TODO()
-        is EventDetailsViewModel.EventDetailsUiState.ViewMode -> TODO()
-    }*/
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ViewModeContent(
+private fun LoadingContent(onBackPressed: () -> Unit) {
+    CommonScaffold(
+        navigationIcon = {
+            CommonIconButton(imageVector = Icons.Default.Close, onClick = onBackPressed)
+        },
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(
+                    PaddingValues(
+                        top = it.calculateTopPadding(),
+                        bottom = it.calculateBottomPadding(),
+                        end = MaterialTheme.spacing.normal,
+                        start = MaterialTheme.spacing.normal
+                    )
+                )
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(vertical = MaterialTheme.spacing.normal)
+                    .fillMaxWidth()
+                    .height(MaterialTheme.sizing.extraBig)
+                    .clip(RoundedCornerShape(12.dp))
+                    .shimmerEffect()
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(MaterialTheme.sizing.big)
+                    .clip(RoundedCornerShape(12.dp))
+                    .shimmerEffect()
+            )
+
+            Divider(modifier = Modifier.padding(vertical = MaterialTheme.spacing.normal))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(MaterialTheme.sizing.normal)
+                    .clip(RoundedCornerShape(12.dp))
+                    .shimmerEffect()
+            )
+
+            Box(
+                modifier = Modifier
+                    .padding(vertical = MaterialTheme.spacing.normal)
+                    .fillMaxWidth()
+                    .height(MaterialTheme.sizing.normal)
+                    .clip(RoundedCornerShape(12.dp))
+                    .shimmerEffect()
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun NoDataContent(
+    onBackPressed: () -> Unit,
+    onTryAgainPressed: () -> Unit,
+) {
+    CommonScaffold(
+        navigationIcon = {
+            CommonIconButton(imageVector = Icons.Default.Close, onClick = onBackPressed)
+        },
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(
+                    PaddingValues(
+                        top = it.calculateTopPadding(),
+                        bottom = it.calculateBottomPadding(),
+                        end = MaterialTheme.spacing.normal,
+                        start = MaterialTheme.spacing.normal
+                    )
+                )
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Image(
+                modifier = Modifier.size(MaterialTheme.sizing.extraBig),
+                painter = painterResource(R.drawable.ic_event_no_data),
+                contentDescription = null
+            )
+
+            TitleMediumText(
+                modifier = Modifier.padding(vertical = MaterialTheme.spacing.normal),
+                textResId = R.string.event_details_no_data,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center
+            )
+
+            CommonOutlinedButton(
+                textResId = R.string.button_try_again,
+                onClick = onTryAgainPressed
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ViewModeContent(
     eventDetails: EventDetails,
     onBackPressed: () -> Unit,
     onEditPressed: () -> Unit,
@@ -345,26 +469,31 @@ private fun getMailIntent(email: String): Intent =
         putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
     }
 
-@SmallPhonePreview
+@MediumPhonePreview
 @Composable
-private fun ViewModePreview() {
-    CalendarAppTheme(styleType = StyleType.WINTER) {
-        ViewModeContent(
-            eventDetails = EVENT_DETAILS,
+private fun NoDataPreview() {
+    CalendarAppTheme(styleType = StyleType.AUTUMN) {
+        NoDataContent(
             onBackPressed = {},
-            onEditPressed = {},
-            onDeletePressed = {},
-            onAttendeePressed = {},
+            onTryAgainPressed = {},
         )
     }
 }
 
 @MediumPhonePreview
 @Composable
-private fun ViewModePreview2() {
+private fun LoadingPreview() {
     CalendarAppTheme(styleType = StyleType.SPRING) {
+        LoadingContent(onBackPressed = {})
+    }
+}
+
+@SmallPhonePreview
+@Composable
+private fun ViewModePreview() {
+    CalendarAppTheme(styleType = StyleType.WINTER) {
         ViewModeContent(
-            eventDetails = EVENT_DETAILS.copy(eventColor = null),
+            eventDetails = EVENT_DETAILS,
             onBackPressed = {},
             onEditPressed = {},
             onDeletePressed = {},

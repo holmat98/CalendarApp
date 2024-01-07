@@ -2,6 +2,7 @@
     <string name="app_name">CalendarApp</string>
     <string name="button_add_permission">Grant permission</string>
     <string name="button_go_to_settings">Open settings</string>
+    <string name="button_try_again">Try again</string>
     <string name="calendar_permission_screen_title">Grant permission to access calendar</string>
     <string name="calendar_permission_screen_message">This permission is required for this application to read, delete, add or update your calendar events</string>
     <string name="calendar_permission_screen_rationale_message">This permission is required for this application to read, delete, add or update your calendar events. Without that you CAN NOT go further.</string>
@@ -21,6 +22,7 @@
         <item quantity="other">%1$s Guests</item>
     </plurals>
     <string name="event_details_join_in_google_meets">Join in Google Meets</string>
+    <string name="event_details_no_data">Couldn\'t get informations about the event</string>
     <string name="event_details_organizer">Organizer</string>
     <string name="event_details_send_email">Send email</string>
     <string name="event_details_urls">Other links</string>
