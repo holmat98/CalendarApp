@@ -38,9 +38,7 @@ fun CommonButton(
     colors: CommonButtonColors = CommonButtonDefaults.commonButtonColors(),
 ) {
     Button(
-        modifier = modifier
-            .padding(vertical = MaterialTheme.spacing.normal)
-            .fillMaxWidth(),
+        modifier = modifier,
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             contentColor = colors.contentColor,

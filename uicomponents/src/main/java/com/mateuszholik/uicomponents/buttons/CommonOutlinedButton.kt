@@ -1,5 +1,6 @@
 package com.mateuszholik.uicomponents.buttons
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -12,6 +13,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,6 +22,23 @@ import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.uicomponents.text.BodySmallText
 import com.mateuszholik.uicomponents.text.TitleMediumText
+
+@Composable
+fun CommonOutlinedButton(
+    @StringRes textResId: Int,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+    colors: CommonButtonColors = CommonButtonDefaults.commonOutlinedButtonColors(),
+) {
+    CommonOutlinedButton(
+        text = stringResource(textResId),
+        onClick = onClick,
+        modifier = modifier,
+        icon = icon,
+        colors = colors,
+    )
+}
 
 @Composable
 fun CommonOutlinedButton(

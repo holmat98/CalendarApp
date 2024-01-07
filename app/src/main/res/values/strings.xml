@@ -22,6 +22,7 @@
     </plurals>
     <string name="event_details_join_in_google_meets">Join in Google Meets</string>
     <string name="event_details_organizer">Organizer</string>
+    <string name="event_details_send_email">Send email</string>
     <string name="event_details_urls">Other links</string>
     <string name="welcome_screen_hello_spring">Hello\nSpring!</string>
     <string name="welcome_screen_hello_summer">Hello\nSummer!</string>

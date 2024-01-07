@@ -9,22 +9,28 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,12 +38,17 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiEvent
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.AttendeeDismissed
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.AttendeeSelected
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.DeleteEvent
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.EnterEditMode
+import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS_EMPTY_DESCRIPTION
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS_GENERIC_DESCRIPTION
@@ -47,15 +58,18 @@ import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
 import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
+import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
+import com.mateuszholik.domain.models.Attendee
 import com.mateuszholik.domain.models.EventDetails
 import com.mateuszholik.domain.models.Generic
 import com.mateuszholik.domain.models.GoogleMeet
 import com.mateuszholik.uicomponents.cards.SectionCard
 import com.mateuszholik.uicomponents.attendee.AttendeeItem
 import com.mateuszholik.uicomponents.attendee.Status
+import com.mateuszholik.uicomponents.bottomsheet.CommonBottomSheetDialog
 import com.mateuszholik.uicomponents.buttons.CommonIconButton
-import com.mateuszholik.uicomponents.buttons.CommonIconButtonDefaults
+import com.mateuszholik.uicomponents.buttons.CommonOutlinedButton
 import com.mateuszholik.uicomponents.cards.CardWithImage
 import com.mateuszholik.uicomponents.cards.EventCard
 import com.mateuszholik.uicomponents.cards.EventWithMeetingCard
@@ -68,17 +82,62 @@ fun EventDetailsScreen(
     onBackPressed: () -> Unit,
     viewModel: EventDetailsViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
+    var selectedAttendee by remember { mutableStateOf<Attendee?>(null) }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ChangeSystemBarColors()
+
+    ObserveAsEvents(viewModel.uiEvent) { uiEvent ->
+        when (uiEvent) {
+            is EventDetailsUiEvent.DismissAttendee -> {
+                selectedAttendee = null
+            }
+            is EventDetailsUiEvent.Error -> {}
+            is EventDetailsUiEvent.ShowAttendee -> {
+                selectedAttendee = uiEvent.attendee
+            }
+        }
+    }
 
     if (uiState is EventDetailsViewModel.EventDetailsUiState.ViewMode) {
         ViewModeContent(
             eventDetails = (uiState as EventDetailsViewModel.EventDetailsUiState.ViewMode).eventDetails,
             onBackPressed = onBackPressed,
             onEditPressed = { viewModel.performUserAction(EnterEditMode) },
-            onDeletePressed = { viewModel.performUserAction(DeleteEvent) }
+            onDeletePressed = { viewModel.performUserAction(DeleteEvent) },
+            onAttendeePressed = { viewModel.performUserAction(AttendeeSelected(it)) }
         )
+    }
+
+    selectedAttendee?.let { attendee ->
+        CommonBottomSheetDialog(
+            onDismissRequest = { viewModel.performUserAction(AttendeeDismissed) }
+        ) {
+            Icon(
+                modifier = Modifier
+                    .padding(vertical = MaterialTheme.spacing.small)
+                    .size(MaterialTheme.sizing.big)
+                    .align(Alignment.CenterHorizontally),
+                imageVector = Icons.Outlined.Face,
+                contentDescription = null
+            )
+
+            TitleMediumText(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                text = attendee.email,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            CommonOutlinedButton(
+                modifier = Modifier
+                    .padding(vertical = MaterialTheme.spacing.small)
+                    .align(Alignment.CenterHorizontally),
+                textResId = R.string.event_details_send_email,
+                icon = Icons.Outlined.Email,
+                onClick = { context.startActivity(getMailIntent(attendee.email)) }
+            )
+        }
     }
 
     /*when (uiState) {
@@ -96,6 +155,7 @@ fun ViewModeContent(
     onBackPressed: () -> Unit,
     onEditPressed: () -> Unit,
     onDeletePressed: () -> Unit,
+    onAttendeePressed: (attendee: Attendee) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -227,7 +287,22 @@ fun ViewModeContent(
                     sectionTitle = stringResource(R.string.event_details_organizer),
                     items = listOf(eventDetails.organizer)
                 ) { organizer, modifier ->
-                    TitleMediumText(modifier = modifier, text = organizer)
+                    Row(
+                        modifier = modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        BodyMediumText(
+                            modifier = Modifier.weight(1f),
+                            text = organizer,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        CommonIconButton(
+                            imageVector = Icons.Outlined.Email,
+                            onClick = { context.startActivity(getMailIntent(organizer)) }
+                        )
+                    }
                 }
             }
 
@@ -243,7 +318,7 @@ fun ViewModeContent(
                         items = eventDetails.attendees
                     ) { attendee, modifier ->
                         AttendeeItem(
-                            modifier = modifier,
+                            modifier = modifier.clickable { onAttendeePressed(attendee) },
                             name = attendee.email,
                             status = Status.valueOf(attendee.status.name)
                         )
@@ -264,6 +339,12 @@ private fun getMapsIntent(location: String): Intent =
         data = Uri.parse("http://maps.google.co.in/maps?q=$location")
     }
 
+private fun getMailIntent(email: String): Intent =
+    Intent(Intent.ACTION_SENDTO).apply {
+        data = Uri.parse("mailto:")
+        putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
+    }
+
 @SmallPhonePreview
 @Composable
 private fun ViewModePreview() {
@@ -272,7 +353,8 @@ private fun ViewModePreview() {
             eventDetails = EVENT_DETAILS,
             onBackPressed = {},
             onEditPressed = {},
-            onDeletePressed = {}
+            onDeletePressed = {},
+            onAttendeePressed = {},
         )
     }
 }
@@ -285,7 +367,8 @@ private fun ViewModePreview2() {
             eventDetails = EVENT_DETAILS.copy(eventColor = null),
             onBackPressed = {},
             onEditPressed = {},
-            onDeletePressed = {}
+            onDeletePressed = {},
+            onAttendeePressed = {},
         )
     }
 }
@@ -298,7 +381,8 @@ private fun ViewModePreview3() {
             eventDetails = EVENT_DETAILS_GENERIC_DESCRIPTION.copy(eventColor = null),
             onBackPressed = {},
             onEditPressed = {},
-            onDeletePressed = {}
+            onDeletePressed = {},
+            onAttendeePressed = {},
         )
     }
 }
@@ -314,7 +398,8 @@ private fun ViewModePreview4() {
             ),
             onBackPressed = {},
             onEditPressed = {},
-            onDeletePressed = {}
+            onDeletePressed = {},
+            onAttendeePressed = {},
         )
     }
 }

@@ -12,6 +12,7 @@ import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventD
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction
 import com.mateuszholik.calendarapp.ui.navigation.MainNavigation.EVENT_ID_ARGUMENT
 import com.mateuszholik.common.provider.DispatcherProvider
+import com.mateuszholik.domain.models.Attendee
 import com.mateuszholik.domain.models.EventDetails
 import com.mateuszholik.domain.models.Result
 import com.mateuszholik.domain.usecases.GetEventDetailsUseCase
@@ -65,7 +66,29 @@ class EventDetailsViewModel @Inject constructor(
         }
     }
 
-    override fun performUserAction(action: EventDetailsUserAction) {
+    override fun performUserAction(action: EventDetailsUserAction) =
+        when (action) {
+            is EventDetailsUserAction.AttendeeDismissed ->
+                handleAttendeeDismissedUserAction()
+            is EventDetailsUserAction.AttendeeSelected ->
+                handleAttendeeSelectedUserAction(action.attendee)
+            is EventDetailsUserAction.DeleteEvent -> Unit
+            is EventDetailsUserAction.DeleteEventCancelled -> Unit
+            is EventDetailsUserAction.DeleteEventConfirmed -> Unit
+            is EventDetailsUserAction.EnterEditMode -> Unit
+            is EventDetailsUserAction.NavigateBack -> Unit
+        }
+
+    private fun handleAttendeeDismissedUserAction() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiEvent.emit(EventDetailsUiEvent.DismissAttendee)
+        }
+    }
+
+    private fun handleAttendeeSelectedUserAction(attendee: Attendee) {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiEvent.emit(EventDetailsUiEvent.ShowAttendee(attendee))
+        }
     }
 
     sealed class EventDetailsUiState : UiState {
@@ -82,6 +105,10 @@ class EventDetailsViewModel @Inject constructor(
     sealed class EventDetailsUiEvent : UiEvent {
 
         data object Error : EventDetailsUiEvent()
+
+        data class ShowAttendee(val attendee: Attendee) : EventDetailsUiEvent()
+
+        data object DismissAttendee : EventDetailsUiEvent()
     }
 
     sealed class EventDetailsUserAction : UserAction {
@@ -95,5 +122,9 @@ class EventDetailsViewModel @Inject constructor(
         data object DeleteEventConfirmed : EventDetailsUserAction()
 
         data object DeleteEventCancelled : EventDetailsUserAction()
+
+        data class AttendeeSelected(val attendee: Attendee) : EventDetailsUserAction()
+
+        data object AttendeeDismissed : EventDetailsUserAction()
     }
 }
