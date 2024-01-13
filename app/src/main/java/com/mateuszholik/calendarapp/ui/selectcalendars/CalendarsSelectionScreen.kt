@@ -48,7 +48,6 @@ import com.mateuszholik.uicomponents.buttons.CommonIconButton
 import com.mateuszholik.uicomponents.checkbox.CommonCheckbox
 import com.mateuszholik.uicomponents.extensions.shimmerEffect
 import com.mateuszholik.uicomponents.scaffold.CommonScaffold
-import com.mateuszholik.uicomponents.text.HeadlineLargeText
 import com.mateuszholik.uicomponents.text.TitleMediumText
 import kotlinx.coroutines.launch
 
@@ -86,6 +85,9 @@ fun CalendarsSelectionScreen(
                 onClick = { viewModel.performUserAction(CalendarProfilesUserAction.OnCalendarsConfirmed) }
             )
         },
+        title = {
+            TitleMediumText(textResId = R.string.calendar_selection_header)
+        },
         snackbarHost = { SnackbarHost(snackBarHostState) }
     ) {
         val paddingValues = PaddingValues(
@@ -121,13 +123,6 @@ private fun ShimmerContent(paddingValues: PaddingValues) {
             .padding(paddingValues)
             .fillMaxSize()
     ) {
-        Box(
-            modifier = Modifier
-                .width(MaterialTheme.sizing.extraBig)
-                .height(MaterialTheme.sizing.big)
-                .shimmerEffect()
-        )
-
         repeat(4) {
             Box(
                 modifier = Modifier
@@ -168,10 +163,6 @@ private fun Content(
             .padding(paddingValues)
             .fillMaxSize()
     ) {
-        item {
-            HeadlineLargeText(textResId = R.string.calendar_selection_header,)
-        }
-
         calendars.forEach { (accountName, calendars) ->
             item {
                 TitleMediumText(

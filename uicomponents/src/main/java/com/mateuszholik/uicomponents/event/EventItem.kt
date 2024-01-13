@@ -2,22 +2,22 @@ package com.mateuszholik.uicomponents.event
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.mateuszholik.designsystem.CalendarAppTheme
-import com.mateuszholik.designsystem.cornerRadius
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
 import com.mateuszholik.designsystem.previews.MediumPhonePreview
@@ -25,9 +25,7 @@ import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.uicomponents.date.EventDate
-import com.mateuszholik.uicomponents.extensions.asTimeString
 import com.mateuszholik.uicomponents.text.TitleMediumText
-import com.mateuszholik.uicomponents.text.TitleSmallText
 import java.time.LocalDateTime
 
 @Composable
@@ -39,62 +37,74 @@ fun EventItem(
     color: Int?,
     onEventClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = MaterialTheme.colorScheme.surface,
-    contentColor: Color = MaterialTheme.colorScheme.onSurface,
+    colors: EventColors = EventDefaults.colors(),
 ) {
-    Row(
-        modifier = modifier
-            .clickable { onEventClicked() }
-            .background(
-                color = backgroundColor,
-                shape = RoundedCornerShape(MaterialTheme.cornerRadius.normal)
-            ),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Box(
-            modifier = Modifier
-                .padding(start = MaterialTheme.spacing.normal)
-                .size(MaterialTheme.sizing.extraTiny)
-                .background(
-                    color = color?.let { Color(it) }
-                        ?: MaterialTheme.colorScheme.secondaryContainer,
-                    shape = CircleShape
-                )
+    Card(
+        modifier = modifier.clickable { onEventClicked() },
+        elevation = CardDefaults.elevatedCardElevation(),
+        colors = CardDefaults.cardColors(
+            containerColor = colors.containerColor,
+            contentColor = colors.contentColor,
         )
-        if (allDay) {
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(
+                        top = MaterialTheme.spacing.tiny,
+                        start = MaterialTheme.spacing.normal
+                    )
+                    .size(MaterialTheme.sizing.extraTiny)
+                    .background(
+                        color = color?.let { Color(it) }
+                            ?: colors.defaultEventColor,
+                        shape = CircleShape
+                    )
+            )
             TitleMediumText(
                 modifier = Modifier.padding(
-                    horizontal = MaterialTheme.spacing.normal,
-                    vertical = MaterialTheme.spacing.small,
+                    start = MaterialTheme.spacing.normal,
+                    end = MaterialTheme.spacing.normal,
                 ),
-                text = title, color = contentColor
+                text = title,
             )
-        } else {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.Start
-            ) {
-                TitleMediumText(
-                    modifier = Modifier.padding(
-                        start = MaterialTheme.spacing.normal,
-                        end = MaterialTheme.spacing.normal,
-                        top = MaterialTheme.spacing.small,
-                    ),
-                    text = title, color = contentColor
-                )
-                EventDate(
-                    modifier = Modifier.padding(
-                        start = MaterialTheme.spacing.normal,
-                        bottom = MaterialTheme.spacing.small
-                    ),
-                    color = contentColor,
-                    startDate = startTime,
-                    endDate = endTime,
-                    allDay = false
-                )
-            }
         }
+        EventDate(
+            modifier = Modifier.padding(
+                start = MaterialTheme.spacing.normal,
+                bottom = MaterialTheme.spacing.small,
+            ),
+            startDate = startTime,
+            endDate = endTime,
+            allDay = allDay
+        )
     }
+}
+
+@Immutable
+data class EventColors internal constructor(
+    val containerColor: Color,
+    val contentColor: Color,
+    val defaultEventColor: Color,
+)
+
+object EventDefaults {
+
+    @Composable
+    @ReadOnlyComposable
+    fun colors(
+        containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+        contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+        defaultEventColor: Color = MaterialTheme.colorScheme.inversePrimary,
+    ): EventColors =
+        EventColors(
+            containerColor = containerColor,
+            contentColor = contentColor,
+            defaultEventColor = defaultEventColor
+        )
 }
 
 @SmallPhonePreview

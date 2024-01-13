@@ -38,7 +38,7 @@ class CalendarViewModel @Inject constructor(
 ) : BaseViewModel<CalendarUiState, CalendarUserAction, CalendarUiEvent>() {
 
     private val _uiState: MutableStateFlow<CalendarUiState> =
-        MutableStateFlow(CalendarUiState.Loading)
+        MutableStateFlow(getInitialLoadingState())
     override val uiState: StateFlow<CalendarUiState>
         get() = _uiState.asStateFlow()
 
@@ -103,13 +103,15 @@ class CalendarViewModel @Inject constructor(
     private fun handleRefreshScreenAction() {
         viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             _uiState.update {
-                if (it is CalendarUiState.Loading) {
-                    getInitialUiState()
+                val (currentMonth, currentDate) = if (it is CalendarUiState.Loading) {
+                    it.currentMonth to it.currentDate
                 } else {
                     val calendarInfo = it as CalendarUiState.CalendarInfo
 
-                    getUpdatedUiState(calendarInfo.currentMonth, calendarInfo.currentDate)
+                    calendarInfo.currentMonth to calendarInfo.currentDate
                 }
+
+                getUpdatedUiState(currentMonth, currentDate)
             }
         }
     }
@@ -132,18 +134,13 @@ class CalendarViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getInitialUiState(): CalendarUiState {
+    private fun getInitialLoadingState(): CalendarUiState {
         val currentDate = currentDateProvider.provide()
         val currentMonth = currentDate.toYearMonth()
 
-        val daysWithEvents = getDaysWithEventsForMonthUseCase(currentMonth)
-        val events = getEventsForDayUseCase(currentDate)
-
-        return CalendarUiState.CalendarInfo(
+        return CalendarUiState.Loading(
             currentDate = currentDate,
             currentMonth = currentMonth,
-            events = events,
-            daysWithEvents = daysWithEvents
         )
     }
 
@@ -164,7 +161,10 @@ class CalendarViewModel @Inject constructor(
 
     sealed class CalendarUiState : UiState {
 
-        data object Loading : CalendarUiState()
+        data class Loading(
+            val currentDate: LocalDate,
+            val currentMonth: YearMonth,
+        ) : CalendarUiState()
 
         data class CalendarInfo(
             val currentDate: LocalDate,

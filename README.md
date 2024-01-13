@@ -52,6 +52,7 @@ Modules:
 <p align="center">
 <img src="screens/welcome_screen.jpg" alt="Welcome screen">
 <img src="screens/calendar_permission_screen.jpg" alt="Calendar permissions screen">
-<img src="screens/calendar_screen_no_events.jpg" alt="Calendar screen with no events">
-<img src="screens/calendar_screen.jpg" alt="Calendar screen with events">
+<img src="screens/calendar_screen_no_events.png" alt="Calendar screen with no events">
+<img src="screens/calendar_screen.png" alt="Calendar screen with events">
+<img src="screens/event_details.png" alt="Screen with event details">
 </p>

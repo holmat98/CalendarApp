@@ -2,6 +2,7 @@ package com.mateuszholik.calendarapp.ui.calendar
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -66,7 +67,6 @@ import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.uicomponents.buttons.CommonIconButton
-import com.mateuszholik.uicomponents.calendar.CalendarShimmerView
 import com.mateuszholik.uicomponents.calendar.CalendarView
 import com.mateuszholik.uicomponents.event.EventItem
 import com.mateuszholik.uicomponents.extensions.shimmerEffect
@@ -162,26 +162,46 @@ fun CalendarScreen(
                     }
                 )
             }
-            Loading -> ShimmerContent(paddingValues = paddingValues)
+            is Loading -> {
+                val loading = uiState as Loading
+                ShimmerContent(
+                    currentMonth = loading.currentMonth,
+                    currentDate = loading.currentDate,
+                    paddingValues = paddingValues
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun ShimmerContent(paddingValues: PaddingValues) {
+private fun ShimmerContent(
+    currentMonth: YearMonth,
+    currentDate: LocalDate,
+    paddingValues: PaddingValues
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(paddingValues)
+            .padding(paddingValues),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.normal),
     ) {
-        item { CalendarShimmerView() }
-        items(count = 3) {
+        item {
+            CalendarView(
+                currentDay = currentDate,
+                currentMonth = currentMonth,
+                daysWithEvents = emptyList(),
+                onDateChanged = {},
+                onMonthChanged = {},
+            )
+        }
+        items(count = 2) {
             Box(
                 modifier = Modifier
-                    .padding(top = MaterialTheme.spacing.normal)
                     .fillMaxWidth()
                     .height(MaterialTheme.sizing.big)
-                    .clip(RoundedCornerShape(MaterialTheme.cornerRadius.normal))
+                    .clip(RoundedCornerShape(MaterialTheme.cornerRadius.cardRadius))
                     .shimmerEffect()
             )
         }
@@ -200,7 +220,8 @@ private fun Content(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.normal),
     ) {
         item {
             CalendarView(
@@ -216,7 +237,7 @@ private fun Content(
             item {
                 Image(
                     modifier = Modifier
-                        .padding(MaterialTheme.spacing.extraBig)
+                        .padding(top = MaterialTheme.spacing.normal)
                         .size(MaterialTheme.sizing.extraBig),
                     painter = painterResource(R.drawable.ic_empty),
                     contentDescription = null,
@@ -244,9 +265,7 @@ private fun Content(
                 key = { event -> event.id }
             ) {
                 EventItem(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = MaterialTheme.spacing.normal),
+                    modifier = Modifier.fillMaxWidth(),
                     title = it.title,
                     startTime = it.startDate,
                     endTime = it.endDate,
@@ -296,6 +315,20 @@ private fun SmallPhonePreview2() {
                 onDateChanged = {},
                 onMonthChanged = {},
                 onEventClicked = {}
+            )
+        }
+    }
+}
+
+@SmallPhonePreview
+@Composable
+private fun SmallPhoneLoadingPreview() {
+    CalendarAppTheme(styleType = StyleType.SPRING) {
+        Surface(color = MaterialTheme.colorScheme.secondary) {
+            ShimmerContent(
+                paddingValues = PaddingValues(MaterialTheme.spacing.normal),
+                currentMonth = CURRENT_DATE.toYearMonth(),
+                currentDate = CURRENT_DATE
             )
         }
     }
