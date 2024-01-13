@@ -245,7 +245,7 @@ private fun Content(
 
         CommonButton(
             modifier = Modifier
-                .padding(top = MaterialTheme.spacing.normal)
+                .padding(vertical = MaterialTheme.spacing.normal)
                 .fillMaxWidth(),
             textResId = buttonResId,
             onClick = onButtonClicked,
