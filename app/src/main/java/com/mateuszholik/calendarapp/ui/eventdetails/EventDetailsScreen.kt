@@ -40,7 +40,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -52,15 +51,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiEvent
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiState.ViewMode
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiState.Loading
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiState.NoData
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiState.EditMode
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.AttendeeDismissed
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.AttendeeSelected
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.DeleteEvent
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.EnterEditMode
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.RetryGetEventDetailsPressed
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
+import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.CALENDAR_1
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS_EMPTY_DESCRIPTION
-import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS_GENERIC_DESCRIPTION
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.ChangeSystemBarColors
 import com.mateuszholik.designsystem.cornerRadius
@@ -80,6 +83,7 @@ import com.mateuszholik.uicomponents.attendee.Status
 import com.mateuszholik.uicomponents.bottomsheet.CommonBottomSheetDialog
 import com.mateuszholik.uicomponents.buttons.CommonIconButton
 import com.mateuszholik.uicomponents.buttons.CommonOutlinedButton
+import com.mateuszholik.uicomponents.buttons.CommonSmallButton
 import com.mateuszholik.uicomponents.cards.CardWithImage
 import com.mateuszholik.uicomponents.cards.EventCard
 import com.mateuszholik.uicomponents.cards.EventWithMeetingCard
@@ -87,6 +91,8 @@ import com.mateuszholik.uicomponents.extensions.shimmerEffect
 import com.mateuszholik.uicomponents.scaffold.CommonScaffold
 import com.mateuszholik.uicomponents.text.BodyMediumText
 import com.mateuszholik.uicomponents.text.TitleMediumText
+import com.mateuszholik.uicomponents.textfield.CommonOutlinedTextField
+import java.time.LocalDateTime
 
 @Composable
 fun EventDetailsScreen(
@@ -112,21 +118,25 @@ fun EventDetailsScreen(
     }
 
     when (uiState) {
-        is EventDetailsViewModel.EventDetailsUiState.EditMode -> {
-
+        is EditMode -> {
+            EditModeContent(
+                editMode = uiState as EditMode,
+                onBackPressed = onBackPressed,
+                onSavePressed = {}
+            )
         }
-        is EventDetailsViewModel.EventDetailsUiState.Loading -> {
+        is Loading -> {
             LoadingContent(onBackPressed = onBackPressed)
         }
-        is EventDetailsViewModel.EventDetailsUiState.NoData -> {
+        is NoData -> {
             NoDataContent(
                 onBackPressed = onBackPressed,
                 onTryAgainPressed = { viewModel.performUserAction(RetryGetEventDetailsPressed) }
             )
         }
-        is EventDetailsViewModel.EventDetailsUiState.ViewMode -> {
+        is ViewMode -> {
             ViewModeContent(
-                eventDetails = (uiState as EventDetailsViewModel.EventDetailsUiState.ViewMode).eventDetails,
+                eventDetails = (uiState as ViewMode).eventDetails,
                 onBackPressed = onBackPressed,
                 onEditPressed = { viewModel.performUserAction(EnterEditMode) },
                 onDeletePressed = { viewModel.performUserAction(DeleteEvent) },
@@ -162,6 +172,51 @@ fun EventDetailsScreen(
                 icon = Icons.Outlined.Email,
                 onClick = { context.startActivity(getMailIntent(attendee.email)) }
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun EditModeContent(
+    editMode: EditMode,
+    onBackPressed: () -> Unit,
+    onSavePressed: () -> Unit,
+) {
+    CommonScaffold(
+        navigationIcon = {
+            CommonIconButton(imageVector = Icons.Default.Close, onClick = onBackPressed)
+        },
+        actions = {
+            CommonSmallButton(
+                modifier = Modifier.padding(end = MaterialTheme.spacing.small),
+                textResId = R.string.button_save, onClick = onSavePressed
+            )
+        }
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .padding(
+                    PaddingValues(
+                        top = it.calculateTopPadding(),
+                        bottom = it.calculateBottomPadding(),
+                        end = MaterialTheme.spacing.normal,
+                        start = MaterialTheme.spacing.normal
+                    )
+                )
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.normal),
+            contentPadding = PaddingValues(vertical = MaterialTheme.spacing.normal)
+        ) {
+            item {
+                CommonOutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = editMode.title,
+                    onTextChanged = {},
+                    hint = stringResource(R.string.event_details_edit_mode_provide_title),
+                    singleLine = true,
+                )
+            }
         }
     }
 }
@@ -504,10 +559,10 @@ private fun ViewModePreview() {
 
 @MediumPhonePreview
 @Composable
-private fun ViewModePreview3() {
-    CalendarAppTheme(styleType = StyleType.WINTER) {
+private fun ViewModePreview2() {
+    CalendarAppTheme(styleType = StyleType.AUTUMN) {
         ViewModeContent(
-            eventDetails = EVENT_DETAILS_GENERIC_DESCRIPTION.copy(eventColor = null),
+            eventDetails = EVENT_DETAILS_EMPTY_DESCRIPTION.copy(eventColor = null),
             onBackPressed = {},
             onEditPressed = {},
             onDeletePressed = {},
@@ -518,17 +573,22 @@ private fun ViewModePreview3() {
 
 @BigPhonePreview
 @Composable
-private fun ViewModePreview4() {
+private fun EditModePreview() {
     CalendarAppTheme(styleType = StyleType.SUMMER, darkTheme = true) {
-        ViewModeContent(
-            eventDetails = EVENT_DETAILS_EMPTY_DESCRIPTION.copy(
-                eventColor = Color.Yellow.toArgb(),
-                canModify = false
+        EditModeContent(
+            editMode = EditMode(
+                title = "Event 1",
+                description = Generic("Description"),
+                dateStart = LocalDateTime.of(2024, 1, 14, 12, 0, 0),
+                dateEnd = LocalDateTime.of(2024, 1, 14, 13, 0, 0),
+                allDay = false,
+                timezone = "Poland",
+                eventColor = null,
+                location = "Poland",
+                calendar = CALENDAR_1,
             ),
             onBackPressed = {},
-            onEditPressed = {},
-            onDeletePressed = {},
-            onAttendeePressed = {},
+            onSavePressed = {},
         )
     }
 }

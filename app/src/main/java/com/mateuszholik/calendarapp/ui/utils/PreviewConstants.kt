@@ -7,7 +7,6 @@ import com.mateuszholik.domain.models.Attendee
 import com.mateuszholik.domain.models.AttendeeStatus
 import com.mateuszholik.domain.models.Availability
 import com.mateuszholik.domain.models.Calendar
-import com.mateuszholik.domain.models.Description
 import com.mateuszholik.domain.models.Event
 import com.mateuszholik.domain.models.EventDetails
 import com.mateuszholik.domain.models.Generic

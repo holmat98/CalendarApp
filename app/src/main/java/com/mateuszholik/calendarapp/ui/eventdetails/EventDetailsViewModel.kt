@@ -10,8 +10,11 @@ import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventD
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiState
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction
 import com.mateuszholik.calendarapp.ui.navigation.MainNavigation.EVENT_ID_ARGUMENT
+import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.CALENDAR_1
 import com.mateuszholik.common.provider.DispatcherProvider
 import com.mateuszholik.domain.models.Attendee
+import com.mateuszholik.domain.models.Calendar
+import com.mateuszholik.domain.models.Description
 import com.mateuszholik.domain.models.EventDetails
 import com.mateuszholik.domain.models.Result
 import com.mateuszholik.domain.usecases.GetEventDetailsUseCase
@@ -23,8 +26,10 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -69,7 +74,8 @@ class EventDetailsViewModel @Inject constructor(
             is EventDetailsUserAction.DeleteEvent -> Unit
             is EventDetailsUserAction.DeleteEventCancelled -> Unit
             is EventDetailsUserAction.DeleteEventConfirmed -> Unit
-            is EventDetailsUserAction.EnterEditMode -> Unit
+            is EventDetailsUserAction.EnterEditMode ->
+                handleEnterEditModeUserAction()
             is EventDetailsUserAction.NavigateBack -> Unit
             is EventDetailsUserAction.RetryGetEventDetailsPressed ->
                 handleRetryGetEventDetailsPressed()
@@ -95,6 +101,30 @@ class EventDetailsViewModel @Inject constructor(
         }
     }
 
+    private fun handleEnterEditModeUserAction() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiState.update { currentState ->
+                if (currentState is EventDetailsUiState.ViewMode) {
+                    with(currentState.eventDetails) {
+                        EventDetailsUiState.EditMode(
+                            title = title,
+                            description = description,
+                            dateStart = dateStart,
+                            dateEnd = dateEnd,
+                            allDay = allDay,
+                            timezone = "",
+                            eventColor = eventColor,
+                            location = location,
+                            calendar = CALENDAR_1,
+                        )
+                    }
+                } else {
+                    currentState
+                }
+            }
+        }
+    }
+
     private suspend fun getEventDetails() {
         val details = getEventDetailsUseCase(eventId)
 
@@ -113,7 +143,17 @@ class EventDetailsViewModel @Inject constructor(
 
         data class ViewMode(val eventDetails: EventDetails) : EventDetailsUiState()
 
-        data class EditMode(val id: Long) : EventDetailsUiState()
+        data class EditMode(
+            val title: String,
+            val description: Description,
+            val dateStart: LocalDateTime,
+            val dateEnd: LocalDateTime,
+            val allDay: Boolean,
+            val timezone: String,
+            val eventColor: Int?,
+            val location: String,
+            val calendar: Calendar,
+        ) : EventDetailsUiState()
     }
 
     sealed class EventDetailsUiEvent : UiEvent {

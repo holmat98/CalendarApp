@@ -2,6 +2,7 @@
     <string name="app_name">CalendarApp</string>
     <string name="button_add_permission">Grant permission</string>
     <string name="button_go_to_settings">Open settings</string>
+    <string name="button_save">Save</string>
     <string name="button_try_again">Try again</string>
     <string name="calendar_permission_screen_title">Grant permission to access calendar</string>
     <string name="calendar_permission_screen_message">This permission is required for this application to read, delete, add or update your calendar events</string>
@@ -17,6 +18,7 @@
         <item quantity="zero">At the time of the event</item>
         <item quantity="other">%1$s minutes before</item>
     </plurals>
+    <string name="event_details_edit_mode_provide_title">Provide title</string>
     <plurals name="event_details_guests">
         <item quantity="one">%1$s Guest</item>
         <item quantity="other">%1$s Guests</item>
