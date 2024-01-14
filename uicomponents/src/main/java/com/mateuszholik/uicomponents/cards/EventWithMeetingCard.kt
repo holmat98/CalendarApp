@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -44,7 +45,10 @@ fun EventWithMeetingCard(
     modifier: Modifier = Modifier,
     eventColor: Color? = null,
 ) {
-    Card(modifier = modifier) {
+    Card(
+        modifier = modifier,
+        elevation = CardDefaults.elevatedCardElevation(3.dp),
+    ) {
         Row(
             modifier = Modifier.padding(
                 top = MaterialTheme.spacing.small,

@@ -40,7 +40,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.cornerRadius
@@ -143,10 +142,10 @@ fun <T> SectionCard(
                     )
                     .fillMaxWidth(),
             ) {
-                items.forEach {
+                items.forEach { item ->
                     sectionItemContent(
-                        modifier = Modifier.padding(bottom = MaterialTheme.spacing.small),
-                        item = it,
+                        item,
+                        Modifier.padding(bottom = MaterialTheme.spacing.small),
                     )
                 }
             }
