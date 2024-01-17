@@ -51,4 +51,6 @@
     <string name="welcome_screen_hello_vacation">Happy\nVacation!</string>
     <string name="welcome_screen_hello_school">Welcome\nSchool!</string>
     <string name="welcome_screen_hello_new_year">Happy\nNew Year!</string>
+    <string name="event_details_edit_mode_provide_description">Provide description</string>
+    <string name="event_details_edit_mode_select_calendar">Select calendar:</string>
 </resources>

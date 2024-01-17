@@ -17,6 +17,7 @@ import com.mateuszholik.domain.models.Calendar
 import com.mateuszholik.domain.models.Description
 import com.mateuszholik.domain.models.EventDetails
 import com.mateuszholik.domain.models.Result
+import com.mateuszholik.domain.usecases.GetCalendarsUseCase
 import com.mateuszholik.domain.usecases.GetEventDetailsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -35,6 +36,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EventDetailsViewModel @Inject constructor(
     private val getEventDetailsUseCase: GetEventDetailsUseCase,
+    private val getCalendarsUseCase: GetCalendarsUseCase,
     private val dispatcherProvider: DispatcherProvider,
     savedStateHandle: SavedStateHandle,
 ) :
@@ -79,6 +81,12 @@ class EventDetailsViewModel @Inject constructor(
             is EventDetailsUserAction.NavigateBack -> Unit
             is EventDetailsUserAction.RetryGetEventDetailsPressed ->
                 handleRetryGetEventDetailsPressed()
+            is EventDetailsUserAction.CalendarSelected ->
+                handleCalendarSelected(action.calendar)
+            is EventDetailsUserAction.CalendarSelectionDismissed ->
+                handleCalendarSelectionDismissed()
+            is EventDetailsUserAction.SelectCalendar ->
+                handleSelectCalendar()
         }
 
     private fun handleAttendeeDismissedUserAction() {
@@ -125,6 +133,32 @@ class EventDetailsViewModel @Inject constructor(
         }
     }
 
+    private fun handleCalendarSelected(calendar: Calendar) {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiEvent.emit(EventDetailsUiEvent.DismissCalendarSelection)
+            _uiState.update {
+                if (it is EventDetailsUiState.EditMode) {
+                    it.copy(calendar = calendar)
+                } else {
+                    it
+                }
+            }
+        }
+    }
+
+    private fun handleCalendarSelectionDismissed() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiEvent.emit(EventDetailsUiEvent.DismissCalendarSelection)
+        }
+    }
+
+    private fun handleSelectCalendar() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            val calendars = getCalendarsUseCase()
+            _uiEvent.emit(EventDetailsUiEvent.ShowCalendarSelection(calendars))
+        }
+    }
+
     private suspend fun getEventDetails() {
         val details = getEventDetailsUseCase(eventId)
 
@@ -163,6 +197,10 @@ class EventDetailsViewModel @Inject constructor(
         data class ShowAttendee(val attendee: Attendee) : EventDetailsUiEvent()
 
         data object DismissAttendee : EventDetailsUiEvent()
+
+        data object DismissCalendarSelection : EventDetailsUiEvent()
+
+        data class ShowCalendarSelection(val calendars: List<Calendar>) : EventDetailsUiEvent()
     }
 
     sealed class EventDetailsUserAction : UserAction {
@@ -182,5 +220,11 @@ class EventDetailsViewModel @Inject constructor(
         data object AttendeeDismissed : EventDetailsUserAction()
 
         data object RetryGetEventDetailsPressed : EventDetailsUserAction()
+
+        data object SelectCalendar : EventDetailsUserAction()
+
+        data class CalendarSelected(val calendar: Calendar) : EventDetailsUserAction()
+
+        data object CalendarSelectionDismissed : EventDetailsUserAction()
     }
 }

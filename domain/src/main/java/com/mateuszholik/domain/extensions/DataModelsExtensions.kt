@@ -29,7 +29,8 @@ internal fun DataCalendar.toCommonModel(): Calendar =
         id = id,
         accountName = accountName,
         calendarName = calendarName,
-        isVisible = isVisible
+        isVisible = isVisible,
+        color = color,
     )
 
 internal fun DataAlert.toCommonModel(): Alert =

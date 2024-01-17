@@ -15,12 +15,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.Info
@@ -57,9 +59,12 @@ import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventD
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiState.EditMode
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.AttendeeDismissed
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.AttendeeSelected
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.CalendarSelected
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.CalendarSelectionDismissed
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.DeleteEvent
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.EnterEditMode
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.RetryGetEventDetailsPressed
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.SelectCalendar
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.CALENDAR_1
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS
@@ -74,6 +79,7 @@ import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.domain.models.Attendee
+import com.mateuszholik.domain.models.Calendar
 import com.mateuszholik.domain.models.EventDetails
 import com.mateuszholik.domain.models.Generic
 import com.mateuszholik.domain.models.GoogleMeet
@@ -84,14 +90,17 @@ import com.mateuszholik.uicomponents.bottomsheet.CommonBottomSheetDialog
 import com.mateuszholik.uicomponents.buttons.CommonIconButton
 import com.mateuszholik.uicomponents.buttons.CommonOutlinedButton
 import com.mateuszholik.uicomponents.buttons.CommonSmallButton
+import com.mateuszholik.uicomponents.calendar.CalendarItem
 import com.mateuszholik.uicomponents.cards.CardWithImage
 import com.mateuszholik.uicomponents.cards.EventCard
 import com.mateuszholik.uicomponents.cards.EventWithMeetingCard
+import com.mateuszholik.uicomponents.dialog.CommonDialog
 import com.mateuszholik.uicomponents.extensions.shimmerEffect
 import com.mateuszholik.uicomponents.scaffold.CommonScaffold
 import com.mateuszholik.uicomponents.text.BodyMediumText
 import com.mateuszholik.uicomponents.text.TitleMediumText
 import com.mateuszholik.uicomponents.textfield.CommonOutlinedTextField
+import com.mateuszholik.uicomponents.textfield.TextFieldWithIcon
 import java.time.LocalDateTime
 
 @Composable
@@ -101,6 +110,7 @@ fun EventDetailsScreen(
 ) {
     val context = LocalContext.current
     var selectedAttendee by remember { mutableStateOf<Attendee?>(null) }
+    var calendars by remember { mutableStateOf<List<Calendar>?>(null) }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ChangeSystemBarColors()
@@ -114,6 +124,12 @@ fun EventDetailsScreen(
             is EventDetailsUiEvent.ShowAttendee -> {
                 selectedAttendee = uiEvent.attendee
             }
+            is EventDetailsUiEvent.DismissCalendarSelection -> {
+                calendars = null
+            }
+            is EventDetailsUiEvent.ShowCalendarSelection -> {
+                calendars = uiEvent.calendars
+            }
         }
     }
 
@@ -122,7 +138,8 @@ fun EventDetailsScreen(
             EditModeContent(
                 editMode = uiState as EditMode,
                 onBackPressed = onBackPressed,
-                onSavePressed = {}
+                onSavePressed = {},
+                onCalendarPressed = { viewModel.performUserAction(SelectCalendar) }
             )
         }
         is Loading -> {
@@ -174,6 +191,32 @@ fun EventDetailsScreen(
             )
         }
     }
+
+    calendars?.let {
+        CommonDialog(onDismissRequest = { viewModel.performUserAction(CalendarSelectionDismissed) }) {
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.normal),
+                contentPadding = PaddingValues(MaterialTheme.spacing.normal),
+            ) {
+                item {
+                    TitleMediumText(textResId = R.string.event_details_edit_mode_select_calendar)
+                }
+                items(items = it) { calendar ->
+                    with(calendar) {
+                        CalendarItem(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { viewModel.performUserAction(CalendarSelected(calendar)) },
+                            email = accountName,
+                            name = calendarName,
+                            calendarColor = color
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -182,6 +225,7 @@ private fun EditModeContent(
     editMode: EditMode,
     onBackPressed: () -> Unit,
     onSavePressed: () -> Unit,
+    onCalendarPressed: () -> Unit,
 ) {
     CommonScaffold(
         navigationIcon = {
@@ -217,6 +261,29 @@ private fun EditModeContent(
                     singleLine = true,
                 )
             }
+            item {
+                TextFieldWithIcon(
+                    text = editMode.description.description,
+                    onTextChanged = {},
+                    icon = Icons.Default.List,
+                    hint = stringResource(R.string.event_details_edit_mode_provide_description),
+                    singleLine = false,
+                )
+            }
+            item { Divider() }
+            item {
+                with(editMode.calendar) {
+                    CalendarItem(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onCalendarPressed() },
+                        email = accountName,
+                        name = calendarName,
+                        calendarColor = color
+                    )
+                }
+            }
+            item { Divider() }
         }
     }
 }
@@ -589,6 +656,7 @@ private fun EditModePreview() {
             ),
             onBackPressed = {},
             onSavePressed = {},
+            onCalendarPressed = {},
         )
     }
 }

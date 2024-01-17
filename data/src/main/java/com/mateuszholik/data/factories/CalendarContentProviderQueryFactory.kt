@@ -23,6 +23,7 @@ internal interface CalendarContentProviderQueryFactory {
         const val CALENDAR_NAME_INDEX = 1
         const val CALENDAR_ACCOUNT_NAME_INDEX = 2
         const val CALENDAR_VISIBLE_INDEX = 3
+        const val CALENDAR_COLOR_INDEX = 4
     }
 }
 
@@ -34,7 +35,8 @@ internal class CalendarContentProviderQueryFactoryImpl @Inject constructor() :
             CalendarContract.Calendars._ID,
             CalendarContract.Calendars.NAME,
             CalendarContract.Calendars.ACCOUNT_NAME,
-            CalendarContract.Calendars.VISIBLE
+            CalendarContract.Calendars.VISIBLE,
+            CalendarContract.Calendars.CALENDAR_COLOR,
         )
 
         return QueryData(

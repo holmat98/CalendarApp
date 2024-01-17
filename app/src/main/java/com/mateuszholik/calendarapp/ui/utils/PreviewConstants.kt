@@ -54,25 +54,29 @@ internal object PreviewConstants {
         id = 1,
         accountName = "Account 1",
         calendarName = "Calendar 1",
-        isVisible = true
+        isVisible = true,
+        color = null,
     )
     val CALENDAR_2 = Calendar(
         id = 2,
         accountName = "Account 1",
         calendarName = "Calendar 2",
-        isVisible = false
+        isVisible = false,
+        color = null,
     )
     val CALENDAR_3 = Calendar(
         id = 3,
         accountName = "Account 2",
         calendarName = "Calendar 3",
-        isVisible = false
+        isVisible = false,
+        color = null,
     )
     val CALENDAR_4 = Calendar(
         id = 4,
         accountName = "Account 2",
         calendarName = "Calendar 4",
-        isVisible = true
+        isVisible = true,
+        color = null,
     )
     val CALENDARS = mapOf(
         "Account 1" to listOf(CALENDAR_1, CALENDAR_2),

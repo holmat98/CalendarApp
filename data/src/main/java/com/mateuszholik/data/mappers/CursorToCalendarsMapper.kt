@@ -1,7 +1,9 @@
 package com.mateuszholik.data.mappers
 
 import android.database.Cursor
+import androidx.core.database.getIntOrNull
 import com.mateuszholik.data.factories.CalendarContentProviderQueryFactory.Companion.CALENDAR_ACCOUNT_NAME_INDEX
+import com.mateuszholik.data.factories.CalendarContentProviderQueryFactory.Companion.CALENDAR_COLOR_INDEX
 import com.mateuszholik.data.factories.CalendarContentProviderQueryFactory.Companion.CALENDAR_ID_INDEX
 import com.mateuszholik.data.factories.CalendarContentProviderQueryFactory.Companion.CALENDAR_NAME_INDEX
 import com.mateuszholik.data.factories.CalendarContentProviderQueryFactory.Companion.CALENDAR_VISIBLE_INDEX
@@ -24,6 +26,7 @@ internal class CursorToCalendarsMapperImpl @Inject constructor() : CursorToCalen
             id = getLong(CALENDAR_ID_INDEX),
             calendarName = getString(CALENDAR_NAME_INDEX),
             accountName = getString(CALENDAR_ACCOUNT_NAME_INDEX),
-            isVisible = getInt(CALENDAR_VISIBLE_INDEX) == 1
+            isVisible = getInt(CALENDAR_VISIBLE_INDEX) == 1,
+            color = getIntOrNull(CALENDAR_COLOR_INDEX)
         )
 }

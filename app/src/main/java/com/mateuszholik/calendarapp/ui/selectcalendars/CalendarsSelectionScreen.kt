@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -46,6 +47,7 @@ import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.domain.models.Calendar
 import com.mateuszholik.uicomponents.buttons.CommonIconButton
 import com.mateuszholik.uicomponents.checkbox.CommonCheckbox
+import com.mateuszholik.uicomponents.checkbox.CommonCheckboxDefaults
 import com.mateuszholik.uicomponents.extensions.shimmerEffect
 import com.mateuszholik.uicomponents.scaffold.CommonScaffold
 import com.mateuszholik.uicomponents.text.TitleMediumText
@@ -186,7 +188,10 @@ private fun Content(
                     onChecked = {
                         isChecked = it
                         onCalendarChecked(calendar.id, it)
-                    }
+                    },
+                    colors = CommonCheckboxDefaults.colors(
+                        checkedColor = calendar.color?.let { Color(it) } ?: MaterialTheme.colorScheme.primary
+                    )
                 )
             }
         }
