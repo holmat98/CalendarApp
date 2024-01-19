@@ -16,4 +16,5 @@ data class EventDetails(
     val hasAlarm: Boolean,
     val canModify: Boolean,
     val canSeeGuests: Boolean,
+    val calendarId: Long,
 )

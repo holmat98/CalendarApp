@@ -6,6 +6,7 @@ import androidx.core.database.getStringOrNull
 import com.mateuszholik.data.extensions.toLocalDateTime
 import com.mateuszholik.data.factories.EventsContentProviderQueryFactory.Companion.EVENT_ALL_DAY_INDEX
 import com.mateuszholik.data.factories.EventsContentProviderQueryFactory.Companion.EVENT_AVAILABILITY_INDEX
+import com.mateuszholik.data.factories.EventsContentProviderQueryFactory.Companion.EVENT_CALENDAR_ID_INDEX
 import com.mateuszholik.data.factories.EventsContentProviderQueryFactory.Companion.EVENT_CAN_MODIFY_INDEX
 import com.mateuszholik.data.factories.EventsContentProviderQueryFactory.Companion.EVENT_CAN_SEE_GUESTS_INDEX
 import com.mateuszholik.data.factories.EventsContentProviderQueryFactory.Companion.EVENT_COLOR_INDEX
@@ -46,7 +47,8 @@ internal class CursorToEventDetailsMapperImpl @Inject constructor() : CursorToEv
                 organizer = getString(EVENT_ORGANIZER_INDEX),
                 hasAlarm = getInt(EVENT_HAS_ALARM_INDEX) == 1,
                 canModify = canModify(),
-                canSeeGuests = getInt(EVENT_CAN_SEE_GUESTS_INDEX) == 1
+                canSeeGuests = getInt(EVENT_CAN_SEE_GUESTS_INDEX) == 1,
+                calendarId = getLong(EVENT_CALENDAR_ID_INDEX)
             )
         }
     }

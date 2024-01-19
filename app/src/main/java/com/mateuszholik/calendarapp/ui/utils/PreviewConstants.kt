@@ -123,6 +123,7 @@ internal object PreviewConstants {
         eventColor = Color.Green.toArgb(),
         location = "Zabrze",
         organizer = "Organizer",
+        calendar = CALENDAR_1
     )
     val EVENT_DETAILS_GENERIC_DESCRIPTION = EVENT_DETAILS.copy(
         description = Generic(

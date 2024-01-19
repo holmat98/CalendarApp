@@ -6,6 +6,7 @@ import com.mateuszholik.domain.models.AttendeeStatus
 import com.mateuszholik.domain.models.Availability
 import com.mateuszholik.domain.models.Calendar
 import com.mateuszholik.domain.models.Description
+import com.mateuszholik.domain.models.EditableEventDetails
 import com.mateuszholik.data.repositories.models.Alert as DataAlert
 import com.mateuszholik.data.repositories.models.Attendee as DataAttendee
 import com.mateuszholik.data.repositories.models.Calendar as DataCalendar
@@ -47,6 +48,7 @@ internal fun DataAttendee.toCommonModel(): Attendee =
 internal fun DataEventDetails.toCommonModel(
     attendees: List<Attendee>,
     alerts: List<Alert>,
+    calendar: Calendar?
 ): EventDetails =
     EventDetails(
         id = id,
@@ -62,4 +64,18 @@ internal fun DataEventDetails.toCommonModel(
         canModify = canModify,
         alerts = alerts,
         attendees = attendees,
+        calendar = calendar
+    )
+
+internal fun DataEventDetails.toEditableEventDetails(calendar: Calendar?): EditableEventDetails =
+    EditableEventDetails(
+        id = id,
+        title = title,
+        description = Description.from(description),
+        dateStart = dateStart,
+        dateEnd = dateEnd,
+        allDay = allDay,
+        eventColor = eventColor,
+        location = location,
+        calendar = calendar
     )

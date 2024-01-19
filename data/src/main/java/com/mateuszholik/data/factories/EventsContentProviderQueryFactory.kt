@@ -40,6 +40,7 @@ internal interface EventsContentProviderQueryFactory {
         const val EVENT_IS_ORGANIZER_INDEX = 12
         const val EVENT_CAN_MODIFY_INDEX = 13
         const val EVENT_CAN_SEE_GUESTS_INDEX = 14
+        const val EVENT_CALENDAR_ID_INDEX = 15
     }
 }
 
@@ -101,7 +102,8 @@ internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
                 CalendarContract.Events.HAS_ALARM,
                 CalendarContract.Events.IS_ORGANIZER,
                 CalendarContract.Events.GUESTS_CAN_MODIFY,
-                CalendarContract.Events.GUESTS_CAN_SEE_GUESTS
+                CalendarContract.Events.GUESTS_CAN_SEE_GUESTS,
+                CalendarContract.Events.CALENDAR_ID,
             ),
             selection = "(${CalendarContract.Events._ID} = ?)",
             selectionArgs = arrayOf("$eventId")

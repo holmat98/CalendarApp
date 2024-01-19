@@ -11,6 +11,8 @@ internal interface CalendarContentProviderQueryFactory {
 
     suspend fun createForCalendars(): QueryData
 
+    suspend fun createForCalendarWith(id: Long): QueryData
+
     suspend fun createForSelectedCalendarsIds(): QueryData
 
     suspend fun createForUpdateCalendarVisibility(
@@ -44,6 +46,23 @@ internal class CalendarContentProviderQueryFactoryImpl @Inject constructor() :
             projection = projection,
             selection = null,
             selectionArgs = null
+        )
+    }
+
+    override suspend fun createForCalendarWith(id: Long): QueryData {
+        val projection = arrayOf(
+            CalendarContract.Calendars._ID,
+            CalendarContract.Calendars.NAME,
+            CalendarContract.Calendars.ACCOUNT_NAME,
+            CalendarContract.Calendars.VISIBLE,
+            CalendarContract.Calendars.CALENDAR_COLOR,
+        )
+
+        return QueryData(
+            uri = CalendarContract.Calendars.CONTENT_URI,
+            projection = projection,
+            selection = "(${CalendarContract.Calendars._ID} = ?)",
+            selectionArgs = arrayOf("$id")
         )
     }
 

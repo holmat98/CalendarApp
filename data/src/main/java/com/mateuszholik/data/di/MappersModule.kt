@@ -6,6 +6,8 @@ import com.mateuszholik.data.mappers.CursorToAttendeesMapper
 import com.mateuszholik.data.mappers.CursorToAttendeesMapperImpl
 import com.mateuszholik.data.mappers.CursorToCalendarIdsMapper
 import com.mateuszholik.data.mappers.CursorToCalendarIdsMapperImpl
+import com.mateuszholik.data.mappers.CursorToCalendarMapper
+import com.mateuszholik.data.mappers.CursorToCalendarMapperImpl
 import com.mateuszholik.data.mappers.CursorToCalendarsMapper
 import com.mateuszholik.data.mappers.CursorToCalendarsMapperImpl
 import com.mateuszholik.data.mappers.CursorToEventDetailsMapper
@@ -41,6 +43,12 @@ internal abstract class MappersModule {
     abstract fun bindsCursorToCalendarIdsMapper(
         cursorToCalendarIdsMapperImpl: CursorToCalendarIdsMapperImpl,
     ): CursorToCalendarIdsMapper
+
+    @Singleton
+    @Binds
+    abstract fun bindsCursorToCalendarMapper(
+        cursorToCalendarMapperImpl: CursorToCalendarMapperImpl,
+    ): CursorToCalendarMapper
 
     @Singleton
     @Binds

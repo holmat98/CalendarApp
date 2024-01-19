@@ -10,14 +10,10 @@ import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventD
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiState
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction
 import com.mateuszholik.calendarapp.ui.navigation.MainNavigation.EVENT_ID_ARGUMENT
-import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.CALENDAR_1
 import com.mateuszholik.common.provider.DispatcherProvider
 import com.mateuszholik.domain.models.Attendee
-import com.mateuszholik.domain.models.Calendar
-import com.mateuszholik.domain.models.Description
 import com.mateuszholik.domain.models.EventDetails
 import com.mateuszholik.domain.models.Result
-import com.mateuszholik.domain.usecases.GetCalendarsUseCase
 import com.mateuszholik.domain.usecases.GetEventDetailsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -27,16 +23,13 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
 class EventDetailsViewModel @Inject constructor(
     private val getEventDetailsUseCase: GetEventDetailsUseCase,
-    private val getCalendarsUseCase: GetCalendarsUseCase,
     private val dispatcherProvider: DispatcherProvider,
     savedStateHandle: SavedStateHandle,
 ) :
@@ -76,17 +69,11 @@ class EventDetailsViewModel @Inject constructor(
             is EventDetailsUserAction.DeleteEvent -> Unit
             is EventDetailsUserAction.DeleteEventCancelled -> Unit
             is EventDetailsUserAction.DeleteEventConfirmed -> Unit
-            is EventDetailsUserAction.EnterEditMode ->
-                handleEnterEditModeUserAction()
+            is EventDetailsUserAction.EditEventPressed ->
+                handleEnterEditEventPressedUserAction(action.eventId)
             is EventDetailsUserAction.NavigateBack -> Unit
             is EventDetailsUserAction.RetryGetEventDetailsPressed ->
                 handleRetryGetEventDetailsPressed()
-            is EventDetailsUserAction.CalendarSelected ->
-                handleCalendarSelected(action.calendar)
-            is EventDetailsUserAction.CalendarSelectionDismissed ->
-                handleCalendarSelectionDismissed()
-            is EventDetailsUserAction.SelectCalendar ->
-                handleSelectCalendar()
         }
 
     private fun handleAttendeeDismissedUserAction() {
@@ -109,53 +96,9 @@ class EventDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun handleEnterEditModeUserAction() {
+    private fun handleEnterEditEventPressedUserAction(eventId: Long) {
         viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
-            _uiState.update { currentState ->
-                if (currentState is EventDetailsUiState.ViewMode) {
-                    with(currentState.eventDetails) {
-                        EventDetailsUiState.EditMode(
-                            title = title,
-                            description = description,
-                            dateStart = dateStart,
-                            dateEnd = dateEnd,
-                            allDay = allDay,
-                            timezone = "",
-                            eventColor = eventColor,
-                            location = location,
-                            calendar = CALENDAR_1,
-                        )
-                    }
-                } else {
-                    currentState
-                }
-            }
-        }
-    }
-
-    private fun handleCalendarSelected(calendar: Calendar) {
-        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
-            _uiEvent.emit(EventDetailsUiEvent.DismissCalendarSelection)
-            _uiState.update {
-                if (it is EventDetailsUiState.EditMode) {
-                    it.copy(calendar = calendar)
-                } else {
-                    it
-                }
-            }
-        }
-    }
-
-    private fun handleCalendarSelectionDismissed() {
-        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
-            _uiEvent.emit(EventDetailsUiEvent.DismissCalendarSelection)
-        }
-    }
-
-    private fun handleSelectCalendar() {
-        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
-            val calendars = getCalendarsUseCase()
-            _uiEvent.emit(EventDetailsUiEvent.ShowCalendarSelection(calendars))
+            _uiEvent.emit(EventDetailsUiEvent.GoToEventDetails(eventId))
         }
     }
 
@@ -176,18 +119,6 @@ class EventDetailsViewModel @Inject constructor(
         data object NoData : EventDetailsUiState()
 
         data class ViewMode(val eventDetails: EventDetails) : EventDetailsUiState()
-
-        data class EditMode(
-            val title: String,
-            val description: Description,
-            val dateStart: LocalDateTime,
-            val dateEnd: LocalDateTime,
-            val allDay: Boolean,
-            val timezone: String,
-            val eventColor: Int?,
-            val location: String,
-            val calendar: Calendar,
-        ) : EventDetailsUiState()
     }
 
     sealed class EventDetailsUiEvent : UiEvent {
@@ -198,14 +129,12 @@ class EventDetailsViewModel @Inject constructor(
 
         data object DismissAttendee : EventDetailsUiEvent()
 
-        data object DismissCalendarSelection : EventDetailsUiEvent()
-
-        data class ShowCalendarSelection(val calendars: List<Calendar>) : EventDetailsUiEvent()
+        data class GoToEventDetails(val eventId: Long) : EventDetailsUiEvent()
     }
 
     sealed class EventDetailsUserAction : UserAction {
 
-        data object EnterEditMode : EventDetailsUserAction()
+        data class EditEventPressed(val eventId: Long) : EventDetailsUserAction()
 
         data object NavigateBack : EventDetailsUserAction()
 
@@ -220,11 +149,5 @@ class EventDetailsViewModel @Inject constructor(
         data object AttendeeDismissed : EventDetailsUserAction()
 
         data object RetryGetEventDetailsPressed : EventDetailsUserAction()
-
-        data object SelectCalendar : EventDetailsUserAction()
-
-        data class CalendarSelected(val calendar: Calendar) : EventDetailsUserAction()
-
-        data object CalendarSelectionDismissed : EventDetailsUserAction()
     }
 }

@@ -2,7 +2,7 @@ package com.mateuszholik.domain.models
 
 import java.time.LocalDateTime
 
-data class EventDetails(
+data class EditableEventDetails(
     val id: Long,
     val title: String,
     val description: Description,
@@ -10,11 +10,6 @@ data class EventDetails(
     val dateEnd: LocalDateTime,
     val allDay: Boolean,
     val eventColor: Int?,
-    val availability: Availability,
     val location: String,
-    val organizer: String,
-    val canModify: Boolean,
-    val alerts: List<Alert>,
-    val attendees: List<Attendee>,
     val calendar: Calendar?,
 )

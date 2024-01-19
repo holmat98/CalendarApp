@@ -15,14 +15,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.Info
@@ -53,64 +51,51 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiEvent
-import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiState.ViewMode
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiState.Loading
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiState.NoData
-import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiState.EditMode
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiState.ViewMode
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.AttendeeDismissed
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.AttendeeSelected
-import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.CalendarSelected
-import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.CalendarSelectionDismissed
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.DeleteEvent
-import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.EnterEditMode
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.EditEventPressed
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.RetryGetEventDetailsPressed
-import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.SelectCalendar
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
-import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.CALENDAR_1
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS_EMPTY_DESCRIPTION
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.ChangeSystemBarColors
 import com.mateuszholik.designsystem.cornerRadius
 import com.mateuszholik.designsystem.models.StyleType
-import com.mateuszholik.designsystem.previews.BigPhonePreview
 import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.domain.models.Attendee
-import com.mateuszholik.domain.models.Calendar
 import com.mateuszholik.domain.models.EventDetails
 import com.mateuszholik.domain.models.Generic
 import com.mateuszholik.domain.models.GoogleMeet
-import com.mateuszholik.uicomponents.cards.SectionCard
 import com.mateuszholik.uicomponents.attendee.AttendeeItem
 import com.mateuszholik.uicomponents.attendee.Status
 import com.mateuszholik.uicomponents.bottomsheet.CommonBottomSheetDialog
 import com.mateuszholik.uicomponents.buttons.CommonIconButton
 import com.mateuszholik.uicomponents.buttons.CommonOutlinedButton
-import com.mateuszholik.uicomponents.buttons.CommonSmallButton
-import com.mateuszholik.uicomponents.calendar.CalendarItem
 import com.mateuszholik.uicomponents.cards.CardWithImage
 import com.mateuszholik.uicomponents.cards.EventCard
 import com.mateuszholik.uicomponents.cards.EventWithMeetingCard
-import com.mateuszholik.uicomponents.dialog.CommonDialog
+import com.mateuszholik.uicomponents.cards.SectionCard
 import com.mateuszholik.uicomponents.extensions.shimmerEffect
 import com.mateuszholik.uicomponents.scaffold.CommonScaffold
 import com.mateuszholik.uicomponents.text.BodyMediumText
 import com.mateuszholik.uicomponents.text.TitleMediumText
-import com.mateuszholik.uicomponents.textfield.CommonOutlinedTextField
-import com.mateuszholik.uicomponents.textfield.TextFieldWithIcon
-import java.time.LocalDateTime
 
 @Composable
 fun EventDetailsScreen(
     onBackPressed: () -> Unit,
+    onEditPressed: (eventId: Long) -> Unit,
     viewModel: EventDetailsViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     var selectedAttendee by remember { mutableStateOf<Attendee?>(null) }
-    var calendars by remember { mutableStateOf<List<Calendar>?>(null) }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ChangeSystemBarColors()
@@ -124,24 +109,13 @@ fun EventDetailsScreen(
             is EventDetailsUiEvent.ShowAttendee -> {
                 selectedAttendee = uiEvent.attendee
             }
-            is EventDetailsUiEvent.DismissCalendarSelection -> {
-                calendars = null
-            }
-            is EventDetailsUiEvent.ShowCalendarSelection -> {
-                calendars = uiEvent.calendars
+            is EventDetailsUiEvent.GoToEventDetails -> {
+                onEditPressed(uiEvent.eventId)
             }
         }
     }
 
     when (uiState) {
-        is EditMode -> {
-            EditModeContent(
-                editMode = uiState as EditMode,
-                onBackPressed = onBackPressed,
-                onSavePressed = {},
-                onCalendarPressed = { viewModel.performUserAction(SelectCalendar) }
-            )
-        }
         is Loading -> {
             LoadingContent(onBackPressed = onBackPressed)
         }
@@ -155,7 +129,7 @@ fun EventDetailsScreen(
             ViewModeContent(
                 eventDetails = (uiState as ViewMode).eventDetails,
                 onBackPressed = onBackPressed,
-                onEditPressed = { viewModel.performUserAction(EnterEditMode) },
+                onEditPressed = { viewModel.performUserAction(EditEventPressed(it)) },
                 onDeletePressed = { viewModel.performUserAction(DeleteEvent) },
                 onAttendeePressed = { viewModel.performUserAction(AttendeeSelected(it)) }
             )
@@ -189,101 +163,6 @@ fun EventDetailsScreen(
                 icon = Icons.Outlined.Email,
                 onClick = { context.startActivity(getMailIntent(attendee.email)) }
             )
-        }
-    }
-
-    calendars?.let {
-        CommonDialog(onDismissRequest = { viewModel.performUserAction(CalendarSelectionDismissed) }) {
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.normal),
-                contentPadding = PaddingValues(MaterialTheme.spacing.normal),
-            ) {
-                item {
-                    TitleMediumText(textResId = R.string.event_details_edit_mode_select_calendar)
-                }
-                items(items = it) { calendar ->
-                    with(calendar) {
-                        CalendarItem(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { viewModel.performUserAction(CalendarSelected(calendar)) },
-                            email = accountName,
-                            name = calendarName,
-                            calendarColor = color
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun EditModeContent(
-    editMode: EditMode,
-    onBackPressed: () -> Unit,
-    onSavePressed: () -> Unit,
-    onCalendarPressed: () -> Unit,
-) {
-    CommonScaffold(
-        navigationIcon = {
-            CommonIconButton(imageVector = Icons.Default.Close, onClick = onBackPressed)
-        },
-        actions = {
-            CommonSmallButton(
-                modifier = Modifier.padding(end = MaterialTheme.spacing.small),
-                textResId = R.string.button_save, onClick = onSavePressed
-            )
-        }
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .padding(
-                    PaddingValues(
-                        top = it.calculateTopPadding(),
-                        bottom = it.calculateBottomPadding(),
-                        end = MaterialTheme.spacing.normal,
-                        start = MaterialTheme.spacing.normal
-                    )
-                )
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.normal),
-            contentPadding = PaddingValues(vertical = MaterialTheme.spacing.normal)
-        ) {
-            item {
-                CommonOutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = editMode.title,
-                    onTextChanged = {},
-                    hint = stringResource(R.string.event_details_edit_mode_provide_title),
-                    singleLine = true,
-                )
-            }
-            item {
-                TextFieldWithIcon(
-                    text = editMode.description.description,
-                    onTextChanged = {},
-                    icon = Icons.Default.List,
-                    hint = stringResource(R.string.event_details_edit_mode_provide_description),
-                    singleLine = false,
-                )
-            }
-            item { Divider() }
-            item {
-                with(editMode.calendar) {
-                    CalendarItem(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onCalendarPressed() },
-                        email = accountName,
-                        name = calendarName,
-                        calendarColor = color
-                    )
-                }
-            }
-            item { Divider() }
         }
     }
 }
@@ -399,7 +278,7 @@ private fun NoDataContent(
 private fun ViewModeContent(
     eventDetails: EventDetails,
     onBackPressed: () -> Unit,
-    onEditPressed: () -> Unit,
+    onEditPressed: (eventId: Long) -> Unit,
     onDeletePressed: () -> Unit,
     onAttendeePressed: (attendee: Attendee) -> Unit,
 ) {
@@ -411,7 +290,7 @@ private fun ViewModeContent(
         },
         actions = {
             if (eventDetails.canModify) {
-                CommonIconButton(imageVector = Icons.Default.Edit, onClick = onEditPressed)
+                CommonIconButton(imageVector = Icons.Default.Edit, onClick = { onEditPressed(eventDetails.id) })
                 CommonIconButton(imageVector = Icons.Default.Delete, onClick = onDeletePressed)
             }
         },
@@ -634,29 +513,6 @@ private fun ViewModePreview2() {
             onEditPressed = {},
             onDeletePressed = {},
             onAttendeePressed = {},
-        )
-    }
-}
-
-@BigPhonePreview
-@Composable
-private fun EditModePreview() {
-    CalendarAppTheme(styleType = StyleType.SUMMER, darkTheme = true) {
-        EditModeContent(
-            editMode = EditMode(
-                title = "Event 1",
-                description = Generic("Description"),
-                dateStart = LocalDateTime.of(2024, 1, 14, 12, 0, 0),
-                dateEnd = LocalDateTime.of(2024, 1, 14, 13, 0, 0),
-                allDay = false,
-                timezone = "Poland",
-                eventColor = null,
-                location = "Poland",
-                calendar = CALENDAR_1,
-            ),
-            onBackPressed = {},
-            onSavePressed = {},
-            onCalendarPressed = {},
         )
     }
 }

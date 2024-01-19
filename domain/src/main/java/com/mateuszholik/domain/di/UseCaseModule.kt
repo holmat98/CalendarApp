@@ -4,6 +4,8 @@ import com.mateuszholik.domain.usecases.GetCalendarsUseCase
 import com.mateuszholik.domain.usecases.GetCalendarsUseCaseImpl
 import com.mateuszholik.domain.usecases.GetDaysWithEventsForMonthUseCase
 import com.mateuszholik.domain.usecases.GetDaysWithEventsForMonthUseCaseImpl
+import com.mateuszholik.domain.usecases.GetEditableEventDetailsUseCase
+import com.mateuszholik.domain.usecases.GetEditableEventDetailsUseCaseImpl
 import com.mateuszholik.domain.usecases.GetEventDetailsUseCase
 import com.mateuszholik.domain.usecases.GetEventDetailsUseCaseImpl
 import com.mateuszholik.domain.usecases.GetEventsForDayUseCase
@@ -30,6 +32,12 @@ internal abstract class UseCaseModule {
     abstract fun bindsGetDaysWithEventsForMonthUseCase(
         getDaysWithEventsForMonthUseCaseImpl: GetDaysWithEventsForMonthUseCaseImpl
     ): GetDaysWithEventsForMonthUseCase
+
+    @ViewModelScoped
+    @Binds
+    abstract fun bindsGetEditableEventDetailsUseCase(
+        getEditableEventDetailsUseCaseImpl: GetEditableEventDetailsUseCaseImpl
+    ): GetEditableEventDetailsUseCase
 
     @ViewModelScoped
     @Binds
