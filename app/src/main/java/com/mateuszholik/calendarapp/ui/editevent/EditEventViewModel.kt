@@ -134,15 +134,11 @@ class EditEventViewModel @Inject constructor(
     }
 
     private fun handleUpdateDescription(newDescription: String) {
-        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
-            _uiState.updateOnEventDetails { it.copy(description = it.description.copyWith(newDescription)) }
-        }
+        _uiState.updateOnEventDetails { it.copy(description = it.description.copyWith(newDescription)) }
     }
 
     private fun handleUpdateTitle(newTitle: String) {
-        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
-            _uiState.updateOnEventDetails { it.copy(title = newTitle) }
-        }
+        _uiState.updateOnEventDetails { it.copy(title = newTitle) }
     }
 
     private fun MutableStateFlow<EditEventUiState>.updateOnEventDetails(transform: (EditEventUiState.EventDetails) -> EditEventUiState) =
