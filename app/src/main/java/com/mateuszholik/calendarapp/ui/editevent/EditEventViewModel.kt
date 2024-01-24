@@ -76,6 +76,10 @@ class EditEventViewModel @Inject constructor(
                 handleExitAttemptCancelled()
             is EditEventUserAction.ExitAttemptConfirmed ->
                 handleExitAttemptConfirmed()
+            is EditEventUserAction.UpdateDescription ->
+                handleUpdateDescription(action.newDescription)
+            is EditEventUserAction.UpdateTitle ->
+                handleUpdateTitle(action.newTitle)
         }
 
     private fun getEventDetails() {
@@ -93,13 +97,7 @@ class EditEventViewModel @Inject constructor(
     private fun handleCalendarSelected(calendar: Calendar) {
         viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             _uiEvent.emit(EditEventUiEvent.DismissCalendarSelection)
-            _uiState.update {
-                if (it is EditEventUiState.EventDetails) {
-                    it.copy(calendar = calendar)
-                } else {
-                    it
-                }
-            }
+            _uiState.updateOnEventDetails { it.copy(calendar = calendar) }
         }
     }
 
@@ -134,6 +132,27 @@ class EditEventViewModel @Inject constructor(
             _uiEvent.emit(EditEventUiEvent.NavigateBack)
         }
     }
+
+    private fun handleUpdateDescription(newDescription: String) {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiState.updateOnEventDetails { it.copy(description = it.description.copyWith(newDescription)) }
+        }
+    }
+
+    private fun handleUpdateTitle(newTitle: String) {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiState.updateOnEventDetails { it.copy(title = newTitle) }
+        }
+    }
+
+    private fun MutableStateFlow<EditEventUiState>.updateOnEventDetails(transform: (EditEventUiState.EventDetails) -> EditEventUiState) =
+        update { currentState ->
+            if (currentState is EditEventUiState.EventDetails) {
+                transform(currentState)
+            } else {
+                currentState
+            }
+        }
 
     private fun EditableEventDetails.toEventDetails(): EditEventUiState.EventDetails =
         EditEventUiState.EventDetails(
@@ -193,5 +212,9 @@ class EditEventViewModel @Inject constructor(
         data object ExitAttemptConfirmed : EditEventUserAction()
 
         data object ExitAttemptCancelled : EditEventUserAction()
+
+        data class UpdateTitle(val newTitle: String) : EditEventUserAction()
+
+        data class UpdateDescription(val newDescription: String) : EditEventUserAction()
     }
 }

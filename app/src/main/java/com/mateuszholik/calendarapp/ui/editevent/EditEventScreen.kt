@@ -35,6 +35,8 @@ import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUse
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.ExitAttemptCancelled
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.ExitAttemptConfirmed
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.SelectCalendar
+import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.UpdateDescription
+import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.UpdateTitle
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants
 import com.mateuszholik.designsystem.CalendarAppTheme
@@ -102,11 +104,11 @@ fun EditEventScreen(
             )
         }
     ) {
-        val paddingValues =  PaddingValues(
-        top = it.calculateTopPadding(),
-        bottom = it.calculateBottomPadding(),
-        end = MaterialTheme.spacing.normal,
-        start = MaterialTheme.spacing.normal
+        val paddingValues = PaddingValues(
+            top = it.calculateTopPadding(),
+            bottom = it.calculateBottomPadding(),
+            end = MaterialTheme.spacing.normal,
+            start = MaterialTheme.spacing.normal
         )
 
         when (uiState) {
@@ -114,7 +116,11 @@ fun EditEventScreen(
                 Content(
                     paddingValues = paddingValues,
                     editMode = uiState as EditEventUiState.EventDetails,
-                    onCalendarPressed = { viewModel.performUserAction(SelectCalendar) }
+                    onCalendarPressed = { viewModel.performUserAction(SelectCalendar) },
+                    onTitleChanged = { newTitle -> viewModel.performUserAction(UpdateTitle(newTitle)) },
+                    onDescriptionChanged = { newDescription ->
+                        viewModel.performUserAction(UpdateDescription(newDescription))
+                    }
                 )
             }
             is EditEventUiState.Loading -> {
@@ -166,6 +172,8 @@ fun EditEventScreen(
 private fun Content(
     editMode: EditEventUiState.EventDetails,
     onCalendarPressed: () -> Unit,
+    onTitleChanged: (String) -> Unit,
+    onDescriptionChanged: (String) -> Unit,
     paddingValues: PaddingValues,
 ) {
     LazyColumn(
@@ -179,7 +187,7 @@ private fun Content(
             CommonOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 text = editMode.title,
-                onTextChanged = {},
+                onTextChanged = onTitleChanged,
                 hint = stringResource(R.string.edit_event_provide_title),
                 singleLine = true,
             )
@@ -187,7 +195,7 @@ private fun Content(
         item {
             TextFieldWithIcon(
                 text = editMode.description.description,
-                onTextChanged = {},
+                onTextChanged = onDescriptionChanged,
                 icon = Icons.Default.List,
                 hint = stringResource(R.string.edit_event_provide_description),
                 singleLine = false,
@@ -231,6 +239,8 @@ private fun EditModePreview() {
                     calendar = PreviewConstants.CALENDAR_1,
                 ),
                 onCalendarPressed = {},
+                onTitleChanged = {},
+                onDescriptionChanged = {},
                 paddingValues = PaddingValues(horizontal = MaterialTheme.spacing.normal),
             )
         }
