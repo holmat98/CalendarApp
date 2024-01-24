@@ -70,6 +70,12 @@ class EditEventViewModel @Inject constructor(
                 handleCalendarSelectionDismissed()
             is EditEventUserAction.SelectCalendar ->
                 handleSelectCalendar()
+            is EditEventUserAction.ExitAttempt ->
+                handleExitAttempt()
+            is EditEventUserAction.ExitAttemptCancelled ->
+                handleExitAttemptCancelled()
+            is EditEventUserAction.ExitAttemptConfirmed ->
+                handleExitAttemptConfirmed()
         }
 
     private fun getEventDetails() {
@@ -110,6 +116,25 @@ class EditEventViewModel @Inject constructor(
         }
     }
 
+    private fun handleExitAttempt() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiEvent.emit(EditEventUiEvent.ShowExitDialog)
+        }
+    }
+
+    private fun handleExitAttemptCancelled() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiEvent.emit(EditEventUiEvent.DismissExitDialog)
+        }
+    }
+
+    private fun handleExitAttemptConfirmed() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiEvent.emit(EditEventUiEvent.DismissExitDialog)
+            _uiEvent.emit(EditEventUiEvent.NavigateBack)
+        }
+    }
+
     private fun EditableEventDetails.toEventDetails(): EditEventUiState.EventDetails =
         EditEventUiState.EventDetails(
             id = id,
@@ -147,6 +172,12 @@ class EditEventViewModel @Inject constructor(
         data object DismissCalendarSelection : EditEventUiEvent()
 
         data class ShowCalendarSelection(val calendars: List<Calendar>) : EditEventUiEvent()
+
+        data object ShowExitDialog : EditEventUiEvent()
+
+        data object DismissExitDialog : EditEventUiEvent()
+
+        data object NavigateBack : EditEventUiEvent()
     }
 
     sealed class EditEventUserAction : UserAction {
@@ -156,5 +187,11 @@ class EditEventViewModel @Inject constructor(
         data class CalendarSelected(val calendar: Calendar) : EditEventUserAction()
 
         data object CalendarSelectionDismissed : EditEventUserAction()
+
+        data object ExitAttempt : EditEventUserAction()
+
+        data object ExitAttemptConfirmed : EditEventUserAction()
+
+        data object ExitAttemptCancelled : EditEventUserAction()
     }
 }
