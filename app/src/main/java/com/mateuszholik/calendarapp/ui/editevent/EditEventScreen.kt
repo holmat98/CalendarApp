@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -68,6 +69,7 @@ import com.mateuszholik.uicomponents.dialog.CommonDialog
 import com.mateuszholik.uicomponents.scaffold.CommonScaffold
 import com.mateuszholik.uicomponents.switches.CommonSwitch
 import com.mateuszholik.uicomponents.text.BodyMediumText
+import com.mateuszholik.uicomponents.text.TextWithIcon
 import com.mateuszholik.uicomponents.text.TitleMediumText
 import com.mateuszholik.uicomponents.textfield.CommonOutlinedTextField
 import com.mateuszholik.uicomponents.textfield.TextFieldWithIcon
@@ -291,7 +293,9 @@ private fun Content(
                         onDateSelected = { onStartDateChanged(it.atStartOfDay()) }
                     )
                     CommonDatePicker(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(bottom = MaterialTheme.spacing.small)
+                            .fillMaxWidth(),
                         date = editMode.dateEnd.toLocalDate(),
                         onDateSelected = { onEndDateChanged(it.atStartOfDay()) }
                     )
@@ -304,11 +308,17 @@ private fun Content(
                         onDateSelected = onStartDateChanged
                     )
                     CommonDateTimePicker(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(bottom = MaterialTheme.spacing.small)
+                            .fillMaxWidth(),
                         date = editMode.dateEnd,
                         onDateSelected = onEndDateChanged
                     )
                 }
+                TextWithIcon(
+                    text = editMode.timezone,
+                    icon = Icons.Outlined.DateRange
+                )
             }
         }
 
@@ -353,6 +363,7 @@ private fun EditModePreview() {
                     description = Generic("Description"),
                     dateStart = LocalDateTime.of(2024, 1, 14, 12, 0, 0),
                     dateEnd = LocalDateTime.of(2024, 1, 14, 13, 0, 0),
+                    timezone = "Timezone",
                     allDay = false,
                     eventColor = ColorsProvider.ColorInfo(-1466246, R.string.color_light_coral),
                     location = "Poland",
@@ -384,6 +395,7 @@ private fun EditModePreview2() {
                     description = Generic("Description"),
                     dateStart = LocalDateTime.of(2024, 1, 14, 12, 0, 0),
                     dateEnd = LocalDateTime.of(2024, 1, 14, 13, 0, 0),
+                    timezone = "Timezone",
                     allDay = true,
                     eventColor = null,
                     location = "Poland",

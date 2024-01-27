@@ -211,6 +211,7 @@ class EditEventViewModel @Inject constructor(
             description = description,
             dateStart = dateStart,
             dateEnd = dateEnd,
+            timezone = timezone,
             allDay = allDay,
             eventColor = eventColor?.let {
                 Timber.d("Testowanie: color = $it")
@@ -230,6 +231,7 @@ class EditEventViewModel @Inject constructor(
             val description: Description,
             val dateStart: LocalDateTime,
             val dateEnd: LocalDateTime,
+            val timezone: String,
             val allDay: Boolean,
             val eventColor: ColorsProvider.ColorInfo?,
             val location: String,
