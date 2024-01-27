@@ -91,6 +91,12 @@ class EditEventViewModel @Inject constructor(
                 handleSelectEventColorDismissed()
             is EditEventUserAction.SelectedEventColor ->
                 handleSelectedEventColor(action.color)
+            is EditEventUserAction.AllDaySelectionChanged ->
+                handleAllDaySelectionChanged(action.allDay)
+            is EditEventUserAction.EndDateChanged ->
+                handleEndDateChanged(action.newEndDate)
+            is EditEventUserAction.StartDateChanged ->
+                handleStartDateChanged(action.newStartDate)
         }
 
     private fun getEventDetails() {
@@ -177,6 +183,18 @@ class EditEventViewModel @Inject constructor(
         }
     }
 
+    private fun handleAllDaySelectionChanged(allDay: Boolean) {
+        _uiState.updateOnEventDetails { it.copy(allDay = allDay) }
+    }
+
+    private fun handleStartDateChanged(newStartDate: LocalDateTime) {
+        _uiState.updateOnEventDetails { it.copy(dateStart = newStartDate) }
+    }
+
+    private fun handleEndDateChanged(newEndDate: LocalDateTime) {
+        _uiState.updateOnEventDetails { it.copy(dateEnd = newEndDate) }
+    }
+
     private fun MutableStateFlow<EditEventUiState>.updateOnEventDetails(transform: (EditEventUiState.EventDetails) -> EditEventUiState) =
         update { currentState ->
             if (currentState is EditEventUiState.EventDetails) {
@@ -197,7 +215,7 @@ class EditEventViewModel @Inject constructor(
             eventColor = eventColor?.let {
                 Timber.d("Testowanie: color = $it")
                 ColorsProvider.ColorInfo(it, R.string.color_default)
-                                         },
+            },
             location = location,
             calendar = calendar
         )
@@ -235,7 +253,8 @@ class EditEventViewModel @Inject constructor(
 
         data object DismissColorEventSelection : EditEventUiEvent()
 
-        data class ShowEventColorSelection(val colors: List<ColorsProvider.ColorInfo>) : EditEventUiEvent()
+        data class ShowEventColorSelection(val colors: List<ColorsProvider.ColorInfo>) :
+            EditEventUiEvent()
     }
 
     sealed class EditEventUserAction : UserAction {
@@ -263,5 +282,11 @@ class EditEventViewModel @Inject constructor(
         data class SelectedEventColor(val color: ColorsProvider.ColorInfo) : EditEventUserAction()
 
         data object SelectEventColorDismissed : EditEventUserAction()
+
+        data class AllDaySelectionChanged(val allDay: Boolean) : EditEventUserAction()
+
+        data class StartDateChanged(val newStartDate: LocalDateTime) : EditEventUserAction()
+
+        data class EndDateChanged(val newEndDate: LocalDateTime) : EditEventUserAction()
     }
 }

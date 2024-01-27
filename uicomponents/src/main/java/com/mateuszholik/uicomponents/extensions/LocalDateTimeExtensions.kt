@@ -34,3 +34,13 @@ internal fun LocalDateTime.asDayString(): String {
 
 internal fun LocalDateTime.isSameDay(otherDay: LocalDateTime): Boolean =
     this.toLocalDate() == otherDay.toLocalDate()
+
+internal fun LocalDateTime.copy(
+    year: Int = this.year,
+    month: Int = this.monthValue,
+    dayOfMonth: Int = this.dayOfMonth,
+    hour: Int = this.hour,
+    minute: Int = this.minute,
+    second: Int = this.second,
+): LocalDateTime =
+    LocalDateTime.of(year, month, dayOfMonth, hour, minute, second)

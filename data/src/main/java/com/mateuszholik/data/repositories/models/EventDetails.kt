@@ -8,6 +8,7 @@ data class EventDetails(
     val description: String,
     val dateStart: LocalDateTime,
     val dateEnd: LocalDateTime,
+    val timezone: String,
     val allDay: Boolean,
     val eventColor: Int?,
     val availability: Int,

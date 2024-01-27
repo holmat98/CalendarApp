@@ -79,6 +79,7 @@ import com.mateuszholik.uicomponents.attendee.Status
 import com.mateuszholik.uicomponents.bottomsheet.CommonBottomSheetDialog
 import com.mateuszholik.uicomponents.buttons.CommonIconButton
 import com.mateuszholik.uicomponents.buttons.CommonOutlinedButton
+import com.mateuszholik.uicomponents.calendar.CalendarItem
 import com.mateuszholik.uicomponents.cards.CardWithImage
 import com.mateuszholik.uicomponents.cards.EventCard
 import com.mateuszholik.uicomponents.cards.EventWithMeetingCard
@@ -126,7 +127,7 @@ fun EventDetailsScreen(
             )
         }
         is ViewMode -> {
-            ViewModeContent(
+            Content(
                 eventDetails = (uiState as ViewMode).eventDetails,
                 onBackPressed = onBackPressed,
                 onEditPressed = { viewModel.performUserAction(EditEventPressed(it)) },
@@ -275,7 +276,7 @@ private fun NoDataContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ViewModeContent(
+private fun Content(
     eventDetails: EventDetails,
     onBackPressed: () -> Unit,
     onEditPressed: (eventId: Long) -> Unit,
@@ -387,6 +388,18 @@ private fun ViewModeContent(
 
             item { Divider() }
 
+            eventDetails.calendar?.let {
+                item {
+                    CalendarItem(
+                        email = it.accountName,
+                        name = it.calendarName,
+                        calendarColor = it.color
+                    )
+                }
+
+                item { Divider() }
+            }
+
             if (eventDetails.alerts.isNotEmpty()) {
                 item {
                     SectionCard(
@@ -493,7 +506,7 @@ private fun LoadingPreview() {
 @Composable
 private fun ViewModePreview() {
     CalendarAppTheme(styleType = StyleType.WINTER) {
-        ViewModeContent(
+        Content(
             eventDetails = EVENT_DETAILS,
             onBackPressed = {},
             onEditPressed = {},
@@ -507,7 +520,7 @@ private fun ViewModePreview() {
 @Composable
 private fun ViewModePreview2() {
     CalendarAppTheme(styleType = StyleType.AUTUMN) {
-        ViewModeContent(
+        Content(
             eventDetails = EVENT_DETAILS_EMPTY_DESCRIPTION.copy(eventColor = null),
             onBackPressed = {},
             onEditPressed = {},

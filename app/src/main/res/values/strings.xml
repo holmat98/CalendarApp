@@ -71,4 +71,5 @@
     <string name="welcome_screen_hello_vacation">Happy\nVacation!</string>
     <string name="welcome_screen_hello_school">Welcome\nSchool!</string>
     <string name="welcome_screen_hello_new_year">Happy\nNew Year!</string>
+    <string name="edit_event_all_day">All day</string>
 </resources>

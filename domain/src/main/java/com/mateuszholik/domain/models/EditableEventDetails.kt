@@ -8,6 +8,7 @@ data class EditableEventDetails(
     val description: Description,
     val dateStart: LocalDateTime,
     val dateEnd: LocalDateTime,
+    val timezone: String,
     val allDay: Boolean,
     val eventColor: Int?,
     val location: String,

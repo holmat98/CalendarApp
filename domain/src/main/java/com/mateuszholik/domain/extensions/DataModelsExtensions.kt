@@ -74,6 +74,7 @@ internal fun DataEventDetails.toEditableEventDetails(calendar: Calendar?): Edita
         description = Description.from(description),
         dateStart = dateStart,
         dateEnd = dateEnd,
+        timezone = timezone,
         allDay = allDay,
         eventColor = eventColor,
         location = location,

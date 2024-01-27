@@ -3,6 +3,7 @@ package com.mateuszholik.calendarapp.ui.editevent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,8 +31,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUiEvent
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUiState
+import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.AllDaySelectionChanged
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.CalendarSelected
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.CalendarSelectionDismissed
+import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.EndDateChanged
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.ExitAttempt
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.ExitAttemptCancelled
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.ExitAttemptConfirmed
@@ -39,6 +42,7 @@ import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUse
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.SelectEventColor
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.SelectEventColorDismissed
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.SelectedEventColor
+import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.StartDateChanged
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.UpdateDescription
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.UpdateLocation
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.UpdateTitle
@@ -57,9 +61,12 @@ import com.mateuszholik.uicomponents.buttons.CommonSmallButton
 import com.mateuszholik.uicomponents.calendar.CalendarItem
 import com.mateuszholik.uicomponents.cards.SelectionCard
 import com.mateuszholik.uicomponents.color.ColorItem
+import com.mateuszholik.uicomponents.date.CommonDatePicker
+import com.mateuszholik.uicomponents.date.CommonDateTimePicker
 import com.mateuszholik.uicomponents.dialog.CommonAlertDialog
 import com.mateuszholik.uicomponents.dialog.CommonDialog
 import com.mateuszholik.uicomponents.scaffold.CommonScaffold
+import com.mateuszholik.uicomponents.switches.CommonSwitch
 import com.mateuszholik.uicomponents.text.BodyMediumText
 import com.mateuszholik.uicomponents.text.TitleMediumText
 import com.mateuszholik.uicomponents.textfield.CommonOutlinedTextField
@@ -140,6 +147,15 @@ fun EditEventScreen(
                     },
                     onLocationChanged = { newLocation ->
                         viewModel.performUserAction(UpdateLocation(newLocation))
+                    },
+                    onAllDayChanged = { allDay ->
+                        viewModel.performUserAction(AllDaySelectionChanged(allDay))
+                    },
+                    onStartDateChanged = { newStartDate ->
+                        viewModel.performUserAction(StartDateChanged(newStartDate))
+                    },
+                    onEndDateChanged = { newEndDate ->
+                        viewModel.performUserAction(EndDateChanged(newEndDate))
                     }
                 )
             }
@@ -208,6 +224,9 @@ private fun Content(
     onTitleChanged: (String) -> Unit,
     onDescriptionChanged: (String) -> Unit,
     onLocationChanged: (String) -> Unit,
+    onStartDateChanged: (LocalDateTime) -> Unit = {},
+    onEndDateChanged: (LocalDateTime) -> Unit = {},
+    onAllDayChanged: (Boolean) -> Unit = {},
     paddingValues: PaddingValues,
 ) {
     LazyColumn(
@@ -236,6 +255,7 @@ private fun Content(
             )
         }
         item { Divider() }
+
         editMode.calendar?.let { calendar ->
             item {
                 with(calendar) {
@@ -249,6 +269,51 @@ private fun Content(
                 }
             }
         }
+
+        item { Divider() }
+
+        item {
+            Column {
+                CommonSwitch(
+                    modifier = Modifier
+                        .padding(bottom = MaterialTheme.spacing.small)
+                        .fillMaxWidth(),
+                    text = stringResource(R.string.edit_event_all_day),
+                    isSelected = editMode.allDay,
+                    onSelectionChanged = onAllDayChanged
+                )
+                if (editMode.allDay) {
+                    CommonDatePicker(
+                        modifier = Modifier
+                            .padding(bottom = MaterialTheme.spacing.small)
+                            .fillMaxWidth(),
+                        date = editMode.dateStart.toLocalDate(),
+                        onDateSelected = { onStartDateChanged(it.atStartOfDay()) }
+                    )
+                    CommonDatePicker(
+                        modifier = Modifier.fillMaxWidth(),
+                        date = editMode.dateEnd.toLocalDate(),
+                        onDateSelected = { onEndDateChanged(it.atStartOfDay()) }
+                    )
+                } else {
+                    CommonDateTimePicker(
+                        modifier = Modifier
+                            .padding(bottom = MaterialTheme.spacing.small)
+                            .fillMaxWidth(),
+                        date = editMode.dateStart,
+                        onDateSelected = onStartDateChanged
+                    )
+                    CommonDateTimePicker(
+                        modifier = Modifier.fillMaxWidth(),
+                        date = editMode.dateEnd,
+                        onDateSelected = onEndDateChanged
+                    )
+                }
+            }
+        }
+
+        item { Divider() }
+
         item {
             SelectionCard(onClick = onColorPressed) {
                 if (editMode.eventColor == null) {
@@ -319,7 +384,7 @@ private fun EditModePreview2() {
                     description = Generic("Description"),
                     dateStart = LocalDateTime.of(2024, 1, 14, 12, 0, 0),
                     dateEnd = LocalDateTime.of(2024, 1, 14, 13, 0, 0),
-                    allDay = false,
+                    allDay = true,
                     eventColor = null,
                     location = "Poland",
                     calendar = PreviewConstants.CALENDAR_1,

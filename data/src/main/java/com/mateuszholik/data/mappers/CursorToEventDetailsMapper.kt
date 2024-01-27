@@ -40,6 +40,7 @@ internal class CursorToEventDetailsMapperImpl @Inject constructor() : CursorToEv
                 description = getStringOrNull(EVENT_DESCRIPTION_INDEX).orEmpty(),
                 dateStart = getLong(EVENT_DATE_START_INDEX).toLocalDateTime(timezone),
                 dateEnd = getLong(EVENT_DATE_END_INDEX).toLocalDateTime(timezone),
+                timezone = timezone,
                 allDay = getInt(EVENT_ALL_DAY_INDEX) == 1,
                 eventColor = getIntOrNull(EVENT_COLOR_INDEX),
                 availability = getInt(EVENT_AVAILABILITY_INDEX),
