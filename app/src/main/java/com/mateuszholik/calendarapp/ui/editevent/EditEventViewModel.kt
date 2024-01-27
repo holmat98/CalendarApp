@@ -2,6 +2,7 @@ package com.mateuszholik.calendarapp.ui.editevent
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.mateuszholik.calendarapp.R
 import com.mateuszholik.calendarapp.ui.base.BaseViewModel
 import com.mateuszholik.calendarapp.ui.base.UiEvent
 import com.mateuszholik.calendarapp.ui.base.UiState
@@ -10,6 +11,7 @@ import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUiE
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUiState
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction
 import com.mateuszholik.calendarapp.ui.navigation.MainNavigation.EVENT_ID_ARGUMENT
+import com.mateuszholik.calendarapp.ui.provider.ColorsProvider
 import com.mateuszholik.common.provider.DispatcherProvider
 import com.mateuszholik.domain.models.Calendar
 import com.mateuszholik.domain.models.Description
@@ -35,6 +37,7 @@ import javax.inject.Inject
 class EditEventViewModel @Inject constructor(
     private val getEditableEventDetailsUseCase: GetEditableEventDetailsUseCase,
     private val getCalendarsUseCase: GetCalendarsUseCase,
+    private val colorsProvider: ColorsProvider,
     private val dispatcherProvider: DispatcherProvider,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<EditEventUiState, EditEventUserAction, EditEventUiEvent>() {
@@ -78,8 +81,16 @@ class EditEventViewModel @Inject constructor(
                 handleExitAttemptConfirmed()
             is EditEventUserAction.UpdateDescription ->
                 handleUpdateDescription(action.newDescription)
+            is EditEventUserAction.UpdateLocation ->
+                handleUpdateLocation(action.newLocation)
             is EditEventUserAction.UpdateTitle ->
                 handleUpdateTitle(action.newTitle)
+            is EditEventUserAction.SelectEventColor ->
+                handleSelectEventColor()
+            is EditEventUserAction.SelectEventColorDismissed ->
+                handleSelectEventColorDismissed()
+            is EditEventUserAction.SelectedEventColor ->
+                handleSelectedEventColor(action.color)
         }
 
     private fun getEventDetails() {
@@ -137,8 +148,33 @@ class EditEventViewModel @Inject constructor(
         _uiState.updateOnEventDetails { it.copy(description = it.description.copyWith(newDescription)) }
     }
 
+    private fun handleUpdateLocation(newLocation: String) {
+        _uiState.updateOnEventDetails { it.copy(location = newLocation) }
+    }
+
     private fun handleUpdateTitle(newTitle: String) {
         _uiState.updateOnEventDetails { it.copy(title = newTitle) }
+    }
+
+    private fun handleSelectEventColor() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            val colors = colorsProvider.provide()
+
+            _uiEvent.emit(EditEventUiEvent.ShowEventColorSelection(colors))
+        }
+    }
+
+    private fun handleSelectEventColorDismissed() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiEvent.emit(EditEventUiEvent.DismissColorEventSelection)
+        }
+    }
+
+    private fun handleSelectedEventColor(color: ColorsProvider.ColorInfo) {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiEvent.emit(EditEventUiEvent.DismissColorEventSelection)
+            _uiState.updateOnEventDetails { it.copy(eventColor = color) }
+        }
     }
 
     private fun MutableStateFlow<EditEventUiState>.updateOnEventDetails(transform: (EditEventUiState.EventDetails) -> EditEventUiState) =
@@ -158,7 +194,10 @@ class EditEventViewModel @Inject constructor(
             dateStart = dateStart,
             dateEnd = dateEnd,
             allDay = allDay,
-            eventColor = eventColor,
+            eventColor = eventColor?.let {
+                Timber.d("Testowanie: color = $it")
+                ColorsProvider.ColorInfo(it, R.string.color_default)
+                                         },
             location = location,
             calendar = calendar
         )
@@ -174,7 +213,7 @@ class EditEventViewModel @Inject constructor(
             val dateStart: LocalDateTime,
             val dateEnd: LocalDateTime,
             val allDay: Boolean,
-            val eventColor: Int?,
+            val eventColor: ColorsProvider.ColorInfo?,
             val location: String,
             val calendar: Calendar?,
         ) : EditEventUiState()
@@ -193,6 +232,10 @@ class EditEventViewModel @Inject constructor(
         data object DismissExitDialog : EditEventUiEvent()
 
         data object NavigateBack : EditEventUiEvent()
+
+        data object DismissColorEventSelection : EditEventUiEvent()
+
+        data class ShowEventColorSelection(val colors: List<ColorsProvider.ColorInfo>) : EditEventUiEvent()
     }
 
     sealed class EditEventUserAction : UserAction {
@@ -209,8 +252,16 @@ class EditEventViewModel @Inject constructor(
 
         data object ExitAttemptCancelled : EditEventUserAction()
 
+        data class UpdateDescription(val newDescription: String) : EditEventUserAction()
+
+        data class UpdateLocation(val newLocation: String) : EditEventUserAction()
+
         data class UpdateTitle(val newTitle: String) : EditEventUserAction()
 
-        data class UpdateDescription(val newDescription: String) : EditEventUserAction()
+        data object SelectEventColor : EditEventUserAction()
+
+        data class SelectedEventColor(val color: ColorsProvider.ColorInfo) : EditEventUserAction()
+
+        data object SelectEventColorDismissed : EditEventUserAction()
     }
 }

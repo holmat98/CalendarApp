@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -35,13 +36,19 @@ import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUse
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.ExitAttemptCancelled
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.ExitAttemptConfirmed
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.SelectCalendar
+import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.SelectEventColor
+import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.SelectEventColorDismissed
+import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.SelectedEventColor
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.UpdateDescription
+import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.UpdateLocation
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.UpdateTitle
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
+import com.mateuszholik.calendarapp.ui.provider.ColorsProvider
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
+import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.domain.models.Calendar
 import com.mateuszholik.domain.models.Generic
@@ -49,9 +56,11 @@ import com.mateuszholik.uicomponents.buttons.CommonIconButton
 import com.mateuszholik.uicomponents.buttons.CommonSmallButton
 import com.mateuszholik.uicomponents.calendar.CalendarItem
 import com.mateuszholik.uicomponents.cards.SelectionCard
+import com.mateuszholik.uicomponents.color.ColorItem
 import com.mateuszholik.uicomponents.dialog.CommonAlertDialog
 import com.mateuszholik.uicomponents.dialog.CommonDialog
 import com.mateuszholik.uicomponents.scaffold.CommonScaffold
+import com.mateuszholik.uicomponents.text.BodyMediumText
 import com.mateuszholik.uicomponents.text.TitleMediumText
 import com.mateuszholik.uicomponents.textfield.CommonOutlinedTextField
 import com.mateuszholik.uicomponents.textfield.TextFieldWithIcon
@@ -65,6 +74,7 @@ fun EditEventScreen(
 ) {
     var calendars by remember { mutableStateOf<List<Calendar>?>(null) }
     var shouldShowExitDialog by remember { mutableStateOf(false) }
+    var colors by remember { mutableStateOf<List<ColorsProvider.ColorInfo>?>(null) }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ObserveAsEvents(viewModel.uiEvent) { uiEvent ->
@@ -84,6 +94,12 @@ fun EditEventScreen(
             is EditEventUiEvent.NavigateBack -> onBackPressed()
             is EditEventUiEvent.ShowExitDialog -> {
                 shouldShowExitDialog = true
+            }
+            is EditEventUiEvent.DismissColorEventSelection -> {
+                colors = null
+            }
+            is EditEventUiEvent.ShowEventColorSelection -> {
+                colors = uiEvent.colors
             }
         }
     }
@@ -117,9 +133,13 @@ fun EditEventScreen(
                     paddingValues = paddingValues,
                     editMode = uiState as EditEventUiState.EventDetails,
                     onCalendarPressed = { viewModel.performUserAction(SelectCalendar) },
+                    onColorPressed = { viewModel.performUserAction(SelectEventColor) },
                     onTitleChanged = { newTitle -> viewModel.performUserAction(UpdateTitle(newTitle)) },
                     onDescriptionChanged = { newDescription ->
                         viewModel.performUserAction(UpdateDescription(newDescription))
+                    },
+                    onLocationChanged = { newLocation ->
+                        viewModel.performUserAction(UpdateLocation(newLocation))
                     }
                 )
             }
@@ -131,25 +151,19 @@ fun EditEventScreen(
 
     calendars?.let {
         CommonDialog(onDismissRequest = { viewModel.performUserAction(CalendarSelectionDismissed) }) {
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.normal),
-                contentPadding = PaddingValues(MaterialTheme.spacing.normal),
-            ) {
-                item {
-                    TitleMediumText(textResId = R.string.edit_event_select_calendar)
-                }
-                items(items = it) { calendar ->
-                    with(calendar) {
-                        CalendarItem(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { viewModel.performUserAction(CalendarSelected(calendar)) },
-                            email = accountName,
-                            name = calendarName,
-                            calendarColor = color
-                        )
-                    }
+            item {
+                TitleMediumText(textResId = R.string.edit_event_select_calendar)
+            }
+            items(items = it) { calendar ->
+                with(calendar) {
+                    CalendarItem(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { viewModel.performUserAction(CalendarSelected(calendar)) },
+                        email = accountName,
+                        name = calendarName,
+                        calendarColor = color
+                    )
                 }
             }
         }
@@ -166,14 +180,34 @@ fun EditEventScreen(
             onPositiveButtonClicked = { viewModel.performUserAction(ExitAttemptConfirmed) }
         )
     }
+
+    colors?.let {
+        CommonDialog(onDismissRequest = { viewModel.performUserAction(SelectEventColorDismissed) }) {
+            item {
+                TitleMediumText(textResId = R.string.edit_event_select_event_color)
+            }
+
+            items(items = it) { color ->
+                ColorItem(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { viewModel.performUserAction(SelectedEventColor(color)) },
+                    color = color.value,
+                    name = stringResource(color.name)
+                )
+            }
+        }
+    }
 }
 
 @Composable
 private fun Content(
     editMode: EditEventUiState.EventDetails,
     onCalendarPressed: () -> Unit,
+    onColorPressed: () -> Unit,
     onTitleChanged: (String) -> Unit,
     onDescriptionChanged: (String) -> Unit,
+    onLocationChanged: (String) -> Unit,
     paddingValues: PaddingValues,
 ) {
     LazyColumn(
@@ -215,12 +249,64 @@ private fun Content(
                 }
             }
         }
+        item {
+            SelectionCard(onClick = onColorPressed) {
+                if (editMode.eventColor == null) {
+                    BodyMediumText(textResId = R.string.edit_event_select_event_color)
+                } else {
+                    ColorItem(
+                        color = editMode.eventColor.value,
+                        name = stringResource(editMode.eventColor.name)
+                    )
+                }
+            }
+        }
+        item {
+            TextFieldWithIcon(
+                text = editMode.location,
+                onTextChanged = onLocationChanged,
+                icon = Icons.Outlined.LocationOn,
+                hint = stringResource(R.string.edit_event_provide_location),
+                singleLine = false,
+            )
+        }
+    }
+}
+
+@MediumPhonePreview
+@Composable
+private fun EditModePreview() {
+    CalendarAppTheme(styleType = StyleType.SUMMER, darkTheme = false) {
+        Surface(
+            color = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+        ) {
+            Content(
+                editMode = EditEventUiState.EventDetails(
+                    id = 1,
+                    title = "Event 1",
+                    description = Generic("Description"),
+                    dateStart = LocalDateTime.of(2024, 1, 14, 12, 0, 0),
+                    dateEnd = LocalDateTime.of(2024, 1, 14, 13, 0, 0),
+                    allDay = false,
+                    eventColor = ColorsProvider.ColorInfo(-1466246, R.string.color_light_coral),
+                    location = "Poland",
+                    calendar = PreviewConstants.CALENDAR_1,
+                ),
+                onCalendarPressed = {},
+                onColorPressed = {},
+                onTitleChanged = {},
+                onDescriptionChanged = {},
+                onLocationChanged = {},
+                paddingValues = PaddingValues(horizontal = MaterialTheme.spacing.normal),
+            )
+        }
     }
 }
 
 @BigPhonePreview
 @Composable
-private fun EditModePreview() {
+private fun EditModePreview2() {
     CalendarAppTheme(styleType = StyleType.SUMMER, darkTheme = true) {
         Surface(
             color = MaterialTheme.colorScheme.surface,
@@ -239,8 +325,10 @@ private fun EditModePreview() {
                     calendar = PreviewConstants.CALENDAR_1,
                 ),
                 onCalendarPressed = {},
+                onColorPressed = {},
                 onTitleChanged = {},
                 onDescriptionChanged = {},
+                onLocationChanged = {},
                 paddingValues = PaddingValues(horizontal = MaterialTheme.spacing.normal),
             )
         }
