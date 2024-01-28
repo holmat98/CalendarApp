@@ -74,7 +74,6 @@ fun DisplayLargeText(
         softWrap = softWrap,
         maxLines = maxLines,
         minLines = minLines,
-        lineHeight = MaterialTheme.typography.displayLarge.lineHeight,
     )
 }
 
@@ -130,7 +129,6 @@ fun DisplayMediumText(
         softWrap = softWrap,
         maxLines = maxLines,
         minLines = minLines,
-        lineHeight = MaterialTheme.typography.displayMedium.lineHeight,
     )
 }
 
@@ -186,7 +184,6 @@ fun DisplaySmallText(
         softWrap = softWrap,
         maxLines = maxLines,
         minLines = minLines,
-        lineHeight = MaterialTheme.typography.displaySmall.lineHeight,
     )
 }
 
@@ -242,7 +239,6 @@ fun HeadlineLargeText(
         softWrap = softWrap,
         maxLines = maxLines,
         minLines = minLines,
-        lineHeight = MaterialTheme.typography.headlineLarge.lineHeight,
     )
 }
 
@@ -298,7 +294,6 @@ fun HeadlineMediumText(
         softWrap = softWrap,
         maxLines = maxLines,
         minLines = minLines,
-        lineHeight = MaterialTheme.typography.headlineMedium.lineHeight,
     )
 }
 
@@ -354,7 +349,6 @@ fun HeadlineSmallText(
         softWrap = softWrap,
         maxLines = maxLines,
         minLines = minLines,
-        lineHeight = MaterialTheme.typography.headlineSmall.lineHeight,
     )
 }
 
@@ -410,7 +404,6 @@ fun TitleLargeText(
         softWrap = softWrap,
         maxLines = maxLines,
         minLines = minLines,
-        lineHeight = MaterialTheme.typography.titleLarge.lineHeight,
     )
 }
 
@@ -466,7 +459,6 @@ fun TitleMediumText(
         softWrap = softWrap,
         maxLines = maxLines,
         minLines = minLines,
-        lineHeight = MaterialTheme.typography.titleMedium.lineHeight,
     )
 }
 
@@ -522,7 +514,6 @@ fun TitleSmallText(
         softWrap = softWrap,
         maxLines = maxLines,
         minLines = minLines,
-        lineHeight = MaterialTheme.typography.titleSmall.lineHeight,
     )
 }
 
@@ -578,7 +569,6 @@ fun BodyLargeText(
         softWrap = softWrap,
         maxLines = maxLines,
         minLines = minLines,
-        lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
     )
 }
 
@@ -634,7 +624,6 @@ fun BodyMediumText(
         softWrap = softWrap,
         maxLines = maxLines,
         minLines = minLines,
-        lineHeight = MaterialTheme.typography.bodyMedium.lineHeight,
     )
 }
 
@@ -690,7 +679,6 @@ fun BodySmallText(
         softWrap = softWrap,
         maxLines = maxLines,
         minLines = minLines,
-        lineHeight = MaterialTheme.typography.bodySmall.lineHeight,
     )
 }
 
@@ -746,7 +734,6 @@ fun LabelLargeText(
         softWrap = softWrap,
         maxLines = maxLines,
         minLines = minLines,
-        lineHeight = MaterialTheme.typography.labelLarge.lineHeight,
     )
 }
 
@@ -802,7 +789,6 @@ fun LabelMediumText(
         softWrap = softWrap,
         maxLines = maxLines,
         minLines = minLines,
-        lineHeight = MaterialTheme.typography.labelMedium.lineHeight,
     )
 }
 
@@ -858,7 +844,6 @@ fun LabelSmallText(
         softWrap = softWrap,
         maxLines = maxLines,
         minLines = minLines,
-        lineHeight = MaterialTheme.typography.labelSmall.lineHeight,
     )
 }
 

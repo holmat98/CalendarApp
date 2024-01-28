@@ -3,13 +3,16 @@ package com.mateuszholik.calendarapp.ui.editevent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ExitToApp
@@ -21,11 +24,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -51,9 +57,11 @@ import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
 import com.mateuszholik.calendarapp.ui.provider.ColorsProvider
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants
 import com.mateuszholik.designsystem.CalendarAppTheme
+import com.mateuszholik.designsystem.cornerRadius
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
 import com.mateuszholik.designsystem.previews.MediumPhonePreview
+import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.domain.models.Calendar
 import com.mateuszholik.domain.models.Generic
@@ -66,6 +74,7 @@ import com.mateuszholik.uicomponents.date.CommonDatePicker
 import com.mateuszholik.uicomponents.date.CommonDateTimePicker
 import com.mateuszholik.uicomponents.dialog.CommonAlertDialog
 import com.mateuszholik.uicomponents.dialog.CommonDialog
+import com.mateuszholik.uicomponents.extensions.shimmerEffect
 import com.mateuszholik.uicomponents.scaffold.CommonScaffold
 import com.mateuszholik.uicomponents.switches.CommonSwitch
 import com.mateuszholik.uicomponents.text.BodyMediumText
@@ -84,6 +93,7 @@ fun EditEventScreen(
     var calendars by remember { mutableStateOf<List<Calendar>?>(null) }
     var shouldShowExitDialog by remember { mutableStateOf(false) }
     var colors by remember { mutableStateOf<List<ColorsProvider.ColorInfo>?>(null) }
+    var isButtonEnabled by remember { mutableStateOf(false) }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ObserveAsEvents(viewModel.uiEvent) { uiEvent ->
@@ -125,7 +135,9 @@ fun EditEventScreen(
         actions = {
             CommonSmallButton(
                 modifier = Modifier.padding(end = MaterialTheme.spacing.small),
-                textResId = R.string.button_save, onClick = {}
+                textResId = R.string.button_save,
+                onClick = {},
+                isEnabled = isButtonEnabled,
             )
         }
     ) {
@@ -138,6 +150,7 @@ fun EditEventScreen(
 
         when (uiState) {
             is EditEventUiState.EventDetails -> {
+                SideEffect { isButtonEnabled = true }
                 Content(
                     paddingValues = paddingValues,
                     editMode = uiState as EditEventUiState.EventDetails,
@@ -162,7 +175,8 @@ fun EditEventScreen(
                 )
             }
             is EditEventUiState.Loading -> {
-
+                SideEffect { isButtonEnabled = false }
+                LoadingContent(paddingValues = paddingValues)
             }
         }
     }
@@ -215,6 +229,52 @@ fun EditEventScreen(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun LoadingContent(paddingValues: PaddingValues) {
+    Column(
+        modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(vertical = MaterialTheme.spacing.normal)
+                .fillMaxWidth()
+                .height(MaterialTheme.sizing.extraBig)
+                .clip(RoundedCornerShape(MaterialTheme.cornerRadius.cardRadius))
+                .shimmerEffect()
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(MaterialTheme.sizing.big)
+                .clip(RoundedCornerShape(MaterialTheme.cornerRadius.cardRadius))
+                .shimmerEffect()
+        )
+
+        Divider(modifier = Modifier.padding(vertical = MaterialTheme.spacing.normal))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(MaterialTheme.sizing.normal)
+                .clip(RoundedCornerShape(MaterialTheme.cornerRadius.cardRadius))
+                .shimmerEffect()
+        )
+
+        Box(
+            modifier = Modifier
+                .padding(vertical = MaterialTheme.spacing.normal)
+                .fillMaxWidth()
+                .height(MaterialTheme.sizing.normal)
+                .clip(RoundedCornerShape(MaterialTheme.cornerRadius.cardRadius))
+                .shimmerEffect()
+        )
     }
 }
 

@@ -215,7 +215,7 @@ class EditEventViewModel @Inject constructor(
             allDay = allDay,
             eventColor = eventColor?.let {
                 Timber.d("Testowanie: color = $it")
-                ColorsProvider.ColorInfo(it, R.string.color_default)
+                ColorsProvider.ColorInfo(it, R.string.color_current)
             },
             location = location,
             calendar = calendar

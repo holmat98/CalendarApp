@@ -55,10 +55,7 @@ fun CardWithImage(
         ) {
             smallIcon?.let {
                 Icon(
-                    modifier = Modifier.padding(
-                        top = 4.dp,
-                        end = MaterialTheme.spacing.small,
-                    ),
+                    modifier = Modifier.padding(end = MaterialTheme.spacing.small),
                     imageVector = it,
                     contentDescription = null
                 )

@@ -21,12 +21,14 @@ fun CommonSmallButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     colors: CommonButtonColors = CommonButtonDefaults.commonButtonColors(),
+    isEnabled: Boolean = true,
 ) {
     CommonSmallButton(
         text = stringResource(textResId),
         onClick = onClick,
         modifier = modifier,
-        colors = colors
+        colors = colors,
+        isEnabled = isEnabled,
     )
 }
 
@@ -36,6 +38,7 @@ fun CommonSmallButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     colors: CommonButtonColors = CommonButtonDefaults.commonButtonColors(),
+    isEnabled: Boolean = true,
 ) {
     Button(
         modifier = modifier,
@@ -43,7 +46,8 @@ fun CommonSmallButton(
         colors = ButtonDefaults.buttonColors(
             contentColor = colors.contentColor,
             containerColor = colors.containerColor,
-        )
+        ),
+        enabled = isEnabled,
     ) {
         LabelSmallText(text = text)
     }

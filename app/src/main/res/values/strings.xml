@@ -16,8 +16,8 @@
     <string name="calendar_screen_no_events_message">You don\'t have any scheduled events today</string>
     <string name="color_blanched_almond">Blanched almond</string>
     <string name="color_blue_cadet">Blue cadet</string>
+    <string name="color_current">Current color</string>
     <string name="color_deep_pink">Deep pink</string>
-    <string name="color_default">Default</string>
     <string name="color_lemon_chiffon">Lemon chiffon</string>
     <string name="color_light_coral">Light coral</string>
     <string name="color_lime">Lime</string>
