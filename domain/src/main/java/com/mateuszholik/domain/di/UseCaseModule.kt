@@ -4,12 +4,16 @@ import com.mateuszholik.domain.usecases.GetCalendarsUseCase
 import com.mateuszholik.domain.usecases.GetCalendarsUseCaseImpl
 import com.mateuszholik.domain.usecases.GetDaysWithEventsForMonthUseCase
 import com.mateuszholik.domain.usecases.GetDaysWithEventsForMonthUseCaseImpl
+import com.mateuszholik.domain.usecases.GetEditableEventDetailsUseCase
+import com.mateuszholik.domain.usecases.GetEditableEventDetailsUseCaseImpl
 import com.mateuszholik.domain.usecases.GetEventDetailsUseCase
 import com.mateuszholik.domain.usecases.GetEventDetailsUseCaseImpl
 import com.mateuszholik.domain.usecases.GetEventsForDayUseCase
 import com.mateuszholik.domain.usecases.GetEventsForDayUseCaseImpl
 import com.mateuszholik.domain.usecases.UpdateCalendarVisibilityUseCase
 import com.mateuszholik.domain.usecases.UpdateCalendarVisibilityUseCaseImpl
+import com.mateuszholik.domain.usecases.UpdateEventDetailsUseCase
+import com.mateuszholik.domain.usecases.UpdateEventDetailsUseCaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -33,6 +37,12 @@ internal abstract class UseCaseModule {
 
     @ViewModelScoped
     @Binds
+    abstract fun bindsGetEditableEventDetailsUseCase(
+        getEditableEventDetailsUseCaseImpl: GetEditableEventDetailsUseCaseImpl
+    ): GetEditableEventDetailsUseCase
+
+    @ViewModelScoped
+    @Binds
     abstract fun bindsGetEventDetailsUseCase(
         getEventDetailsUseCaseImpl: GetEventDetailsUseCaseImpl,
     ): GetEventDetailsUseCase
@@ -47,4 +57,9 @@ internal abstract class UseCaseModule {
     abstract fun bindsUpdateCalendarVisibilityUseCase(
         updateCalendarsUseCaseImpl: UpdateCalendarVisibilityUseCaseImpl
     ): UpdateCalendarVisibilityUseCase
+
+    @Binds
+    abstract fun bindsUpdateEventDetailsUseCase(
+        updateEventDetailsUseCaseImpl: UpdateEventDetailsUseCaseImpl
+    ): UpdateEventDetailsUseCase
 }

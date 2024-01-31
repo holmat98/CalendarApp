@@ -8,16 +8,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.mateuszholik.designsystem.CalendarAppTheme
+import com.mateuszholik.designsystem.cornerRadius
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.BigPhonePreview
 import com.mateuszholik.designsystem.previews.MediumPhonePreview
@@ -41,22 +45,26 @@ fun EventItem(
 ) {
     Card(
         modifier = modifier.clickable { onEventClicked() },
-        elevation = CardDefaults.elevatedCardElevation(),
+        elevation = CardDefaults.elevatedCardElevation(3.dp),
+        shape = RoundedCornerShape(MaterialTheme.cornerRadius.normal),
         colors = CardDefaults.cardColors(
             containerColor = colors.containerColor,
             contentColor = colors.contentColor,
         )
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .padding(
+                    top = MaterialTheme.spacing.small,
+                    start = MaterialTheme.spacing.normal,
+                    end = MaterialTheme.spacing.normal,
+                )
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
                 modifier = Modifier
-                    .padding(
-                        top = MaterialTheme.spacing.tiny,
-                        start = MaterialTheme.spacing.normal
-                    )
+                    .padding(top = MaterialTheme.spacing.tiny)
                     .size(MaterialTheme.sizing.extraTiny)
                     .background(
                         color = color?.let { Color(it) }
@@ -65,16 +73,14 @@ fun EventItem(
                     )
             )
             TitleMediumText(
-                modifier = Modifier.padding(
-                    start = MaterialTheme.spacing.normal,
-                    end = MaterialTheme.spacing.normal,
-                ),
+                modifier = Modifier.padding(start = MaterialTheme.spacing.small),
                 text = title,
             )
         }
         EventDate(
             modifier = Modifier.padding(
                 start = MaterialTheme.spacing.normal,
+                end = MaterialTheme.spacing.normal,
                 bottom = MaterialTheme.spacing.small,
             ),
             startDate = startTime,
@@ -111,15 +117,19 @@ object EventDefaults {
 @Composable
 private fun SmallPhonePreview() {
     CalendarAppTheme(styleType = StyleType.SUMMER) {
-        EventItem(
-            modifier = Modifier.fillMaxWidth(),
-            title = "Event 1",
-            startTime = LocalDateTime.of(2023, 11, 12, 13, 0),
-            endTime = LocalDateTime.of(2023, 11, 12, 14, 0),
-            allDay = false,
-            color = null,
-            onEventClicked = { }
-        )
+        Surface {
+            EventItem(
+                modifier = Modifier
+                    .padding(MaterialTheme.spacing.normal)
+                    .fillMaxWidth(),
+                title = "Event 1",
+                startTime = LocalDateTime.of(2023, 11, 12, 13, 0),
+                endTime = LocalDateTime.of(2023, 11, 12, 14, 0),
+                allDay = false,
+                color = null,
+                onEventClicked = { }
+            )
+        }
     }
 }
 
@@ -127,15 +137,19 @@ private fun SmallPhonePreview() {
 @Composable
 private fun MediumPhonePreview() {
     CalendarAppTheme(styleType = StyleType.WINTER) {
-        EventItem(
-            modifier = Modifier.fillMaxWidth(),
-            title = "Event 2",
-            startTime = LocalDateTime.of(2023, 11, 12, 13, 0),
-            endTime = LocalDateTime.of(2023, 11, 12, 14, 0),
-            allDay = true,
-            color = null,
-            onEventClicked = { }
-        )
+        Surface {
+            EventItem(
+                modifier = Modifier
+                    .padding(MaterialTheme.spacing.normal)
+                    .fillMaxWidth(),
+                title = "Event 2",
+                startTime = LocalDateTime.of(2023, 11, 12, 13, 0),
+                endTime = LocalDateTime.of(2023, 11, 12, 14, 0),
+                allDay = true,
+                color = null,
+                onEventClicked = { }
+            )
+        }
     }
 }
 
@@ -143,14 +157,18 @@ private fun MediumPhonePreview() {
 @Composable
 private fun BigPhonePreview() {
     CalendarAppTheme(styleType = StyleType.SPRING, darkTheme = true) {
-        EventItem(
-            modifier = Modifier.fillMaxWidth(),
-            title = "Event 3",
-            startTime = LocalDateTime.of(2023, 11, 12, 13, 0),
-            endTime = LocalDateTime.of(2023, 11, 12, 14, 0),
-            allDay = true,
-            color = null,
-            onEventClicked = { }
-        )
+        Surface {
+            EventItem(
+                modifier = Modifier
+                    .padding(MaterialTheme.spacing.normal)
+                    .fillMaxWidth(),
+                title = "Event 3",
+                startTime = LocalDateTime.of(2023, 11, 12, 13, 0),
+                endTime = LocalDateTime.of(2023, 11, 12, 14, 0),
+                allDay = true,
+                color = null,
+                onEventClicked = { }
+            )
+        }
     }
 }

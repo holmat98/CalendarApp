@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -35,7 +36,10 @@ fun CardWithImage(
     modifier: Modifier = Modifier,
     smallIcon: ImageVector? = null,
 ) {
-    Card(modifier = modifier) {
+    Card(
+        modifier = modifier,
+        elevation = CardDefaults.elevatedCardElevation(3.dp),
+    ) {
         Image(
             modifier = Modifier
                 .fillMaxWidth()
@@ -51,10 +55,7 @@ fun CardWithImage(
         ) {
             smallIcon?.let {
                 Icon(
-                    modifier = Modifier.padding(
-                        top = 4.dp,
-                        end = MaterialTheme.spacing.small,
-                    ),
+                    modifier = Modifier.padding(end = MaterialTheme.spacing.small),
                     imageVector = it,
                     contentDescription = null
                 )

@@ -69,7 +69,8 @@ class EventDetailsViewModel @Inject constructor(
             is EventDetailsUserAction.DeleteEvent -> Unit
             is EventDetailsUserAction.DeleteEventCancelled -> Unit
             is EventDetailsUserAction.DeleteEventConfirmed -> Unit
-            is EventDetailsUserAction.EnterEditMode -> Unit
+            is EventDetailsUserAction.EditEventPressed ->
+                handleEnterEditEventPressedUserAction(action.eventId)
             is EventDetailsUserAction.NavigateBack -> Unit
             is EventDetailsUserAction.RetryGetEventDetailsPressed ->
                 handleRetryGetEventDetailsPressed()
@@ -95,6 +96,12 @@ class EventDetailsViewModel @Inject constructor(
         }
     }
 
+    private fun handleEnterEditEventPressedUserAction(eventId: Long) {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiEvent.emit(EventDetailsUiEvent.GoToEventDetails(eventId))
+        }
+    }
+
     private suspend fun getEventDetails() {
         val details = getEventDetailsUseCase(eventId)
 
@@ -112,8 +119,6 @@ class EventDetailsViewModel @Inject constructor(
         data object NoData : EventDetailsUiState()
 
         data class ViewMode(val eventDetails: EventDetails) : EventDetailsUiState()
-
-        data class EditMode(val id: Long) : EventDetailsUiState()
     }
 
     sealed class EventDetailsUiEvent : UiEvent {
@@ -123,11 +128,13 @@ class EventDetailsViewModel @Inject constructor(
         data class ShowAttendee(val attendee: Attendee) : EventDetailsUiEvent()
 
         data object DismissAttendee : EventDetailsUiEvent()
+
+        data class GoToEventDetails(val eventId: Long) : EventDetailsUiEvent()
     }
 
     sealed class EventDetailsUserAction : UserAction {
 
-        data object EnterEditMode : EventDetailsUserAction()
+        data class EditEventPressed(val eventId: Long) : EventDetailsUserAction()
 
         data object NavigateBack : EventDetailsUserAction()
 

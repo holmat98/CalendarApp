@@ -2,6 +2,8 @@ package com.mateuszholik.calendarapp.di
 
 import com.mateuszholik.calendarapp.provider.CurrentDateProvider
 import com.mateuszholik.calendarapp.provider.CurrentDateProviderImpl
+import com.mateuszholik.calendarapp.ui.provider.ColorsProvider
+import com.mateuszholik.calendarapp.ui.provider.ColorsProviderImpl
 import com.mateuszholik.calendarapp.ui.provider.StyleProvider
 import com.mateuszholik.calendarapp.ui.provider.StyleProviderImpl
 import com.mateuszholik.calendarapp.ui.welcome.provider.WelcomeScreenInfoProvider
@@ -25,6 +27,11 @@ internal abstract class ProvidersModule {
     abstract fun bindsWelcomeScreenInfoProvider(
         welcomeScreenInfoProviderImpl: WelcomeScreenInfoProviderImpl,
     ): WelcomeScreenInfoProvider
+
+    @Binds
+    abstract fun bindsColorsProvider(
+        colorsProviderImpl: ColorsProviderImpl
+    ): ColorsProvider
 }
 
 @Module

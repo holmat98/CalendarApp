@@ -6,15 +6,14 @@ import com.mateuszholik.domain.models.Calendar
 import com.mateuszholik.domain.usecases.base.UseCase
 import javax.inject.Inject
 
-interface GetCalendarsUseCase : UseCase<Map<String, List<Calendar>>>
+interface GetCalendarsUseCase : UseCase<List<Calendar>>
 
 internal class GetCalendarsUseCaseImpl @Inject constructor(
     private val calendarRepository: CalendarRepository,
 ) : GetCalendarsUseCase {
 
-    override suspend fun invoke(): Map<String, List<Calendar>> =
+    override suspend fun invoke(): List<Calendar> =
         calendarRepository
             .getCalendars()
             .map { it.toCommonModel() }
-            .groupBy { it.accountName }
 }

@@ -1,8 +1,8 @@
 package com.mateuszholik.domain.usecases
 
-import android.util.Log
 import com.mateuszholik.data.repositories.AlertRepository
 import com.mateuszholik.data.repositories.AttendeesRepository
+import com.mateuszholik.data.repositories.CalendarRepository
 import com.mateuszholik.data.repositories.EventsRepository
 import com.mateuszholik.domain.extensions.toCommonModel
 import com.mateuszholik.domain.extensions.asResult
@@ -17,6 +17,7 @@ internal class GetEventDetailsUseCaseImpl @Inject constructor(
     private val eventsRepository: EventsRepository,
     private val alertRepository: AlertRepository,
     private val attendeesRepository: AttendeesRepository,
+    private val calendarRepository: CalendarRepository,
 ) : GetEventDetailsUseCase {
 
     override suspend fun invoke(param: Long): Result<EventDetails> {
@@ -38,12 +39,15 @@ internal class GetEventDetailsUseCaseImpl @Inject constructor(
             emptyList()
         }
 
-        Log.d("Testowanie", event?.description.orEmpty())
+        val calendar = event?.let {
+            calendarRepository.getCalendar(it.calendarId)?.toCommonModel()
+        }
 
         return event.asResult {
             this.toCommonModel(
                 attendees = attendees,
-                alerts = alerts
+                alerts = alerts,
+                calendar = calendar
             )
         }
     }

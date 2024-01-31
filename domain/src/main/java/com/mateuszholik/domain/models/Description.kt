@@ -3,6 +3,8 @@ package com.mateuszholik.domain.models
 sealed interface Description {
     val description: String
 
+    fun copyWith(newDescription: String): Description
+
     companion object {
         private const val GOOGLE_MEET_DESCRIPTION_SEPARATOR = "-::~:~::~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~::~:~::-"
         private const val GOOGLE_MEET_URL = "meet.google.com"
@@ -33,11 +35,36 @@ sealed interface Description {
     }
 }
 
-data class Generic(override val description: String): Description
+data class Generic(override val description: String): Description {
+
+    override fun copyWith(newDescription: String): Description =
+        copy(description = newDescription)
+
+    override fun equals(other: Any?): Boolean =
+        when (other) {
+            is GoogleMeet -> description == other.originalDescription
+            is Generic -> description == other.description
+            else -> false
+        }
+}
 
 data class GoogleMeet(
     override val description: String,
     val originalDescription: String,
     val meetingUrl: String,
     val otherUrls: List<String>,
-): Description
+): Description {
+
+    override fun copyWith(newDescription: String): Description =
+        copy(
+            description = newDescription,
+            originalDescription = originalDescription.replace(description, newDescription)
+        )
+
+    override fun equals(other: Any?): Boolean =
+        when (other) {
+            is GoogleMeet -> originalDescription == other.originalDescription
+            is Generic -> originalDescription == other.description
+            else -> false
+        }
+}

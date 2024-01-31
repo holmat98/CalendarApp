@@ -8,6 +8,7 @@ data class EventDetails(
     val description: String,
     val dateStart: LocalDateTime,
     val dateEnd: LocalDateTime,
+    val timezone: String,
     val allDay: Boolean,
     val eventColor: Int?,
     val availability: Int,
@@ -16,4 +17,5 @@ data class EventDetails(
     val hasAlarm: Boolean,
     val canModify: Boolean,
     val canSeeGuests: Boolean,
+    val calendarId: Long,
 )

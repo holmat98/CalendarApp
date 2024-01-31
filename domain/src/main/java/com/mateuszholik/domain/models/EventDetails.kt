@@ -16,4 +16,5 @@ data class EventDetails(
     val canModify: Boolean,
     val alerts: List<Alert>,
     val attendees: List<Attendee>,
+    val calendar: Calendar?,
 )

@@ -35,4 +35,15 @@ object CommonButtonDefaults {
             containerColor = containerColor,
             contentColor = contentColor,
         )
+
+    @Composable
+    @ReadOnlyComposable
+    fun commonTextButtonColors(
+        containerColor: Color = Color.Transparent,
+        contentColor: Color = MaterialTheme.colorScheme.secondary,
+    ): CommonButtonColors =
+        CommonButtonColors(
+            containerColor = containerColor,
+            contentColor = contentColor,
+        )
 }

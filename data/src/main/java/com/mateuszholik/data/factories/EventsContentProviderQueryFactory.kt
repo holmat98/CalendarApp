@@ -1,7 +1,12 @@
 package com.mateuszholik.data.factories
 
+import android.content.ContentUris
+import android.content.ContentValues
 import android.provider.CalendarContract
+import com.mateuszholik.data.extensions.toMillis
 import com.mateuszholik.data.factories.models.QueryData
+import com.mateuszholik.data.factories.models.UpdateData
+import com.mateuszholik.data.repositories.models.UpdatedEventDetails
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.ZoneId
@@ -14,6 +19,8 @@ internal interface EventsContentProviderQueryFactory {
     suspend fun createForEvent(eventId: Long): QueryData
 
     suspend fun createForEventsFromMonth(yearMonth: YearMonth, calendarIds: List<Long>): QueryData
+
+    suspend fun createForUpdateEvent(updatedEventDetails: UpdatedEventDetails): UpdateData
 
     companion object {
         const val TODAY_EVENTS_ID_INDEX = 0
@@ -40,6 +47,7 @@ internal interface EventsContentProviderQueryFactory {
         const val EVENT_IS_ORGANIZER_INDEX = 12
         const val EVENT_CAN_MODIFY_INDEX = 13
         const val EVENT_CAN_SEE_GUESTS_INDEX = 14
+        const val EVENT_CALENDAR_ID_INDEX = 15
     }
 }
 
@@ -53,9 +61,8 @@ internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
         val dayAtStart = day.atStartOfDay()
         val dayAtEnd = day.plusDays(1).atStartOfDay()
 
-        val zoneId = ZoneId.systemDefault()
-        val dayAtStartEpochMillis = dayAtStart.atZone(zoneId).toInstant().toEpochMilli()
-        val dayAtEndEpochMillis = dayAtEnd.atZone(zoneId).toInstant().toEpochMilli()
+        val dayAtStartEpochMillis = dayAtStart.toMillis()
+        val dayAtEndEpochMillis = dayAtEnd.toMillis()
 
         val selection =
             "((${CalendarContract.Events.DTSTART} >= ?) AND (${CalendarContract.Events.DTSTART} < ?) ${calendarIds.asInSelection()})"
@@ -101,7 +108,8 @@ internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
                 CalendarContract.Events.HAS_ALARM,
                 CalendarContract.Events.IS_ORGANIZER,
                 CalendarContract.Events.GUESTS_CAN_MODIFY,
-                CalendarContract.Events.GUESTS_CAN_SEE_GUESTS
+                CalendarContract.Events.GUESTS_CAN_SEE_GUESTS,
+                CalendarContract.Events.CALENDAR_ID,
             ),
             selection = "(${CalendarContract.Events._ID} = ?)",
             selectionArgs = arrayOf("$eventId")
@@ -114,9 +122,8 @@ internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
         val firstDay = yearMonth.atDay(1).atStartOfDay()
         val lastDay = yearMonth.plusMonths(1).atDay(1).atStartOfDay()
 
-        val zoneId = ZoneId.systemDefault()
-        val dayAtStartEpochMillis = firstDay.atZone(zoneId).toInstant().toEpochMilli()
-        val dayAtEndEpochMillis = lastDay.atZone(zoneId).toInstant().toEpochMilli()
+        val dayAtStartEpochMillis = firstDay.toMillis()
+        val dayAtEndEpochMillis = lastDay.toMillis()
 
         val selection =
             "((${CalendarContract.Events.DTSTART} >= ?) AND (${CalendarContract.Events.DTSTART} < ?) ${calendarIds.asInSelection()})"
@@ -136,6 +143,36 @@ internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
             projection = projection
         )
     }
+
+    override suspend fun createForUpdateEvent(updatedEventDetails: UpdatedEventDetails): UpdateData =
+        UpdateData(
+            uri = ContentUris.withAppendedId(
+                CalendarContract.Events.CONTENT_URI,
+                updatedEventDetails.id
+            ),
+            values = ContentValues().apply {
+                with(updatedEventDetails) {
+                    title?.let { put(CalendarContract.Events.TITLE, it) }
+                    description?.let { put(CalendarContract.Events.DESCRIPTION, it) }
+                    dateStart?.let {
+                        put(
+                            CalendarContract.Events.DTSTART,
+                            it.toMillis(ZoneId.of(timezone))
+                        )
+                    }
+                    dateEnd?.let {
+                        put(
+                            CalendarContract.Events.DTEND,
+                            it.toMillis(ZoneId.of(timezone))
+                        )
+                    }
+                    allDay?.let { put(CalendarContract.Events.ALL_DAY, it) }
+                    eventColor?.let { put(CalendarContract.Events.EVENT_COLOR, it) }
+                    location?.let { put(CalendarContract.Events.EVENT_LOCATION, it) }
+                    calendarId?.let { put(CalendarContract.Events.CALENDAR_ID, it) }
+                }
+            }
+        )
 
     private fun List<Long>.asInSelection(): String {
         if (isEmpty()) {

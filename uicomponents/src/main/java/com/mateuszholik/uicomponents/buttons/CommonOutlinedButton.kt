@@ -58,10 +58,7 @@ fun CommonOutlinedButton(
     ) {
         icon?.let {
             Icon(
-                modifier = Modifier.padding(
-                    top = 4.dp,
-                    end = 8.dp
-                ),
+                modifier = Modifier.padding(end = 8.dp),
                 imageVector = it,
                 contentDescription = null
             )

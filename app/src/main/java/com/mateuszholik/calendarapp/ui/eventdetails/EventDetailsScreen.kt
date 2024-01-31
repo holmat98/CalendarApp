@@ -31,16 +31,18 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -52,20 +54,21 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiEvent
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiState.Loading
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiState.NoData
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiState.ViewMode
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.AttendeeDismissed
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.AttendeeSelected
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.DeleteEvent
-import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.EnterEditMode
+import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.EditEventPressed
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction.RetryGetEventDetailsPressed
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS_EMPTY_DESCRIPTION
-import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS_GENERIC_DESCRIPTION
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.ChangeSystemBarColors
 import com.mateuszholik.designsystem.cornerRadius
 import com.mateuszholik.designsystem.models.StyleType
-import com.mateuszholik.designsystem.previews.BigPhonePreview
 import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.sizing
@@ -74,28 +77,33 @@ import com.mateuszholik.domain.models.Attendee
 import com.mateuszholik.domain.models.EventDetails
 import com.mateuszholik.domain.models.Generic
 import com.mateuszholik.domain.models.GoogleMeet
-import com.mateuszholik.uicomponents.cards.SectionCard
 import com.mateuszholik.uicomponents.attendee.AttendeeItem
 import com.mateuszholik.uicomponents.attendee.Status
 import com.mateuszholik.uicomponents.bottomsheet.CommonBottomSheetDialog
 import com.mateuszholik.uicomponents.buttons.CommonIconButton
 import com.mateuszholik.uicomponents.buttons.CommonOutlinedButton
+import com.mateuszholik.uicomponents.calendar.CalendarItem
 import com.mateuszholik.uicomponents.cards.CardWithImage
 import com.mateuszholik.uicomponents.cards.EventCard
 import com.mateuszholik.uicomponents.cards.EventWithMeetingCard
+import com.mateuszholik.uicomponents.cards.SectionCard
 import com.mateuszholik.uicomponents.extensions.shimmerEffect
 import com.mateuszholik.uicomponents.scaffold.CommonScaffold
 import com.mateuszholik.uicomponents.text.BodyMediumText
 import com.mateuszholik.uicomponents.text.TitleMediumText
+import kotlinx.coroutines.launch
 
 @Composable
 fun EventDetailsScreen(
     onBackPressed: () -> Unit,
+    onEditPressed: (eventId: Long) -> Unit,
     viewModel: EventDetailsViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     var selectedAttendee by remember { mutableStateOf<Attendee?>(null) }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackBarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     ChangeSystemBarColors()
 
@@ -104,31 +112,43 @@ fun EventDetailsScreen(
             is EventDetailsUiEvent.DismissAttendee -> {
                 selectedAttendee = null
             }
-            is EventDetailsUiEvent.Error -> {}
+            is EventDetailsUiEvent.Error -> {
+                coroutineScope.launch {
+                    snackBarHostState.showSnackbar(
+                        message = context.getString(R.string.error_unknown_text),
+                        withDismissAction = true,
+                    )
+                }
+            }
             is EventDetailsUiEvent.ShowAttendee -> {
                 selectedAttendee = uiEvent.attendee
+            }
+            is EventDetailsUiEvent.GoToEventDetails -> {
+                onEditPressed(uiEvent.eventId)
             }
         }
     }
 
     when (uiState) {
-        is EventDetailsViewModel.EventDetailsUiState.EditMode -> {
-
-        }
-        is EventDetailsViewModel.EventDetailsUiState.Loading -> {
-            LoadingContent(onBackPressed = onBackPressed)
-        }
-        is EventDetailsViewModel.EventDetailsUiState.NoData -> {
-            NoDataContent(
+        is Loading -> {
+            LoadingContent(
                 onBackPressed = onBackPressed,
-                onTryAgainPressed = { viewModel.performUserAction(RetryGetEventDetailsPressed) }
+                snackBarHostState = snackBarHostState,
             )
         }
-        is EventDetailsViewModel.EventDetailsUiState.ViewMode -> {
-            ViewModeContent(
-                eventDetails = (uiState as EventDetailsViewModel.EventDetailsUiState.ViewMode).eventDetails,
+        is NoData -> {
+            NoDataContent(
                 onBackPressed = onBackPressed,
-                onEditPressed = { viewModel.performUserAction(EnterEditMode) },
+                onTryAgainPressed = { viewModel.performUserAction(RetryGetEventDetailsPressed) },
+                snackBarHostState = snackBarHostState,
+            )
+        }
+        is ViewMode -> {
+            Content(
+                snackBarHostState = snackBarHostState,
+                eventDetails = (uiState as ViewMode).eventDetails,
+                onBackPressed = onBackPressed,
+                onEditPressed = { viewModel.performUserAction(EditEventPressed(it)) },
                 onDeletePressed = { viewModel.performUserAction(DeleteEvent) },
                 onAttendeePressed = { viewModel.performUserAction(AttendeeSelected(it)) }
             )
@@ -168,11 +188,15 @@ fun EventDetailsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun LoadingContent(onBackPressed: () -> Unit) {
+private fun LoadingContent(
+    onBackPressed: () -> Unit,
+    snackBarHostState: SnackbarHostState,
+) {
     CommonScaffold(
         navigationIcon = {
             CommonIconButton(imageVector = Icons.Default.Close, onClick = onBackPressed)
         },
+        snackbarHost = { SnackbarHost(snackBarHostState) },
     ) {
         Column(
             modifier = Modifier
@@ -231,11 +255,13 @@ private fun LoadingContent(onBackPressed: () -> Unit) {
 private fun NoDataContent(
     onBackPressed: () -> Unit,
     onTryAgainPressed: () -> Unit,
+    snackBarHostState: SnackbarHostState,
 ) {
     CommonScaffold(
         navigationIcon = {
             CommonIconButton(imageVector = Icons.Default.Close, onClick = onBackPressed)
         },
+        snackbarHost = { SnackbarHost(snackBarHostState) },
     ) {
         Column(
             modifier = Modifier
@@ -274,10 +300,11 @@ private fun NoDataContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ViewModeContent(
+private fun Content(
+    snackBarHostState: SnackbarHostState,
     eventDetails: EventDetails,
     onBackPressed: () -> Unit,
-    onEditPressed: () -> Unit,
+    onEditPressed: (eventId: Long) -> Unit,
     onDeletePressed: () -> Unit,
     onAttendeePressed: (attendee: Attendee) -> Unit,
 ) {
@@ -287,9 +314,10 @@ private fun ViewModeContent(
         navigationIcon = {
             CommonIconButton(imageVector = Icons.Default.Close, onClick = onBackPressed)
         },
+        snackbarHost = { SnackbarHost(snackBarHostState) },
         actions = {
             if (eventDetails.canModify) {
-                CommonIconButton(imageVector = Icons.Default.Edit, onClick = onEditPressed)
+                CommonIconButton(imageVector = Icons.Default.Edit, onClick = { onEditPressed(eventDetails.id) })
                 CommonIconButton(imageVector = Icons.Default.Delete, onClick = onDeletePressed)
             }
         },
@@ -386,6 +414,18 @@ private fun ViewModeContent(
 
             item { Divider() }
 
+            eventDetails.calendar?.let {
+                item {
+                    CalendarItem(
+                        email = it.accountName,
+                        name = it.calendarName,
+                        calendarColor = it.color
+                    )
+                }
+
+                item { Divider() }
+            }
+
             if (eventDetails.alerts.isNotEmpty()) {
                 item {
                     SectionCard(
@@ -476,6 +516,7 @@ private fun NoDataPreview() {
         NoDataContent(
             onBackPressed = {},
             onTryAgainPressed = {},
+            snackBarHostState = remember { SnackbarHostState() },
         )
     }
 }
@@ -484,7 +525,10 @@ private fun NoDataPreview() {
 @Composable
 private fun LoadingPreview() {
     CalendarAppTheme(styleType = StyleType.SPRING) {
-        LoadingContent(onBackPressed = {})
+        LoadingContent(
+            onBackPressed = {},
+            snackBarHostState = remember { SnackbarHostState() },
+        )
     }
 }
 
@@ -492,43 +536,28 @@ private fun LoadingPreview() {
 @Composable
 private fun ViewModePreview() {
     CalendarAppTheme(styleType = StyleType.WINTER) {
-        ViewModeContent(
+        Content(
             eventDetails = EVENT_DETAILS,
             onBackPressed = {},
             onEditPressed = {},
             onDeletePressed = {},
             onAttendeePressed = {},
+            snackBarHostState = remember { SnackbarHostState() },
         )
     }
 }
 
 @MediumPhonePreview
 @Composable
-private fun ViewModePreview3() {
-    CalendarAppTheme(styleType = StyleType.WINTER) {
-        ViewModeContent(
-            eventDetails = EVENT_DETAILS_GENERIC_DESCRIPTION.copy(eventColor = null),
+private fun ViewModePreview2() {
+    CalendarAppTheme(styleType = StyleType.AUTUMN) {
+        Content(
+            eventDetails = EVENT_DETAILS_EMPTY_DESCRIPTION.copy(eventColor = null),
             onBackPressed = {},
             onEditPressed = {},
             onDeletePressed = {},
             onAttendeePressed = {},
-        )
-    }
-}
-
-@BigPhonePreview
-@Composable
-private fun ViewModePreview4() {
-    CalendarAppTheme(styleType = StyleType.SUMMER, darkTheme = true) {
-        ViewModeContent(
-            eventDetails = EVENT_DETAILS_EMPTY_DESCRIPTION.copy(
-                eventColor = Color.Yellow.toArgb(),
-                canModify = false
-            ),
-            onBackPressed = {},
-            onEditPressed = {},
-            onDeletePressed = {},
-            onAttendeePressed = {},
+            snackBarHostState = remember { SnackbarHostState() },
         )
     }
 }

@@ -66,7 +66,7 @@ class CalendarsSelectionViewModel @Inject constructor(
         viewModelScope.launch(dispatcherProvider.main() + handler) {
             val calendars = getCalendarsUseCase()
 
-            _uiState.emit(CalendarProfilesUiState.Calendars(calendars))
+            _uiState.emit(CalendarProfilesUiState.Calendars(calendars.groupBy { it.accountName }))
         }
     }
 

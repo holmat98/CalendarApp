@@ -1,7 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">CalendarApp</string>
     <string name="button_add_permission">Grant permission</string>
+    <string name="button_cancel">Cancel</string>
     <string name="button_go_to_settings">Open settings</string>
+    <string name="button_ok">OK</string>
+    <string name="button_save">Save</string>
     <string name="button_try_again">Try again</string>
     <string name="calendar_permission_screen_title">Grant permission to access calendar</string>
     <string name="calendar_permission_screen_message">This permission is required for this application to read, delete, add or update your calendar events</string>
@@ -11,6 +14,25 @@
     <string name="calendar_selection_header">Select calendars</string>
     <string name="calendar_screen_no_events_title">No events found</string>
     <string name="calendar_screen_no_events_message">You don\'t have any scheduled events today</string>
+    <string name="color_blanched_almond">Blanched almond</string>
+    <string name="color_blue_cadet">Blue cadet</string>
+    <string name="color_current">Current color</string>
+    <string name="color_deep_pink">Deep pink</string>
+    <string name="color_lemon_chiffon">Lemon chiffon</string>
+    <string name="color_light_coral">Light coral</string>
+    <string name="color_lime">Lime</string>
+    <string name="color_magenta">Magenta</string>
+    <string name="color_moccasin">Moccasin</string>
+    <string name="color_orange">Orange</string>
+    <string name="color_pale_turquoise">Pale turquoise</string>
+    <string name="color_spring_green">Spring green</string>
+    <string name="edit_event_select_calendar">Select calendar:</string>
+    <string name="edit_event_select_event_color">Select event color</string>
+    <string name="edit_event_exit_message">All your changes will be removed.</string>
+    <string name="edit_event_exit_title">Exit event edition?</string>
+    <string name="edit_event_provide_description">Provide description</string>
+    <string name="edit_event_provide_location">Provide location</string>
+    <string name="edit_event_provide_title">Provide title</string>
     <string name="error_unknown_text">Something went wrong</string>
     <string name="event_details_alerts">Alerts</string>
     <plurals name="event_details_alert_minutes_before">
@@ -49,4 +71,5 @@
     <string name="welcome_screen_hello_vacation">Happy\nVacation!</string>
     <string name="welcome_screen_hello_school">Welcome\nSchool!</string>
     <string name="welcome_screen_hello_new_year">Happy\nNew Year!</string>
+    <string name="edit_event_all_day">All day</string>
 </resources>
