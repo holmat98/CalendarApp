@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ExitToApp
@@ -32,7 +33,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -303,6 +307,11 @@ private fun Content(
     onAllDayChanged: (Boolean) -> Unit = {},
     paddingValues: PaddingValues,
 ) {
+    val titleFocusRequester = remember { FocusRequester() }
+    val descriptionFocusRequester = remember { FocusRequester() }
+    val locationFocusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+
     LazyColumn(
         modifier = Modifier
             .padding(paddingValues)
@@ -317,6 +326,10 @@ private fun Content(
                 onTextChanged = onTitleChanged,
                 hint = stringResource(R.string.edit_event_provide_title),
                 singleLine = true,
+                focusRequester = titleFocusRequester,
+                keyboardActions = KeyboardActions(
+                    onDone = { focusManager.moveFocus(FocusDirection.Next) }
+                )
             )
         }
         item {
@@ -326,6 +339,10 @@ private fun Content(
                 onTextChanged = onDescriptionChanged,
                 hint = stringResource(R.string.edit_event_provide_description),
                 singleLine = false,
+                focusRequester = descriptionFocusRequester,
+                keyboardActions = KeyboardActions(
+                    onDone = { focusManager.moveFocus(FocusDirection.Next) }
+                )
             )
         }
         item { Divider() }
@@ -333,7 +350,12 @@ private fun Content(
         editMode.calendar?.let { calendar ->
             item {
                 with(calendar) {
-                    SelectionCard(onClick = onCalendarPressed) {
+                    SelectionCard(
+                        onClick = {
+                        onCalendarPressed()
+                        focusManager.clearFocus()
+                    }
+                    ) {
                         CalendarItem(
                             email = accountName,
                             name = calendarName,
@@ -354,7 +376,10 @@ private fun Content(
                         .fillMaxWidth(),
                     text = stringResource(R.string.edit_event_all_day),
                     isSelected = editMode.allDay,
-                    onSelectionChanged = onAllDayChanged
+                    onSelectionChanged = {
+                        onAllDayChanged(it)
+                        focusManager.clearFocus()
+                    }
                 )
                 if (editMode.allDay) {
                     CommonDatePicker(
@@ -362,14 +387,20 @@ private fun Content(
                             .padding(bottom = MaterialTheme.spacing.small)
                             .fillMaxWidth(),
                         date = editMode.dateStart.toLocalDate(),
-                        onDateSelected = { onStartDateChanged(it.atStartOfDay()) }
+                        onDateSelected = {
+                            onStartDateChanged(it.atStartOfDay())
+                            focusManager.clearFocus()
+                        }
                     )
                     CommonDatePicker(
                         modifier = Modifier
                             .padding(bottom = MaterialTheme.spacing.small)
                             .fillMaxWidth(),
                         date = editMode.dateEnd.toLocalDate(),
-                        onDateSelected = { onEndDateChanged(it.atStartOfDay()) }
+                        onDateSelected = { 
+                            onEndDateChanged(it.atStartOfDay())
+                            focusManager.clearFocus()
+                        }
                     )
                 } else {
                     CommonDateTimePicker(
@@ -377,14 +408,20 @@ private fun Content(
                             .padding(bottom = MaterialTheme.spacing.small)
                             .fillMaxWidth(),
                         date = editMode.dateStart,
-                        onDateSelected = onStartDateChanged
+                        onDateSelected = {
+                            onStartDateChanged(it)
+                            focusManager.clearFocus()
+                        }
                     )
                     CommonDateTimePicker(
                         modifier = Modifier
                             .padding(bottom = MaterialTheme.spacing.small)
                             .fillMaxWidth(),
                         date = editMode.dateEnd,
-                        onDateSelected = onEndDateChanged
+                        onDateSelected = {
+                            onEndDateChanged(it)
+                            focusManager.clearFocus()
+                        }
                     )
                 }
                 TextWithIcon(
@@ -397,7 +434,12 @@ private fun Content(
         item { Divider() }
 
         item {
-            SelectionCard(onClick = onColorPressed) {
+            SelectionCard(
+                onClick = {
+                    onColorPressed()
+                    focusManager.clearFocus()
+                }
+            ) {
                 if (editMode.eventColor == null) {
                     BodyMediumText(textResId = R.string.edit_event_select_event_color)
                 } else {
@@ -415,6 +457,10 @@ private fun Content(
                 onTextChanged = onLocationChanged,
                 hint = stringResource(R.string.edit_event_provide_location),
                 singleLine = false,
+                focusRequester = locationFocusRequester,
+                keyboardActions = KeyboardActions {
+                    focusManager.clearFocus()
+                }
             )
         }
     }
