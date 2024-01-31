@@ -12,6 +12,8 @@ import com.mateuszholik.domain.usecases.GetEventsForDayUseCase
 import com.mateuszholik.domain.usecases.GetEventsForDayUseCaseImpl
 import com.mateuszholik.domain.usecases.UpdateCalendarVisibilityUseCase
 import com.mateuszholik.domain.usecases.UpdateCalendarVisibilityUseCaseImpl
+import com.mateuszholik.domain.usecases.UpdateEventDetailsUseCase
+import com.mateuszholik.domain.usecases.UpdateEventDetailsUseCaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -55,4 +57,9 @@ internal abstract class UseCaseModule {
     abstract fun bindsUpdateCalendarVisibilityUseCase(
         updateCalendarsUseCaseImpl: UpdateCalendarVisibilityUseCaseImpl
     ): UpdateCalendarVisibilityUseCase
+
+    @Binds
+    abstract fun bindsUpdateEventDetailsUseCase(
+        updateEventDetailsUseCaseImpl: UpdateEventDetailsUseCaseImpl
+    ): UpdateEventDetailsUseCase
 }

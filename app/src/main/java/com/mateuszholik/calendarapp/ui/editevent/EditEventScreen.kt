@@ -16,22 +16,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -45,6 +46,7 @@ import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUse
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.ExitAttempt
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.ExitAttemptCancelled
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.ExitAttemptConfirmed
+import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.SaveUpdatedEventDetails
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.SelectCalendar
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.SelectEventColor
 import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction.SelectEventColorDismissed
@@ -81,7 +83,7 @@ import com.mateuszholik.uicomponents.text.BodyMediumText
 import com.mateuszholik.uicomponents.text.TextWithIcon
 import com.mateuszholik.uicomponents.text.TitleMediumText
 import com.mateuszholik.uicomponents.textfield.CommonOutlinedTextField
-import com.mateuszholik.uicomponents.textfield.TextFieldWithIcon
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -95,6 +97,9 @@ fun EditEventScreen(
     var colors by remember { mutableStateOf<List<ColorsProvider.ColorInfo>?>(null) }
     var isButtonEnabled by remember { mutableStateOf(false) }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val snackBarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     ObserveAsEvents(viewModel.uiEvent) { uiEvent ->
         when (uiEvent) {
@@ -102,7 +107,12 @@ fun EditEventScreen(
                 calendars = null
             }
             is EditEventUiEvent.Error -> {
-
+                coroutineScope.launch {
+                    snackBarHostState.showSnackbar(
+                        message = context.getString(R.string.error_unknown_text),
+                        withDismissAction = true,
+                    )
+                }
             }
             is EditEventUiEvent.ShowCalendarSelection -> {
                 calendars = uiEvent.calendars
@@ -120,6 +130,9 @@ fun EditEventScreen(
             is EditEventUiEvent.ShowEventColorSelection -> {
                 colors = uiEvent.colors
             }
+            is EditEventUiEvent.ChangeSaveButtonAvailability -> {
+                isButtonEnabled = uiEvent.enabled
+            }
         }
     }
 
@@ -132,11 +145,12 @@ fun EditEventScreen(
                 onClick = { viewModel.performUserAction(ExitAttempt) }
             )
         },
+        snackbarHost = { SnackbarHost(snackBarHostState) },
         actions = {
             CommonSmallButton(
                 modifier = Modifier.padding(end = MaterialTheme.spacing.small),
                 textResId = R.string.button_save,
-                onClick = {},
+                onClick = { viewModel.performUserAction(SaveUpdatedEventDetails) },
                 isEnabled = isButtonEnabled,
             )
         }
@@ -150,7 +164,6 @@ fun EditEventScreen(
 
         when (uiState) {
             is EditEventUiState.EventDetails -> {
-                SideEffect { isButtonEnabled = true }
                 Content(
                     paddingValues = paddingValues,
                     editMode = uiState as EditEventUiState.EventDetails,
@@ -175,7 +188,6 @@ fun EditEventScreen(
                 )
             }
             is EditEventUiState.Loading -> {
-                SideEffect { isButtonEnabled = false }
                 LoadingContent(paddingValues = paddingValues)
             }
         }
@@ -308,10 +320,10 @@ private fun Content(
             )
         }
         item {
-            TextFieldWithIcon(
+            CommonOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 text = editMode.description.description,
                 onTextChanged = onDescriptionChanged,
-                icon = Icons.Default.List,
                 hint = stringResource(R.string.edit_event_provide_description),
                 singleLine = false,
             )
@@ -397,10 +409,10 @@ private fun Content(
             }
         }
         item {
-            TextFieldWithIcon(
+            CommonOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 text = editMode.location,
                 onTextChanged = onLocationChanged,
-                icon = Icons.Outlined.LocationOn,
                 hint = stringResource(R.string.edit_event_provide_location),
                 singleLine = false,
             )

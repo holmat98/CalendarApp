@@ -1,7 +1,6 @@
 package com.mateuszholik.data.repositories
 
 import android.content.Context
-import android.provider.CalendarContract.Calendars
 import com.mateuszholik.common.provider.DispatcherProvider
 import com.mateuszholik.data.factories.CalendarContentProviderQueryFactory
 import com.mateuszholik.data.mappers.CursorToCalendarMapper

@@ -2,7 +2,6 @@ package com.mateuszholik.calendarapp.ui.editevent
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.mateuszholik.calendarapp.R
 import com.mateuszholik.calendarapp.ui.base.BaseViewModel
 import com.mateuszholik.calendarapp.ui.base.UiEvent
 import com.mateuszholik.calendarapp.ui.base.UiState
@@ -17,8 +16,10 @@ import com.mateuszholik.domain.models.Calendar
 import com.mateuszholik.domain.models.Description
 import com.mateuszholik.domain.models.EditableEventDetails
 import com.mateuszholik.domain.models.Result
+import com.mateuszholik.domain.models.UpdatedEventDetails
 import com.mateuszholik.domain.usecases.GetCalendarsUseCase
 import com.mateuszholik.domain.usecases.GetEditableEventDetailsUseCase
+import com.mateuszholik.domain.usecases.UpdateEventDetailsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -37,12 +38,15 @@ import javax.inject.Inject
 class EditEventViewModel @Inject constructor(
     private val getEditableEventDetailsUseCase: GetEditableEventDetailsUseCase,
     private val getCalendarsUseCase: GetCalendarsUseCase,
+    private val updateEventDetailsUseCase: UpdateEventDetailsUseCase,
     private val colorsProvider: ColorsProvider,
     private val dispatcherProvider: DispatcherProvider,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<EditEventUiState, EditEventUserAction, EditEventUiEvent>() {
 
     private val eventId: Long = savedStateHandle[EVENT_ID_ARGUMENT] ?: 0
+
+    private var initialEventDetails: EditEventUiState.EventDetails? = null
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Timber.e(throwable, "Error on Calendar screen")
@@ -97,6 +101,8 @@ class EditEventViewModel @Inject constructor(
                 handleEndDateChanged(action.newEndDate)
             is EditEventUserAction.StartDateChanged ->
                 handleStartDateChanged(action.newStartDate)
+            is EditEventUserAction.SaveUpdatedEventDetails ->
+                handleSaveUpdatedEventDetails()
         }
 
     private fun getEventDetails() {
@@ -104,9 +110,12 @@ class EditEventViewModel @Inject constructor(
             val eventDetailsResult = getEditableEventDetailsUseCase(eventId)
 
             if (eventDetailsResult is Result.Success) {
-                _uiState.emit(eventDetailsResult.data.toEventDetails())
+                val eventDetails = eventDetailsResult.data.toEventDetails()
+                initialEventDetails = eventDetails
+                _uiState.emit(eventDetails)
+                _uiEvent.emit(EditEventUiEvent.ChangeSaveButtonAvailability(enabled = true))
             } else {
-                Timber.d("Testowanie: error")
+                _uiEvent.emit(EditEventUiEvent.Error)
             }
         }
     }
@@ -195,7 +204,41 @@ class EditEventViewModel @Inject constructor(
         _uiState.updateOnEventDetails { it.copy(dateEnd = newEndDate) }
     }
 
-    private fun MutableStateFlow<EditEventUiState>.updateOnEventDetails(transform: (EditEventUiState.EventDetails) -> EditEventUiState) =
+    private fun handleSaveUpdatedEventDetails() {
+        if (initialEventDetails == null) {
+            return
+        }
+
+        val currentState = _uiState.value
+
+        if (currentState !is EditEventUiState.EventDetails) {
+            return
+        }
+
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            val updatedEventDetails = with(currentState) {
+                UpdatedEventDetails(
+                    id = id,
+                    title = title.takeIf { title != initialEventDetails?.title },
+                    description = description.description.takeIf { description != initialEventDetails?.description },
+                    dateStart = dateStart.takeIf { dateStart != initialEventDetails?.dateStart },
+                    dateEnd = dateEnd.takeIf { dateEnd != initialEventDetails?.dateEnd },
+                    timezone = timezone,
+                    allDay = allDay.takeIf { allDay != initialEventDetails?.allDay },
+                    eventColor = eventColor?.value.takeIf { eventColor?.value != initialEventDetails?.eventColor?.value },
+                    location = location.takeIf { location != initialEventDetails?.location },
+                    calendarId = calendar?.id.takeIf { calendar?.id != initialEventDetails?.id }
+                )
+            }
+
+            updateEventDetailsUseCase(updatedEventDetails)
+            _uiEvent.emit(EditEventUiEvent.NavigateBack)
+        }
+    }
+
+    private fun MutableStateFlow<EditEventUiState>.updateOnEventDetails(
+        transform: (EditEventUiState.EventDetails) -> EditEventUiState,
+    ) =
         update { currentState ->
             if (currentState is EditEventUiState.EventDetails) {
                 transform(currentState)
@@ -213,10 +256,7 @@ class EditEventViewModel @Inject constructor(
             dateEnd = dateEnd,
             timezone = timezone,
             allDay = allDay,
-            eventColor = eventColor?.let {
-                Timber.d("Testowanie: color = $it")
-                ColorsProvider.ColorInfo(it, R.string.color_current)
-            },
+            eventColor = eventColor?.let { colorsProvider.provideDefault(it) },
             location = location,
             calendar = calendar
         )
@@ -255,8 +295,11 @@ class EditEventViewModel @Inject constructor(
 
         data object DismissColorEventSelection : EditEventUiEvent()
 
-        data class ShowEventColorSelection(val colors: List<ColorsProvider.ColorInfo>) :
-            EditEventUiEvent()
+        data class ShowEventColorSelection(
+            val colors: List<ColorsProvider.ColorInfo>,
+        ) : EditEventUiEvent()
+
+        data class ChangeSaveButtonAvailability(val enabled: Boolean) : EditEventUiEvent()
     }
 
     sealed class EditEventUserAction : UserAction {
@@ -290,5 +333,7 @@ class EditEventViewModel @Inject constructor(
         data class StartDateChanged(val newStartDate: LocalDateTime) : EditEventUserAction()
 
         data class EndDateChanged(val newEndDate: LocalDateTime) : EditEventUserAction()
+
+        data object SaveUpdatedEventDetails : EditEventUserAction()
     }
 }

@@ -7,6 +7,8 @@ import javax.inject.Inject
 
 interface ColorsProvider {
 
+    fun provideDefault(color: Int): ColorInfo
+
     fun provide(): List<ColorInfo>
 
     data class ColorInfo(
@@ -16,6 +18,12 @@ interface ColorsProvider {
 }
 
 class ColorsProviderImpl @Inject constructor() : ColorsProvider {
+
+    override fun provideDefault(color: Int): ColorInfo =
+        ColorInfo(
+            value = color,
+            name = R.string.color_current
+        )
 
     override fun provide(): List<ColorInfo> =
         listOf(

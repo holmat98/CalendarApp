@@ -39,6 +39,13 @@ data class Generic(override val description: String): Description {
 
     override fun copyWith(newDescription: String): Description =
         copy(description = newDescription)
+
+    override fun equals(other: Any?): Boolean =
+        when (other) {
+            is GoogleMeet -> description == other.originalDescription
+            is Generic -> description == other.description
+            else -> false
+        }
 }
 
 data class GoogleMeet(
@@ -53,4 +60,11 @@ data class GoogleMeet(
             description = newDescription,
             originalDescription = originalDescription.replace(description, newDescription)
         )
+
+    override fun equals(other: Any?): Boolean =
+        when (other) {
+            is GoogleMeet -> originalDescription == other.originalDescription
+            is Generic -> originalDescription == other.description
+            else -> false
+        }
 }

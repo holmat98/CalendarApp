@@ -10,6 +10,7 @@ import com.mateuszholik.data.mappers.CursorToEventsMapper
 import com.mateuszholik.data.mappers.CursorToListOfDaysMapper
 import com.mateuszholik.data.repositories.models.Event
 import com.mateuszholik.data.repositories.models.EventDetails
+import com.mateuszholik.data.repositories.models.UpdatedEventDetails
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
@@ -23,6 +24,8 @@ interface EventsRepository {
     suspend fun getEventDetails(id: Long): EventDetails?
 
     suspend fun getDaysWithEventsForMonth(yearMonth: YearMonth): List<LocalDate>
+
+    suspend fun updateEventDetails(updatedEventDetails: UpdatedEventDetails)
 }
 
 internal class EventsRepositoryImpl @Inject constructor(
@@ -107,6 +110,16 @@ internal class EventsRepositoryImpl @Inject constructor(
         cursor?.close()
 
         return days
+    }
+
+    override suspend fun updateEventDetails(updatedEventDetails: UpdatedEventDetails) {
+        withContext(dispatcherProvider.io()) {
+            val updateData = eventsContentProviderQueryFactory.createForUpdateEvent(
+                updatedEventDetails = updatedEventDetails
+            )
+
+            contentResolver.update(updateData.uri, updateData.values, null, null)
+        }
     }
 
     private suspend fun getSelectedCalendarIds(): List<Long> {

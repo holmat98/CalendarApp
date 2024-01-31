@@ -111,5 +111,7 @@ object MainNavigation {
         navigate("$EVENT_DETAILS_SCREEN/$EVENT_ID_ARGUMENT=$eventId")
 
     private fun NavController.navigateToEditEventScreen(eventId: Long) =
-        navigate("$EDIT_EVENT_SCREEN/$EVENT_ID_ARGUMENT=$eventId")
+        navigate("$EDIT_EVENT_SCREEN/$EVENT_ID_ARGUMENT=$eventId") {
+            popUpTo(CALENDAR_SCREEN)
+        }
 }
