@@ -31,10 +31,13 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -88,6 +91,7 @@ import com.mateuszholik.uicomponents.extensions.shimmerEffect
 import com.mateuszholik.uicomponents.scaffold.CommonScaffold
 import com.mateuszholik.uicomponents.text.BodyMediumText
 import com.mateuszholik.uicomponents.text.TitleMediumText
+import kotlinx.coroutines.launch
 
 @Composable
 fun EventDetailsScreen(
@@ -98,6 +102,8 @@ fun EventDetailsScreen(
     val context = LocalContext.current
     var selectedAttendee by remember { mutableStateOf<Attendee?>(null) }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackBarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     ChangeSystemBarColors()
 
@@ -106,7 +112,14 @@ fun EventDetailsScreen(
             is EventDetailsUiEvent.DismissAttendee -> {
                 selectedAttendee = null
             }
-            is EventDetailsUiEvent.Error -> {}
+            is EventDetailsUiEvent.Error -> {
+                coroutineScope.launch {
+                    snackBarHostState.showSnackbar(
+                        message = context.getString(R.string.error_unknown_text),
+                        withDismissAction = true,
+                    )
+                }
+            }
             is EventDetailsUiEvent.ShowAttendee -> {
                 selectedAttendee = uiEvent.attendee
             }
@@ -118,16 +131,21 @@ fun EventDetailsScreen(
 
     when (uiState) {
         is Loading -> {
-            LoadingContent(onBackPressed = onBackPressed)
+            LoadingContent(
+                onBackPressed = onBackPressed,
+                snackBarHostState = snackBarHostState,
+            )
         }
         is NoData -> {
             NoDataContent(
                 onBackPressed = onBackPressed,
-                onTryAgainPressed = { viewModel.performUserAction(RetryGetEventDetailsPressed) }
+                onTryAgainPressed = { viewModel.performUserAction(RetryGetEventDetailsPressed) },
+                snackBarHostState = snackBarHostState,
             )
         }
         is ViewMode -> {
             Content(
+                snackBarHostState = snackBarHostState,
                 eventDetails = (uiState as ViewMode).eventDetails,
                 onBackPressed = onBackPressed,
                 onEditPressed = { viewModel.performUserAction(EditEventPressed(it)) },
@@ -170,11 +188,15 @@ fun EventDetailsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun LoadingContent(onBackPressed: () -> Unit) {
+private fun LoadingContent(
+    onBackPressed: () -> Unit,
+    snackBarHostState: SnackbarHostState,
+) {
     CommonScaffold(
         navigationIcon = {
             CommonIconButton(imageVector = Icons.Default.Close, onClick = onBackPressed)
         },
+        snackbarHost = { SnackbarHost(snackBarHostState) },
     ) {
         Column(
             modifier = Modifier
@@ -233,11 +255,13 @@ private fun LoadingContent(onBackPressed: () -> Unit) {
 private fun NoDataContent(
     onBackPressed: () -> Unit,
     onTryAgainPressed: () -> Unit,
+    snackBarHostState: SnackbarHostState,
 ) {
     CommonScaffold(
         navigationIcon = {
             CommonIconButton(imageVector = Icons.Default.Close, onClick = onBackPressed)
         },
+        snackbarHost = { SnackbarHost(snackBarHostState) },
     ) {
         Column(
             modifier = Modifier
@@ -277,6 +301,7 @@ private fun NoDataContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Content(
+    snackBarHostState: SnackbarHostState,
     eventDetails: EventDetails,
     onBackPressed: () -> Unit,
     onEditPressed: (eventId: Long) -> Unit,
@@ -289,6 +314,7 @@ private fun Content(
         navigationIcon = {
             CommonIconButton(imageVector = Icons.Default.Close, onClick = onBackPressed)
         },
+        snackbarHost = { SnackbarHost(snackBarHostState) },
         actions = {
             if (eventDetails.canModify) {
                 CommonIconButton(imageVector = Icons.Default.Edit, onClick = { onEditPressed(eventDetails.id) })
@@ -490,6 +516,7 @@ private fun NoDataPreview() {
         NoDataContent(
             onBackPressed = {},
             onTryAgainPressed = {},
+            snackBarHostState = remember { SnackbarHostState() },
         )
     }
 }
@@ -498,7 +525,10 @@ private fun NoDataPreview() {
 @Composable
 private fun LoadingPreview() {
     CalendarAppTheme(styleType = StyleType.SPRING) {
-        LoadingContent(onBackPressed = {})
+        LoadingContent(
+            onBackPressed = {},
+            snackBarHostState = remember { SnackbarHostState() },
+        )
     }
 }
 
@@ -512,6 +542,7 @@ private fun ViewModePreview() {
             onEditPressed = {},
             onDeletePressed = {},
             onAttendeePressed = {},
+            snackBarHostState = remember { SnackbarHostState() },
         )
     }
 }
@@ -526,6 +557,7 @@ private fun ViewModePreview2() {
             onEditPressed = {},
             onDeletePressed = {},
             onAttendeePressed = {},
+            snackBarHostState = remember { SnackbarHostState() },
         )
     }
 }
