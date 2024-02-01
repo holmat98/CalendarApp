@@ -125,11 +125,6 @@ internal object PreviewConstants {
         organizer = "Organizer",
         calendar = CALENDAR_1
     )
-    val EVENT_DETAILS_GENERIC_DESCRIPTION = EVENT_DETAILS.copy(
-        description = Generic(
-            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mollis erat in libero posuere mattis. Aenean dapibus risus consequat, faucibus est at, vestibulum ipsum. Phasellus a elit id nisl euismod rhoncus. Aenean accumsan eget ante et dignissim. Proin non purus vel lacus facilisis facilisis."
-        )
-    )
     val EVENT_DETAILS_EMPTY_DESCRIPTION = EVENT_DETAILS.copy(
         description = Generic("")
     )

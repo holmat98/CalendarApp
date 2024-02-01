@@ -2,7 +2,7 @@ package com.mateuszholik.calendarapp.ui.welcome.provider
 
 import com.mateuszholik.calendarapp.R
 import com.mateuszholik.calendarapp.provider.CurrentDateProvider
-import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenUiState
+import com.mateuszholik.calendarapp.ui.welcome.models.WelcomeScreenUiState
 import java.time.LocalDate
 import java.time.Month
 import javax.inject.Inject

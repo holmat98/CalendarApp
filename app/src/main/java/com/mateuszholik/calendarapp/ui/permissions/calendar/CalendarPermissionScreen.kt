@@ -33,9 +33,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
-import com.mateuszholik.calendarapp.ui.permissions.calendar.CalendarPermissionViewModel.CalendarPermissionUiEvent
-import com.mateuszholik.calendarapp.ui.permissions.calendar.CalendarPermissionViewModel.CalendarPermissionUiState
-import com.mateuszholik.calendarapp.ui.permissions.calendar.CalendarPermissionViewModel.CalendarPermissionUserAction
+import com.mateuszholik.calendarapp.ui.permissions.calendar.models.CalendarPermissionUiEvent
+import com.mateuszholik.calendarapp.ui.permissions.calendar.models.CalendarPermissionUiState
+import com.mateuszholik.calendarapp.ui.permissions.calendar.models.CalendarPermissionUserAction
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.ChangeSystemBarColors
 import com.mateuszholik.designsystem.models.StyleType

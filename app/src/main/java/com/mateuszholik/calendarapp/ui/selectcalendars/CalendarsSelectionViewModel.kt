@@ -2,14 +2,10 @@ package com.mateuszholik.calendarapp.ui.selectcalendars
 
 import androidx.lifecycle.viewModelScope
 import com.mateuszholik.calendarapp.ui.base.BaseViewModel
-import com.mateuszholik.calendarapp.ui.base.UiEvent
-import com.mateuszholik.calendarapp.ui.base.UiState
-import com.mateuszholik.calendarapp.ui.base.UserAction
-import com.mateuszholik.calendarapp.ui.selectcalendars.CalendarsSelectionViewModel.CalendarProfilesUserAction
-import com.mateuszholik.calendarapp.ui.selectcalendars.CalendarsSelectionViewModel.CalendarProfilesUiState
-import com.mateuszholik.calendarapp.ui.selectcalendars.CalendarsSelectionViewModel.CalendarProfilesUiEvent
+import com.mateuszholik.calendarapp.ui.selectcalendars.models.CalendarProfilesUserAction
+import com.mateuszholik.calendarapp.ui.selectcalendars.models.CalendarProfilesUiState
+import com.mateuszholik.calendarapp.ui.selectcalendars.models.CalendarProfilesUiEvent
 import com.mateuszholik.common.provider.DispatcherProvider
-import com.mateuszholik.domain.models.Calendar
 import com.mateuszholik.domain.usecases.GetCalendarsUseCase
 import com.mateuszholik.domain.usecases.UpdateCalendarVisibilityUseCase
 import com.mateuszholik.domain.usecases.UpdateCalendarVisibilityUseCase.Param
@@ -85,29 +81,5 @@ class CalendarsSelectionViewModel @Inject constructor(
         viewModelScope.launch(dispatcherProvider.main() + handler) {
             _uiEvent.emit(CalendarProfilesUiEvent.CalendarsSelected)
         }
-    }
-
-    sealed class CalendarProfilesUiState : UiState {
-
-        data object Loading : CalendarProfilesUiState()
-
-        data class Calendars(val calendars: Map<String, List<Calendar>>) : CalendarProfilesUiState()
-    }
-
-    sealed class CalendarProfilesUiEvent : UiEvent {
-
-        data object Error : CalendarProfilesUiEvent()
-
-        data object CalendarsSelected : CalendarProfilesUiEvent()
-    }
-
-    sealed class CalendarProfilesUserAction : UserAction {
-
-        data class OnCalendarSelectionChanged(
-            val calendarId: Long,
-            val isVisible: Boolean,
-        ) : CalendarProfilesUserAction()
-
-        data object OnCalendarsConfirmed : CalendarProfilesUserAction()
     }
 }

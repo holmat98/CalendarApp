@@ -1,15 +1,11 @@
 package com.mateuszholik.calendarapp.ui.welcome
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.lifecycle.viewModelScope
 import com.mateuszholik.calendarapp.permissions.CalendarPermissionsManager
 import com.mateuszholik.common.provider.DispatcherProvider
 import com.mateuszholik.calendarapp.ui.base.BaseStateViewModel
-import com.mateuszholik.calendarapp.ui.base.UiEvent
-import com.mateuszholik.calendarapp.ui.base.UiState
-import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenUiEvent
-import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenUiState
+import com.mateuszholik.calendarapp.ui.welcome.models.WelcomeScreenUiEvent
+import com.mateuszholik.calendarapp.ui.welcome.models.WelcomeScreenUiState
 import com.mateuszholik.calendarapp.ui.welcome.provider.WelcomeScreenInfoProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -51,17 +47,5 @@ class WelcomeViewModel @Inject constructor(
                 _uiEvent.emit(WelcomeScreenUiEvent.NavigateToPermissionsScreen)
             }
         }
-    }
-
-    data class WelcomeScreenUiState(
-        @StringRes val text: Int,
-        @DrawableRes val image: Int,
-    ) : UiState
-
-    sealed class WelcomeScreenUiEvent : UiEvent {
-
-        data object NavigateToNextScreen : WelcomeScreenUiEvent()
-
-        data object NavigateToPermissionsScreen : WelcomeScreenUiEvent()
     }
 }
