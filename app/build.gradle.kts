@@ -1,6 +1,6 @@
 plugins {
     id(Plugins.ANDROID_APPLICATION)
-    id(Plugins.KOTLIN)
+    id(Plugins.ANDROID_KOTLIN)
     id(Google.KSP.PLUGIN)
     id(Plugins.HILT)
 }
