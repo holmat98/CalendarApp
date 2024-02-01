@@ -3,9 +3,9 @@ package com.mateuszholik.calendarapp.ui.calendar
 import app.cash.turbine.test
 import com.mateuszholik.calendarapp.provider.CurrentDateProvider
 import com.mateuszholik.calendarapp.TestDispatcherProvider
-import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent
-import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiState
-import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction
+import com.mateuszholik.calendarapp.ui.calendar.models.CalendarUiEvent
+import com.mateuszholik.calendarapp.ui.calendar.models.CalendarUiState
+import com.mateuszholik.calendarapp.ui.calendar.models.CalendarUserAction
 import com.mateuszholik.domain.models.Event
 import com.mateuszholik.domain.usecases.GetDaysWithEventsForMonthUseCase
 import com.mateuszholik.domain.usecases.GetEventsForDayUseCase

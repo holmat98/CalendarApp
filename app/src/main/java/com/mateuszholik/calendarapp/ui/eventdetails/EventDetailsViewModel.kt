@@ -3,16 +3,12 @@ package com.mateuszholik.calendarapp.ui.eventdetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.mateuszholik.calendarapp.ui.base.BaseViewModel
-import com.mateuszholik.calendarapp.ui.base.UiEvent
-import com.mateuszholik.calendarapp.ui.base.UiState
-import com.mateuszholik.calendarapp.ui.base.UserAction
-import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiEvent
-import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUiState
-import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsViewModel.EventDetailsUserAction
+import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUiEvent
+import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUiState
+import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUserAction
 import com.mateuszholik.calendarapp.ui.navigation.MainNavigation.EVENT_ID_ARGUMENT
 import com.mateuszholik.common.provider.DispatcherProvider
 import com.mateuszholik.domain.models.Attendee
-import com.mateuszholik.domain.models.EventDetails
 import com.mateuszholik.domain.models.Result
 import com.mateuszholik.domain.usecases.GetEventDetailsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -110,44 +106,5 @@ class EventDetailsViewModel @Inject constructor(
         } else {
             _uiState.emit(EventDetailsUiState.NoData)
         }
-    }
-
-    sealed class EventDetailsUiState : UiState {
-
-        data object Loading : EventDetailsUiState()
-
-        data object NoData : EventDetailsUiState()
-
-        data class ViewMode(val eventDetails: EventDetails) : EventDetailsUiState()
-    }
-
-    sealed class EventDetailsUiEvent : UiEvent {
-
-        data object Error : EventDetailsUiEvent()
-
-        data class ShowAttendee(val attendee: Attendee) : EventDetailsUiEvent()
-
-        data object DismissAttendee : EventDetailsUiEvent()
-
-        data class GoToEventDetails(val eventId: Long) : EventDetailsUiEvent()
-    }
-
-    sealed class EventDetailsUserAction : UserAction {
-
-        data class EditEventPressed(val eventId: Long) : EventDetailsUserAction()
-
-        data object NavigateBack : EventDetailsUserAction()
-
-        data object DeleteEvent : EventDetailsUserAction()
-
-        data object DeleteEventConfirmed : EventDetailsUserAction()
-
-        data object DeleteEventCancelled : EventDetailsUserAction()
-
-        data class AttendeeSelected(val attendee: Attendee) : EventDetailsUserAction()
-
-        data object AttendeeDismissed : EventDetailsUserAction()
-
-        data object RetryGetEventDetailsPressed : EventDetailsUserAction()
     }
 }

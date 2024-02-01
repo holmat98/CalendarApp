@@ -3,17 +3,13 @@ package com.mateuszholik.calendarapp.ui.editevent
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.mateuszholik.calendarapp.ui.base.BaseViewModel
-import com.mateuszholik.calendarapp.ui.base.UiEvent
-import com.mateuszholik.calendarapp.ui.base.UiState
-import com.mateuszholik.calendarapp.ui.base.UserAction
-import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUiEvent
-import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUiState
-import com.mateuszholik.calendarapp.ui.editevent.EditEventViewModel.EditEventUserAction
+import com.mateuszholik.calendarapp.ui.editevent.models.EditEventUiEvent
+import com.mateuszholik.calendarapp.ui.editevent.models.EditEventUiState
+import com.mateuszholik.calendarapp.ui.editevent.models.EditEventUserAction
 import com.mateuszholik.calendarapp.ui.navigation.MainNavigation.EVENT_ID_ARGUMENT
 import com.mateuszholik.calendarapp.ui.provider.ColorsProvider
 import com.mateuszholik.common.provider.DispatcherProvider
 import com.mateuszholik.domain.models.Calendar
-import com.mateuszholik.domain.models.Description
 import com.mateuszholik.domain.models.EditableEventDetails
 import com.mateuszholik.domain.models.Result
 import com.mateuszholik.domain.models.UpdatedEventDetails
@@ -260,80 +256,4 @@ class EditEventViewModel @Inject constructor(
             location = location,
             calendar = calendar
         )
-
-    sealed class EditEventUiState : UiState {
-
-        data object Loading : EditEventUiState()
-
-        data class EventDetails(
-            val id: Long,
-            val title: String,
-            val description: Description,
-            val dateStart: LocalDateTime,
-            val dateEnd: LocalDateTime,
-            val timezone: String,
-            val allDay: Boolean,
-            val eventColor: ColorsProvider.ColorInfo?,
-            val location: String,
-            val calendar: Calendar?,
-        ) : EditEventUiState()
-    }
-
-    sealed class EditEventUiEvent : UiEvent {
-
-        data object Error : EditEventUiEvent()
-
-        data object DismissCalendarSelection : EditEventUiEvent()
-
-        data class ShowCalendarSelection(val calendars: List<Calendar>) : EditEventUiEvent()
-
-        data object ShowExitDialog : EditEventUiEvent()
-
-        data object DismissExitDialog : EditEventUiEvent()
-
-        data object NavigateBack : EditEventUiEvent()
-
-        data object DismissColorEventSelection : EditEventUiEvent()
-
-        data class ShowEventColorSelection(
-            val colors: List<ColorsProvider.ColorInfo>,
-        ) : EditEventUiEvent()
-
-        data class ChangeSaveButtonAvailability(val enabled: Boolean) : EditEventUiEvent()
-    }
-
-    sealed class EditEventUserAction : UserAction {
-
-        data object SelectCalendar : EditEventUserAction()
-
-        data class CalendarSelected(val calendar: Calendar) : EditEventUserAction()
-
-        data object CalendarSelectionDismissed : EditEventUserAction()
-
-        data object ExitAttempt : EditEventUserAction()
-
-        data object ExitAttemptConfirmed : EditEventUserAction()
-
-        data object ExitAttemptCancelled : EditEventUserAction()
-
-        data class UpdateDescription(val newDescription: String) : EditEventUserAction()
-
-        data class UpdateLocation(val newLocation: String) : EditEventUserAction()
-
-        data class UpdateTitle(val newTitle: String) : EditEventUserAction()
-
-        data object SelectEventColor : EditEventUserAction()
-
-        data class SelectedEventColor(val color: ColorsProvider.ColorInfo) : EditEventUserAction()
-
-        data object SelectEventColorDismissed : EditEventUserAction()
-
-        data class AllDaySelectionChanged(val allDay: Boolean) : EditEventUserAction()
-
-        data class StartDateChanged(val newStartDate: LocalDateTime) : EditEventUserAction()
-
-        data class EndDateChanged(val newEndDate: LocalDateTime) : EditEventUserAction()
-
-        data object SaveUpdatedEventDetails : EditEventUserAction()
-    }
 }

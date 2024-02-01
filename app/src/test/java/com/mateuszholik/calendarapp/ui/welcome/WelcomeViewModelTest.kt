@@ -3,6 +3,8 @@ package com.mateuszholik.calendarapp.ui.welcome
 import app.cash.turbine.test
 import com.mateuszholik.calendarapp.TestDispatcherProvider
 import com.mateuszholik.calendarapp.permissions.CalendarPermissionsManager
+import com.mateuszholik.calendarapp.ui.welcome.models.WelcomeScreenUiEvent
+import com.mateuszholik.calendarapp.ui.welcome.models.WelcomeScreenUiState
 import com.mateuszholik.calendarapp.ui.welcome.provider.WelcomeScreenInfoProvider
 import io.mockk.every
 import io.mockk.mockk
@@ -56,12 +58,12 @@ class WelcomeViewModelTest {
             viewModel.uiEvent.test {
                 val emittedValue = awaitItem()
 
-                assertThat(emittedValue).isEqualTo(WelcomeViewModel.WelcomeScreenUiEvent.NavigateToNextScreen)
+                assertThat(emittedValue).isEqualTo(WelcomeScreenUiEvent.NavigateToNextScreen)
             }
         }
 
     private companion object {
-        val DEFAULT_UI_STATE_VALUE = WelcomeViewModel.WelcomeScreenUiState(
+        val DEFAULT_UI_STATE_VALUE = WelcomeScreenUiState(
             text = 0,
             image = 1,
         )

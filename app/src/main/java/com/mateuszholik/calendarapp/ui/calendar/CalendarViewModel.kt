@@ -4,14 +4,10 @@ import androidx.lifecycle.viewModelScope
 import com.mateuszholik.calendarapp.provider.CurrentDateProvider
 import com.mateuszholik.common.provider.DispatcherProvider
 import com.mateuszholik.calendarapp.ui.base.BaseViewModel
-import com.mateuszholik.calendarapp.ui.base.UiEvent
-import com.mateuszholik.calendarapp.ui.base.UiState
-import com.mateuszholik.calendarapp.ui.base.UserAction
-import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent
-import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiState
-import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction
+import com.mateuszholik.calendarapp.ui.calendar.models.CalendarUiEvent
+import com.mateuszholik.calendarapp.ui.calendar.models.CalendarUiState
+import com.mateuszholik.calendarapp.ui.calendar.models.CalendarUserAction
 import com.mateuszholik.dateutils.extensions.toYearMonth
-import com.mateuszholik.domain.models.Event
 import com.mateuszholik.domain.usecases.GetDaysWithEventsForMonthUseCase
 import com.mateuszholik.domain.usecases.GetEventsForDayUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -157,46 +153,5 @@ class CalendarViewModel @Inject constructor(
             events = events,
             daysWithEvents = daysWithEvents
         )
-    }
-
-    sealed class CalendarUiState : UiState {
-
-        data class Loading(
-            val currentDate: LocalDate,
-            val currentMonth: YearMonth,
-        ) : CalendarUiState()
-
-        data class CalendarInfo(
-            val currentDate: LocalDate,
-            val currentMonth: YearMonth,
-            val events: List<Event>,
-            val daysWithEvents: List<LocalDate>,
-        ) : CalendarUiState()
-    }
-
-    sealed class CalendarUiEvent : UiEvent {
-
-        data class NavigateToEvent(val eventId: Long) : CalendarUiEvent()
-
-        data object NavigateToAddEvent : CalendarUiEvent()
-
-        data object Error : CalendarUiEvent()
-
-        data object NavigateToCalendarsSelection : CalendarUiEvent()
-    }
-
-    sealed class CalendarUserAction : UserAction {
-
-        data class SelectedDateChanged(val newDate: LocalDate) : CalendarUserAction()
-
-        data class CurrentMonthChanged(val newMonth: YearMonth) : CalendarUserAction()
-
-        data object RefreshScreen : CalendarUserAction()
-
-        data class EventClicked(val eventId: Long) : CalendarUserAction()
-
-        data object AddEventClicked : CalendarUserAction()
-
-        data object ProfileClicked : CalendarUserAction()
     }
 }

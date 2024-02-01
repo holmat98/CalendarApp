@@ -31,9 +31,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
-import com.mateuszholik.calendarapp.ui.selectcalendars.CalendarsSelectionViewModel.CalendarProfilesUserAction
-import com.mateuszholik.calendarapp.ui.selectcalendars.CalendarsSelectionViewModel.CalendarProfilesUiState
-import com.mateuszholik.calendarapp.ui.selectcalendars.CalendarsSelectionViewModel.CalendarProfilesUiEvent
+import com.mateuszholik.calendarapp.ui.selectcalendars.models.CalendarProfilesUserAction
+import com.mateuszholik.calendarapp.ui.selectcalendars.models.CalendarProfilesUiState
+import com.mateuszholik.calendarapp.ui.selectcalendars.models.CalendarProfilesUiEvent
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.CALENDARS
 import com.mateuszholik.designsystem.CalendarAppTheme

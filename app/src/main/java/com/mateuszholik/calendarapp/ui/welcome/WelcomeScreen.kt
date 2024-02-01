@@ -21,8 +21,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
-import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenUiEvent.NavigateToNextScreen
-import com.mateuszholik.calendarapp.ui.welcome.WelcomeViewModel.WelcomeScreenUiEvent.NavigateToPermissionsScreen
+import com.mateuszholik.calendarapp.ui.welcome.models.WelcomeScreenUiEvent.NavigateToNextScreen
+import com.mateuszholik.calendarapp.ui.welcome.models.WelcomeScreenUiEvent.NavigateToPermissionsScreen
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.ChangeSystemBarColors
 import com.mateuszholik.designsystem.models.StyleType

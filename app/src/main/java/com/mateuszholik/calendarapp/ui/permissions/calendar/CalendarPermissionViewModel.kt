@@ -5,12 +5,9 @@ import com.mateuszholik.calendarapp.permissions.CalendarPermissionsManager
 import com.mateuszholik.calendarapp.permissions.PermissionManager
 import com.mateuszholik.common.provider.DispatcherProvider
 import com.mateuszholik.calendarapp.ui.base.BaseViewModel
-import com.mateuszholik.calendarapp.ui.base.UiEvent
-import com.mateuszholik.calendarapp.ui.base.UiState
-import com.mateuszholik.calendarapp.ui.base.UserAction
-import com.mateuszholik.calendarapp.ui.permissions.calendar.CalendarPermissionViewModel.CalendarPermissionUiEvent
-import com.mateuszholik.calendarapp.ui.permissions.calendar.CalendarPermissionViewModel.CalendarPermissionUiState
-import com.mateuszholik.calendarapp.ui.permissions.calendar.CalendarPermissionViewModel.CalendarPermissionUserAction
+import com.mateuszholik.calendarapp.ui.permissions.calendar.models.CalendarPermissionUiEvent
+import com.mateuszholik.calendarapp.ui.permissions.calendar.models.CalendarPermissionUiState
+import com.mateuszholik.calendarapp.ui.permissions.calendar.models.CalendarPermissionUserAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -96,36 +93,5 @@ class CalendarPermissionViewModel @Inject constructor(
             _uiState.emit(CalendarPermissionUiState.Loading)
             calendarPermissionManager.handleBackFromSettings()
         }
-    }
-
-    sealed class CalendarPermissionUiState : UiState {
-
-        data object Loading : CalendarPermissionUiState()
-
-        data class AskForCalendarPermissions(
-            val permissions: List<String>,
-        ) : CalendarPermissionUiState()
-
-        data class ShowRationaleForCalendarPermissions(
-            val permissions: List<String>,
-        ) : CalendarPermissionUiState()
-
-        data object ShowSettings : CalendarPermissionUiState()
-    }
-
-    sealed class CalendarPermissionUiEvent : UiEvent {
-
-        data object AllPermissionsGranted : CalendarPermissionUiEvent()
-
-        data object Error : CalendarPermissionUiEvent()
-    }
-
-    sealed class CalendarPermissionUserAction : UserAction {
-
-        data class OnCalendarPermissionResultUserAction(
-            val results: Map<String, Boolean>,
-        ) : CalendarPermissionUserAction()
-
-        data object OnReturnBackFromSettingsUserAction : CalendarPermissionUserAction()
     }
 }
