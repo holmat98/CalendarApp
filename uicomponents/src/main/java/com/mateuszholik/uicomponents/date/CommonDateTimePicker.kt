@@ -27,6 +27,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.mateuszholik.dateutils.Milliseconds
+import com.mateuszholik.dateutils.Seconds
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
@@ -34,9 +36,9 @@ import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.uicomponents.R
 import com.mateuszholik.uicomponents.buttons.CommonTextButton
-import com.mateuszholik.uicomponents.extensions.asDayString
-import com.mateuszholik.uicomponents.extensions.asTimeString
-import com.mateuszholik.uicomponents.extensions.copy
+import com.mateuszholik.dateutils.extensions.asDayString
+import com.mateuszholik.dateutils.extensions.asTimeString
+import com.mateuszholik.dateutils.extensions.copy
 import com.mateuszholik.uicomponents.text.BodySmallText
 import java.time.Instant
 import java.time.LocalDateTime
@@ -54,7 +56,7 @@ fun CommonDateTimePicker(
 
     OutlinedCard(modifier = modifier) {
         Row(
-            modifier = Modifier.padding(MaterialTheme.spacing.small),
+            modifier = Modifier.padding(MaterialTheme.spacing.normal),
             verticalAlignment = Alignment.CenterVertically
         ) {
             BodySmallText(
@@ -79,7 +81,7 @@ fun CommonDateTimePicker(
 
     if (shouldShowDatePicker) {
         val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = date.toEpochSecond(ZoneOffset.UTC).times(1000)
+            initialSelectedDateMillis = Milliseconds.ofSeconds(Seconds.ofDateTime(date)).value
         )
         DatePickerDialog(
             onDismissRequest = { shouldShowDatePicker = false },
@@ -88,8 +90,7 @@ fun CommonDateTimePicker(
                     textResId = android.R.string.ok,
                     onClick = {
                         datePickerState.selectedDateMillis?.let {
-                            val localDate =
-                                Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC).toLocalDate()
+                            val localDate = Milliseconds.ofMillis(it).asDate()
                             onDateSelected(
                                 date.copy(
                                     year = localDate.year,

@@ -1,4 +1,4 @@
-package com.mateuszholik.uicomponents.extensions
+package com.mateuszholik.dateutils.extensions
 
 import java.util.Locale
 

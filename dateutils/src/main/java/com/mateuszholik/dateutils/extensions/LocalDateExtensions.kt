@@ -1,10 +1,11 @@
-package com.mateuszholik.uicomponents.extensions
+package com.mateuszholik.dateutils.extensions
 
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-internal fun LocalDate.asDayString(): String {
+fun LocalDate.asDayString(): String {
     val dateTimeFormatter = if (Locale.getDefault().country == Locale.US.country) {
         DateTimeFormatter.ofPattern("MMMM d yyyy")
     } else {
@@ -13,3 +14,6 @@ internal fun LocalDate.asDayString(): String {
 
     return this.format(dateTimeFormatter)
 }
+
+fun LocalDate.toYearMonth(): YearMonth =
+    YearMonth.of(year, month)

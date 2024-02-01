@@ -12,6 +12,7 @@ dependencies {
 
     // Modules
     module(name = ":designsystem")
+    module(name = ":dateutils")
 
     // Dependencies
     coreKtx()

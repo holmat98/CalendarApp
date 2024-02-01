@@ -3,10 +3,10 @@ package com.mateuszholik.data.factories
 import android.content.ContentUris
 import android.content.ContentValues
 import android.provider.CalendarContract
-import com.mateuszholik.data.extensions.toMillis
 import com.mateuszholik.data.factories.models.QueryData
 import com.mateuszholik.data.factories.models.UpdateData
 import com.mateuszholik.data.repositories.models.UpdatedEventDetails
+import com.mateuszholik.dateutils.Milliseconds
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.ZoneId
@@ -58,18 +58,15 @@ internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
         day: LocalDate,
         calendarIds: List<Long>,
     ): QueryData {
-        val dayAtStart = day.atStartOfDay()
-        val dayAtEnd = day.plusDays(1).atStartOfDay()
-
-        val dayAtStartEpochMillis = dayAtStart.toMillis()
-        val dayAtEndEpochMillis = dayAtEnd.toMillis()
+        val dayAtStartEpochMillis = Milliseconds.ofDate(day)
+        val dayAtEndEpochMillis = Milliseconds.ofDate(day.plusDays(1))
 
         val selection =
             "((${CalendarContract.Events.DTSTART} >= ?) AND (${CalendarContract.Events.DTSTART} < ?) ${calendarIds.asInSelection()})"
 
         val selectionArgs = arrayOf(
-            "$dayAtStartEpochMillis",
-            "$dayAtEndEpochMillis",
+            "${dayAtStartEpochMillis.value}",
+            "${dayAtEndEpochMillis.value}",
         ) + calendarIds.map { "$it" }.toTypedArray()
 
         val projection = arrayOf(
@@ -119,17 +116,14 @@ internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
         yearMonth: YearMonth,
         calendarIds: List<Long>,
     ): QueryData {
-        val firstDay = yearMonth.atDay(1).atStartOfDay()
-        val lastDay = yearMonth.plusMonths(1).atDay(1).atStartOfDay()
-
-        val dayAtStartEpochMillis = firstDay.toMillis()
-        val dayAtEndEpochMillis = lastDay.toMillis()
+        val dayAtStartEpochMillis = Milliseconds.ofDate(yearMonth.atDay(1))
+        val dayAtEndEpochMillis = Milliseconds.ofDate(yearMonth.plusMonths(1).atDay(1))
 
         val selection =
             "((${CalendarContract.Events.DTSTART} >= ?) AND (${CalendarContract.Events.DTSTART} < ?) ${calendarIds.asInSelection()})"
         val selectionArgs = arrayOf(
-            "$dayAtStartEpochMillis",
-            "$dayAtEndEpochMillis"
+            "${dayAtStartEpochMillis.value}",
+            "${dayAtEndEpochMillis.value}"
         ) + calendarIds.map { "$it" }.toTypedArray()
         val projection = arrayOf(
             CalendarContract.Events.DTSTART,
@@ -157,13 +151,13 @@ internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
                     dateStart?.let {
                         put(
                             CalendarContract.Events.DTSTART,
-                            it.toMillis(ZoneId.of(timezone))
+                            Milliseconds.ofDateTime(it, ZoneId.of(timezone)).value
                         )
                     }
                     dateEnd?.let {
                         put(
                             CalendarContract.Events.DTEND,
-                            it.toMillis(ZoneId.of(timezone))
+                            Milliseconds.ofDateTime(it, ZoneId.of(timezone)).value
                         )
                     }
                     allDay?.let { put(CalendarContract.Events.ALL_DAY, it) }

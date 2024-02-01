@@ -11,6 +11,7 @@ dependencies {
 
     // modules
     module(name = ":common")
+    module(name = ":dateutils")
 
     // dependencies
     coreKtx()
