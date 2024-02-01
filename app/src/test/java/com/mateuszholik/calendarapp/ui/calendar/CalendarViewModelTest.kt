@@ -63,7 +63,7 @@ internal class CalendarViewModelTest {
     fun `After creating CalendarViewModel uiState initial value are set to Loading`() =
         runTest {
             assertThat(viewModel.uiState.value).isEqualTo(
-                CalendarUiState.Loading
+                CalendarUiState.Loading(CURRENT_DATE, CURRENT_MONTH)
             )
         }
 
