@@ -1,7 +1,6 @@
 package com.mateuszholik.calendarapp.ui.calendar
 
 import androidx.lifecycle.viewModelScope
-import com.mateuszholik.calendarapp.extensions.toYearMonth
 import com.mateuszholik.calendarapp.provider.CurrentDateProvider
 import com.mateuszholik.common.provider.DispatcherProvider
 import com.mateuszholik.calendarapp.ui.base.BaseViewModel
@@ -11,6 +10,7 @@ import com.mateuszholik.calendarapp.ui.base.UserAction
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiState
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUserAction
+import com.mateuszholik.dateutils.extensions.toYearMonth
 import com.mateuszholik.domain.models.Event
 import com.mateuszholik.domain.usecases.GetDaysWithEventsForMonthUseCase
 import com.mateuszholik.domain.usecases.GetEventsForDayUseCase

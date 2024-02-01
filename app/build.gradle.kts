@@ -1,6 +1,6 @@
 plugins {
     id(Plugins.ANDROID_APPLICATION)
-    id(Plugins.KOTLIN)
+    id(Plugins.ANDROID_KOTLIN)
     id(Google.KSP.PLUGIN)
     id(Plugins.HILT)
 }
@@ -15,6 +15,7 @@ dependencies {
 
     // modules
     module(name = ":common")
+    module(name = ":dateutils")
     module(name = ":designsystem")
     module(name = ":domain")
     module(name = ":uicomponents")

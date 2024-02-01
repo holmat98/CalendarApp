@@ -3,7 +3,6 @@ package com.mateuszholik.data.mappers
 import android.database.Cursor
 import androidx.core.database.getIntOrNull
 import androidx.core.database.getStringOrNull
-import com.mateuszholik.data.extensions.toLocalDateTime
 import com.mateuszholik.data.factories.EventsContentProviderQueryFactory.Companion.EVENT_ALL_DAY_INDEX
 import com.mateuszholik.data.factories.EventsContentProviderQueryFactory.Companion.EVENT_AVAILABILITY_INDEX
 import com.mateuszholik.data.factories.EventsContentProviderQueryFactory.Companion.EVENT_CALENDAR_ID_INDEX
@@ -22,6 +21,8 @@ import com.mateuszholik.data.factories.EventsContentProviderQueryFactory.Compani
 import com.mateuszholik.data.factories.EventsContentProviderQueryFactory.Companion.EVENT_TITLE_INDEX
 import com.mateuszholik.data.mappers.base.Mapper
 import com.mateuszholik.data.repositories.models.EventDetails
+import com.mateuszholik.dateutils.Milliseconds
+import java.time.ZoneId
 import javax.inject.Inject
 
 internal interface CursorToEventDetailsMapper : Mapper<EventDetails>
@@ -38,8 +39,10 @@ internal class CursorToEventDetailsMapperImpl @Inject constructor() : CursorToEv
                 id = getLong(EVENT_ID_INDEX),
                 title = getString(EVENT_TITLE_INDEX),
                 description = getStringOrNull(EVENT_DESCRIPTION_INDEX).orEmpty(),
-                dateStart = getLong(EVENT_DATE_START_INDEX).toLocalDateTime(timezone),
-                dateEnd = getLong(EVENT_DATE_END_INDEX).toLocalDateTime(timezone),
+                dateStart = Milliseconds.ofMillis(getLong(EVENT_DATE_START_INDEX))
+                    .asDateTime(ZoneId.of(timezone)),
+                dateEnd = Milliseconds.ofMillis(getLong(EVENT_DATE_END_INDEX))
+                    .asDateTime(ZoneId.of(timezone)),
                 timezone = timezone,
                 allDay = getInt(EVENT_ALL_DAY_INDEX) == 1,
                 eventColor = getIntOrNull(EVENT_COLOR_INDEX),

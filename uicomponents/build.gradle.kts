@@ -1,6 +1,6 @@
 plugins {
     id(Plugins.ANDROID_LIBRARY)
-    id(Plugins.KOTLIN)
+    id(Plugins.ANDROID_KOTLIN)
 }
 
 android.configure(
@@ -12,6 +12,7 @@ dependencies {
 
     // Modules
     module(name = ":designsystem")
+    module(name = ":dateutils")
 
     // Dependencies
     coreKtx()

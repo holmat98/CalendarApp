@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
-import com.mateuszholik.uicomponents.extensions.capitalized
+import com.mateuszholik.dateutils.extensions.toText
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
@@ -23,7 +23,7 @@ fun DateText(
 
     Row(modifier = modifier) {
         HeadlineSmallText(
-            text = "$monthName ${date.year}".capitalized(),
+            text = date.toText(),
             color = textColor
         )
     }

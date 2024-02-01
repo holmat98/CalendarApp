@@ -38,7 +38,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
-import com.mateuszholik.calendarapp.extensions.toYearMonth
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent.Error
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent.NavigateToAddEvent
 import com.mateuszholik.calendarapp.ui.calendar.CalendarViewModel.CalendarUiEvent.NavigateToEvent
@@ -56,6 +55,7 @@ import com.mateuszholik.calendarapp.ui.observers.ObserveResumeLifecycleState
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.CURRENT_DATE
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.DAYS_WITH_EVENTS
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENTS
+import com.mateuszholik.dateutils.extensions.toYearMonth
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.ChangeSystemBarColors
 import com.mateuszholik.designsystem.cornerRadius

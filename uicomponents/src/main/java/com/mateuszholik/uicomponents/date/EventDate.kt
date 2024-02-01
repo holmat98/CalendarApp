@@ -10,11 +10,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.models.StyleType
-import com.mateuszholik.uicomponents.extensions.asDayString
-import com.mateuszholik.uicomponents.extensions.asFullDayString
-import com.mateuszholik.uicomponents.extensions.asFullDayTimeString
-import com.mateuszholik.uicomponents.extensions.asTimeString
-import com.mateuszholik.uicomponents.extensions.isSameDay
+import com.mateuszholik.dateutils.extensions.asDayString
+import com.mateuszholik.dateutils.extensions.asFullDayString
+import com.mateuszholik.dateutils.extensions.asFullDayTimeString
+import com.mateuszholik.dateutils.extensions.asTimeString
+import com.mateuszholik.dateutils.extensions.isSameDay
 import com.mateuszholik.uicomponents.text.TitleSmallText
 import java.time.LocalDateTime
 
