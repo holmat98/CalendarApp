@@ -19,7 +19,6 @@ jobs:
           java-version: '17'
       - name: Build App Bundle
         run: ./gradlew :app:bundleDebug
-      - run: npm install -g appcenter-cli
       - name: Test
         run: ./gradlew :app:testDebugUnitTest :data:testDebugUnitTest :domain:testDebugUnitTest :common:testDebugUnitTest
       - name: Test Coverage
@@ -29,5 +28,6 @@ jobs:
         with:
           name: test_coverage
           path: /home/runner/work/CalendarApp/CalendarApp/*/build/reports/jacoco
+      - run: npm install -g appcenter-cli
       - name: Upload to App Center
         run: appcenter distribute release --app ${{secrets.APP_NAME}} --file app/build/outputs/bundle/debug/app-debug.aab --group Pr --token ${{secrets.APP_CENTER_TOKEN}}

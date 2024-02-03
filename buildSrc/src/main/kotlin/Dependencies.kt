@@ -147,3 +147,11 @@ object Lottie {
 
     const val DEPENDENCY = "com.airbnb.android:lottie-compose:$version"
 }
+
+object AndroidGitVersion {
+    const val VERSION = "0.4.14"
+    const val PLUGIN = "com.gladed.androidgitversion"
+    const val FORMAT = "%tag%%-commit%%-dirty%"
+    const val PARTS = 4
+    const val MULTIPLIER = 100
+}
