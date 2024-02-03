@@ -26,6 +26,8 @@ interface EventsRepository {
     suspend fun getDaysWithEventsForMonth(yearMonth: YearMonth): List<LocalDate>
 
     suspend fun updateEventDetails(updatedEventDetails: UpdatedEventDetails)
+
+    suspend fun deleteEvent(eventId: Long)
 }
 
 internal class EventsRepositoryImpl @Inject constructor(
@@ -119,6 +121,14 @@ internal class EventsRepositoryImpl @Inject constructor(
             )
 
             contentResolver.update(updateData.uri, updateData.values, null, null)
+        }
+    }
+
+    override suspend fun deleteEvent(eventId: Long) {
+        withContext(dispatcherProvider.io()) {
+            val deleteData = eventsContentProviderQueryFactory.createForDeleteEvent(eventId)
+
+            contentResolver.delete(deleteData.uri, null, null)
         }
     }
 

@@ -5,19 +5,19 @@ import com.mateuszholik.domain.models.Attendee
 
 sealed class EventDetailsUserAction : UserAction {
 
-    data class EditEventPressed(val eventId: Long) : EventDetailsUserAction()
-
-    data object NavigateBack : EventDetailsUserAction()
-
-    data object DeleteEvent : EventDetailsUserAction()
-
-    data object DeleteEventConfirmed : EventDetailsUserAction()
-
-    data object DeleteEventCancelled : EventDetailsUserAction()
+    data object AttendeeDismissed : EventDetailsUserAction()
 
     data class AttendeeSelected(val attendee: Attendee) : EventDetailsUserAction()
 
-    data object AttendeeDismissed : EventDetailsUserAction()
+    data object DeleteEvent : EventDetailsUserAction()
+
+    data object DeleteEventCancelled : EventDetailsUserAction()
+
+    data object DeleteEventConfirmed : EventDetailsUserAction()
+
+    data class EditEventPressed(val eventId: Long) : EventDetailsUserAction()
+
+    data object NavigateBackPressed : EventDetailsUserAction()
 
     data object RetryGetEventDetailsPressed : EventDetailsUserAction()
 }

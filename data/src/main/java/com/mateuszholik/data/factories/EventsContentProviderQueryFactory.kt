@@ -3,6 +3,7 @@ package com.mateuszholik.data.factories
 import android.content.ContentUris
 import android.content.ContentValues
 import android.provider.CalendarContract
+import com.mateuszholik.data.factories.models.DeleteData
 import com.mateuszholik.data.factories.models.QueryData
 import com.mateuszholik.data.factories.models.UpdateData
 import com.mateuszholik.data.repositories.models.UpdatedEventDetails
@@ -21,6 +22,8 @@ internal interface EventsContentProviderQueryFactory {
     suspend fun createForEventsFromMonth(yearMonth: YearMonth, calendarIds: List<Long>): QueryData
 
     suspend fun createForUpdateEvent(updatedEventDetails: UpdatedEventDetails): UpdateData
+
+    suspend fun createForDeleteEvent(eventId: Long): DeleteData
 
     companion object {
         const val TODAY_EVENTS_ID_INDEX = 0
@@ -166,6 +169,14 @@ internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
                     calendarId?.let { put(CalendarContract.Events.CALENDAR_ID, it) }
                 }
             }
+        )
+
+    override suspend fun createForDeleteEvent(eventId: Long): DeleteData =
+        DeleteData(
+            uri = ContentUris.withAppendedId(
+                CalendarContract.Events.CONTENT_URI,
+                eventId
+            )
         )
 
     private fun List<Long>.asInSelection(): String {

@@ -43,6 +43,8 @@
         <item quantity="one">%1$s Guest</item>
         <item quantity="other">%1$s Guests</item>
     </plurals>
+    <string name="event_details_delete_title">Delete event</string>
+    <string name="event_details_delete_message">Do you want to delete this event?</string>
     <string name="event_details_join_in_google_meets">Join in Google Meets</string>
     <string name="event_details_no_data">Couldn\'t get informations about the event</string>
     <string name="event_details_organizer">Organizer</string>

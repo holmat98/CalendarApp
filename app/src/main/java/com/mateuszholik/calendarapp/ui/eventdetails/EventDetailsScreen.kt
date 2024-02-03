@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.Info
@@ -57,6 +58,7 @@ import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUiEvent
 import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUiState.Loading
 import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUiState.NoData
 import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUiState.ViewMode
+import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUserAction
 import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUserAction.AttendeeDismissed
 import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUserAction.AttendeeSelected
 import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUserAction.DeleteEvent
@@ -87,6 +89,7 @@ import com.mateuszholik.uicomponents.cards.CardWithImage
 import com.mateuszholik.uicomponents.cards.EventCard
 import com.mateuszholik.uicomponents.cards.EventWithMeetingCard
 import com.mateuszholik.uicomponents.cards.SectionCard
+import com.mateuszholik.uicomponents.dialog.CommonAlertDialog
 import com.mateuszholik.uicomponents.extensions.shimmerEffect
 import com.mateuszholik.uicomponents.scaffold.CommonScaffold
 import com.mateuszholik.uicomponents.text.BodyMediumText
@@ -101,6 +104,7 @@ fun EventDetailsScreen(
 ) {
     val context = LocalContext.current
     var selectedAttendee by remember { mutableStateOf<Attendee?>(null) }
+    var shouldShowDeleteEventDialog by remember { mutableStateOf(false) }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -112,6 +116,9 @@ fun EventDetailsScreen(
             is EventDetailsUiEvent.DismissAttendee -> {
                 selectedAttendee = null
             }
+            is EventDetailsUiEvent.DismissDeleteEventConfirmation -> {
+                shouldShowDeleteEventDialog = false
+            }
             is EventDetailsUiEvent.Error -> {
                 coroutineScope.launch {
                     snackBarHostState.showSnackbar(
@@ -120,11 +127,17 @@ fun EventDetailsScreen(
                     )
                 }
             }
+            is EventDetailsUiEvent.GoToEventDetails -> {
+                onEditPressed(uiEvent.eventId)
+            }
+            is EventDetailsUiEvent.NavigateBack -> {
+                onBackPressed()
+            }
             is EventDetailsUiEvent.ShowAttendee -> {
                 selectedAttendee = uiEvent.attendee
             }
-            is EventDetailsUiEvent.GoToEventDetails -> {
-                onEditPressed(uiEvent.eventId)
+            is EventDetailsUiEvent.ShowDeleteEventConfirmation -> {
+                shouldShowDeleteEventDialog = true
             }
         }
     }
@@ -132,13 +145,13 @@ fun EventDetailsScreen(
     when (uiState) {
         is Loading -> {
             LoadingContent(
-                onBackPressed = onBackPressed,
+                onBackPressed = { viewModel.performUserAction(EventDetailsUserAction.NavigateBackPressed) },
                 snackBarHostState = snackBarHostState,
             )
         }
         is NoData -> {
             NoDataContent(
-                onBackPressed = onBackPressed,
+                onBackPressed = { viewModel.performUserAction(EventDetailsUserAction.NavigateBackPressed) },
                 onTryAgainPressed = { viewModel.performUserAction(RetryGetEventDetailsPressed) },
                 snackBarHostState = snackBarHostState,
             )
@@ -147,7 +160,7 @@ fun EventDetailsScreen(
             Content(
                 snackBarHostState = snackBarHostState,
                 eventDetails = (uiState as ViewMode).eventDetails,
-                onBackPressed = onBackPressed,
+                onBackPressed = { viewModel.performUserAction(EventDetailsUserAction.NavigateBackPressed) },
                 onEditPressed = { viewModel.performUserAction(EditEventPressed(it)) },
                 onDeletePressed = { viewModel.performUserAction(DeleteEvent) },
                 onAttendeePressed = { viewModel.performUserAction(AttendeeSelected(it)) }
@@ -183,6 +196,18 @@ fun EventDetailsScreen(
                 onClick = { context.startActivity(getMailIntent(attendee.email)) }
             )
         }
+    }
+
+    if (shouldShowDeleteEventDialog) {
+        CommonAlertDialog(
+            titleResId = R.string.event_details_delete_title,
+            messageResId = R.string.event_details_delete_message,
+            icon = Icons.Outlined.Delete,
+            negativeButtonResId = R.string.button_cancel,
+            positiveButtonResId = R.string.button_ok,
+            onNegativeButtonClicked = { viewModel.performUserAction(EventDetailsUserAction.DeleteEventCancelled) },
+            onPositiveButtonClicked = { viewModel.performUserAction(EventDetailsUserAction.DeleteEventConfirmed) },
+        )
     }
 }
 
@@ -317,7 +342,9 @@ private fun Content(
         snackbarHost = { SnackbarHost(snackBarHostState) },
         actions = {
             if (eventDetails.canModify) {
-                CommonIconButton(imageVector = Icons.Default.Edit, onClick = { onEditPressed(eventDetails.id) })
+                CommonIconButton(
+                    imageVector = Icons.Default.Edit,
+                    onClick = { onEditPressed(eventDetails.id) })
                 CommonIconButton(imageVector = Icons.Default.Delete, onClick = onDeletePressed)
             }
         },
