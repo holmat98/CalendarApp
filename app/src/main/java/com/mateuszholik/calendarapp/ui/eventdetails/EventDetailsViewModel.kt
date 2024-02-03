@@ -10,6 +10,7 @@ import com.mateuszholik.calendarapp.ui.navigation.MainNavigation.EVENT_ID_ARGUME
 import com.mateuszholik.common.provider.DispatcherProvider
 import com.mateuszholik.domain.models.Attendee
 import com.mateuszholik.domain.models.Result
+import com.mateuszholik.domain.usecases.DeleteEventUseCase
 import com.mateuszholik.domain.usecases.GetEventDetailsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -26,6 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EventDetailsViewModel @Inject constructor(
     private val getEventDetailsUseCase: GetEventDetailsUseCase,
+    private val deleteEventUseCase: DeleteEventUseCase,
     private val dispatcherProvider: DispatcherProvider,
     savedStateHandle: SavedStateHandle,
 ) :
@@ -62,12 +64,16 @@ class EventDetailsViewModel @Inject constructor(
                 handleAttendeeDismissedUserAction()
             is EventDetailsUserAction.AttendeeSelected ->
                 handleAttendeeSelectedUserAction(action.attendee)
-            is EventDetailsUserAction.DeleteEvent -> Unit
-            is EventDetailsUserAction.DeleteEventCancelled -> Unit
-            is EventDetailsUserAction.DeleteEventConfirmed -> Unit
+            is EventDetailsUserAction.DeleteEvent ->
+                handleDeleteEvent()
+            is EventDetailsUserAction.DeleteEventCancelled ->
+                handleDeleteEventCancelled()
+            is EventDetailsUserAction.DeleteEventConfirmed ->
+                handleDeleteEventConfirmed()
             is EventDetailsUserAction.EditEventPressed ->
                 handleEnterEditEventPressedUserAction(action.eventId)
-            is EventDetailsUserAction.NavigateBack -> Unit
+            is EventDetailsUserAction.NavigateBackPressed ->
+                handleNavigateBack()
             is EventDetailsUserAction.RetryGetEventDetailsPressed ->
                 handleRetryGetEventDetailsPressed()
         }
@@ -84,17 +90,43 @@ class EventDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun handleRetryGetEventDetailsPressed() {
+    private fun handleDeleteEvent() {
         viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
-            _uiState.emit(EventDetailsUiState.Loading)
+            _uiEvent.emit(EventDetailsUiEvent.ShowDeleteEventConfirmation)
+        }
+    }
 
-            getEventDetails()
+    private fun handleDeleteEventCancelled() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiEvent.emit(EventDetailsUiEvent.DismissDeleteEventConfirmation)
+        }
+    }
+
+    private fun handleDeleteEventConfirmed() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            deleteEventUseCase(eventId)
+            _uiEvent.emit(EventDetailsUiEvent.DismissDeleteEventConfirmation)
+            _uiEvent.emit(EventDetailsUiEvent.NavigateBack)
         }
     }
 
     private fun handleEnterEditEventPressedUserAction(eventId: Long) {
         viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             _uiEvent.emit(EventDetailsUiEvent.GoToEventDetails(eventId))
+        }
+    }
+
+    private fun handleNavigateBack() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiEvent.emit(EventDetailsUiEvent.NavigateBack)
+        }
+    }
+
+    private fun handleRetryGetEventDetailsPressed() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiState.emit(EventDetailsUiState.Loading)
+
+            getEventDetails()
         }
     }
 

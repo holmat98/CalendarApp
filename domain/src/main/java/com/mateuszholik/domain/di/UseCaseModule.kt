@@ -1,5 +1,7 @@
 package com.mateuszholik.domain.di
 
+import com.mateuszholik.domain.usecases.DeleteEventUseCase
+import com.mateuszholik.domain.usecases.DeleteEventUseCaseImpl
 import com.mateuszholik.domain.usecases.GetCalendarsUseCase
 import com.mateuszholik.domain.usecases.GetCalendarsUseCaseImpl
 import com.mateuszholik.domain.usecases.GetDaysWithEventsForMonthUseCase
@@ -25,6 +27,11 @@ import dagger.hilt.android.scopes.ViewModelScoped
 internal abstract class UseCaseModule {
 
     @Binds
+    abstract fun bindsDeleteUseCase(
+        deleteEventUseCaseImpl: DeleteEventUseCaseImpl,
+    ): DeleteEventUseCase
+
+    @Binds
     abstract fun bindsGetCalendarsUseCase(
         getCalendarUseCaseImpl: GetCalendarsUseCaseImpl,
     ): GetCalendarsUseCase
@@ -32,13 +39,13 @@ internal abstract class UseCaseModule {
     @ViewModelScoped
     @Binds
     abstract fun bindsGetDaysWithEventsForMonthUseCase(
-        getDaysWithEventsForMonthUseCaseImpl: GetDaysWithEventsForMonthUseCaseImpl
+        getDaysWithEventsForMonthUseCaseImpl: GetDaysWithEventsForMonthUseCaseImpl,
     ): GetDaysWithEventsForMonthUseCase
 
     @ViewModelScoped
     @Binds
     abstract fun bindsGetEditableEventDetailsUseCase(
-        getEditableEventDetailsUseCaseImpl: GetEditableEventDetailsUseCaseImpl
+        getEditableEventDetailsUseCaseImpl: GetEditableEventDetailsUseCaseImpl,
     ): GetEditableEventDetailsUseCase
 
     @ViewModelScoped
@@ -50,16 +57,16 @@ internal abstract class UseCaseModule {
     @ViewModelScoped
     @Binds
     abstract fun bindsGetEventsForDayUseCase(
-        getEventsForDayUseCaseImpl: GetEventsForDayUseCaseImpl
+        getEventsForDayUseCaseImpl: GetEventsForDayUseCaseImpl,
     ): GetEventsForDayUseCase
 
     @Binds
     abstract fun bindsUpdateCalendarVisibilityUseCase(
-        updateCalendarsUseCaseImpl: UpdateCalendarVisibilityUseCaseImpl
+        updateCalendarsUseCaseImpl: UpdateCalendarVisibilityUseCaseImpl,
     ): UpdateCalendarVisibilityUseCase
 
     @Binds
     abstract fun bindsUpdateEventDetailsUseCase(
-        updateEventDetailsUseCaseImpl: UpdateEventDetailsUseCaseImpl
+        updateEventDetailsUseCaseImpl: UpdateEventDetailsUseCaseImpl,
     ): UpdateEventDetailsUseCase
 }
