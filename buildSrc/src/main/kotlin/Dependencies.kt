@@ -4,6 +4,7 @@ object Plugins {
     const val ANDROID_KOTLIN = "org.jetbrains.kotlin.android"
     const val KOTLIN = "kotlin"
     const val HILT = "com.google.dagger.hilt.android"
+    const val JACOCO = "jacoco-reports"
 }
 
 object DefaultConfig {

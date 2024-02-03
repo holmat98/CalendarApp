@@ -10,8 +10,6 @@ import com.mateuszholik.designsystem.models.StyleType
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.dateutils.extensions.toText
 import java.time.YearMonth
-import java.time.format.TextStyle
-import java.util.Locale
 
 @Composable
 fun DateText(
@@ -19,8 +17,6 @@ fun DateText(
     modifier: Modifier = Modifier,
     textColor: Color = MaterialTheme.colorScheme.onSecondary,
 ) {
-    val monthName = date.month.getDisplayName(TextStyle.FULL_STANDALONE, Locale.getDefault())
-
     Row(modifier = modifier) {
         HeadlineSmallText(
             text = date.toText(),
