@@ -1,0 +1,33 @@
+name: CalendarApp CI/CD
+
+on: [pull_request]
+
+jobs:
+  build:
+    name: Build, Test and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3.11.0
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      - name: Build App Bundle
+        run: ./gradlew :app:bundleDebug
+      - name: Test
+        run: ./gradlew :app:testDebugUnitTest :data:testDebugUnitTest :domain:testDebugUnitTest :common:testDebugUnitTest
+      - name: Test Coverage
+        run: ./gradlew testDebugUnitTestCoverage
+      - name: Upload Test Coverage Report
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: test_coverage
+          path: /home/runner/work/CalendarApp/CalendarApp/*/build/reports/jacoco
+      - run: npm install -g appcenter-cli
+      - name: Upload to App Center
+        run: appcenter distribute release --app ${{secrets.APP_NAME}} --file app/build/outputs/bundle/debug/app-debug.aab --group Pr --token ${{secrets.APP_CENTER_TOKEN}}
