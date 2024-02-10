@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.mateuszholik.calendarapp.ui.addevent.AddEventScreen
 import com.mateuszholik.calendarapp.ui.calendar.CalendarScreen
 import com.mateuszholik.calendarapp.ui.editevent.EditEventScreen
 import com.mateuszholik.calendarapp.ui.eventdetails.EventDetailsScreen
@@ -22,6 +23,7 @@ object MainNavigation {
     private const val CALENDAR_PROFILES_SCREEN = "$ROOT/CALENDAR_PROFILES_SCREEN"
     private const val EVENT_DETAILS_SCREEN = "$ROOT/EVENT_DETAILS_SCREEN"
     private const val EDIT_EVENT_SCREEN = "$ROOT/EDIT_EVENT_SCREEN"
+    private const val ADD_EVENT_SCREEN = "$ROOT/ADD_EVENT_SCREEN"
 
     internal const val EVENT_ID_ARGUMENT = "EVENT_ID_KEY"
 
@@ -33,6 +35,7 @@ object MainNavigation {
             calendarsSelectionScreen(navController)
             eventDetailsScreen(navController)
             editEventScreen(navController)
+            addEventScreen(navController)
         }
     }
 
@@ -48,7 +51,7 @@ object MainNavigation {
     private fun NavGraphBuilder.calendarScreen(navController: NavController) {
         composable(CALENDAR_SCREEN) {
             CalendarScreen(
-                onAddEventClicked = {},
+                onAddEventClicked = { navController.navigateToAddEventScreen() },
                 onEventClicked = { navController.navigateToEventDetails(it) },
                 onProfileClicked = { navController.navigateToCalendarsSelectionScreen() }
             )
@@ -94,6 +97,12 @@ object MainNavigation {
         }
     }
 
+    private fun NavGraphBuilder.addEventScreen(navController: NavController) {
+        composable(ADD_EVENT_SCREEN) {
+            AddEventScreen(onBackPressed = { navController.navigateUp() })
+        }
+    }
+
     private fun NavController.navigateToCalendarPermissionsScreen() =
         navigate(CALENDAR_PERMISSIONS_SCREEN) {
             popUpTo(ROOT) { inclusive = true }
@@ -114,4 +123,7 @@ object MainNavigation {
         navigate("$EDIT_EVENT_SCREEN/$EVENT_ID_ARGUMENT=$eventId") {
             popUpTo(CALENDAR_SCREEN)
         }
+
+    private fun NavController.navigateToAddEventScreen() =
+        navigate(ADD_EVENT_SCREEN)
 }
