@@ -4,6 +4,7 @@ import com.mateuszholik.calendarapp.ui.base.UserAction
 import com.mateuszholik.calendarapp.ui.provider.ColorsProvider
 import com.mateuszholik.domain.models.Calendar
 import java.time.LocalDateTime
+import java.util.TimeZone
 
 sealed class AddEventUserAction : UserAction {
 
@@ -29,7 +30,13 @@ sealed class AddEventUserAction : UserAction {
 
     data object SelectEventColorDismissed : AddEventUserAction()
 
+    data object SelectTimeZone : AddEventUserAction()
+
+    data object SelectTimeZoneDismissed : AddEventUserAction()
+
     data class StartDateChanged(val newStartDate: LocalDateTime) : AddEventUserAction()
+
+    data class TimeZoneSelected(val timeZone: TimeZone) : AddEventUserAction()
 
     data class EndDateChanged(val newEndDate: LocalDateTime) : AddEventUserAction()
 }

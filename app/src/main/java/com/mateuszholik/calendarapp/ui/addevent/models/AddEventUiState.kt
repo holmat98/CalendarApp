@@ -4,6 +4,7 @@ import com.mateuszholik.calendarapp.ui.base.UiState
 import com.mateuszholik.calendarapp.ui.provider.ColorsProvider
 import com.mateuszholik.domain.models.Calendar
 import java.time.LocalDateTime
+import java.util.TimeZone
 
 data class AddEventUiState(
     val title: String,
@@ -11,7 +12,7 @@ data class AddEventUiState(
     val allDay: Boolean,
     val startDate: LocalDateTime,
     val endDate: LocalDateTime,
-    val timezone: String,
+    val timezone: TimeZone,
     val urls: String,
     val calendar: Calendar,
     val color: ColorsProvider.ColorInfo,

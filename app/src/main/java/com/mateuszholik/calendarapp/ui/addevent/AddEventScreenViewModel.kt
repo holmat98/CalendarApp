@@ -7,6 +7,7 @@ import com.mateuszholik.calendarapp.ui.addevent.models.AddEventUiState
 import com.mateuszholik.calendarapp.ui.addevent.models.AddEventUserAction
 import com.mateuszholik.calendarapp.ui.base.BaseViewModel
 import com.mateuszholik.calendarapp.ui.provider.ColorsProvider
+import com.mateuszholik.calendarapp.ui.provider.TimezoneProvider
 import com.mateuszholik.common.provider.DispatcherProvider
 import com.mateuszholik.dateutils.extensions.copy
 import com.mateuszholik.domain.models.Calendar
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDateTime
+import java.util.TimeZone
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,6 +32,7 @@ class AddEventScreenViewModel @Inject constructor(
     private val currentDateProvider: CurrentDateProvider,
     private val colorsProvider: ColorsProvider,
     private val getCalendarsUseCase: GetCalendarsUseCase,
+    private val timezoneProvider: TimezoneProvider,
     private val dispatcherProvider: DispatcherProvider,
 ) : BaseViewModel<AddEventUiState, AddEventUserAction, AddEventUiEvent>() {
 
@@ -73,14 +76,29 @@ class AddEventScreenViewModel @Inject constructor(
                 handleStartDateChanged(action.newStartDate)
             is AddEventUserAction.UpdateDescription ->
                 handleUpdateDescription(action.newDescription)
+            is AddEventUserAction.SelectTimeZone ->
+                handleSelectTimeZone()
+            is AddEventUserAction.SelectTimeZoneDismissed ->
+                handleSelectTimeZoneDismissed()
             is AddEventUserAction.UpdateLocation ->
                 handleUpdateLocation(action.newLocation)
             is AddEventUserAction.UpdateTitle ->
                 handleUpdateTitle(action.newTitle)
+            is AddEventUserAction.TimeZoneSelected ->
+                handleTimeZoneSelected(action.timeZone)
         }
 
     private fun handleAllDaySelectionChanged(allDay: Boolean) {
-        _uiState.update { it.copy(allDay = allDay) }
+        _uiState.update {
+            it.copy(
+                allDay = allDay,
+                timezone = if (allDay) {
+                    timezoneProvider.provideUTC()
+                } else {
+                    it.timezone
+                }
+            )
+        }
     }
 
     private fun handleCalendarSelected(calendar: Calendar) {
@@ -142,12 +160,33 @@ class AddEventScreenViewModel @Inject constructor(
         }
     }
 
+    private fun handleSelectTimeZone() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            val timezones = timezoneProvider.provideAllTimezones()
+
+            _uiEvent.emit(AddEventUiEvent.ShowTimeZoneSelection(timezones))
+        }
+    }
+
+    private fun handleSelectTimeZoneDismissed() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiEvent.emit(AddEventUiEvent.DismissTimeZoneSelection)
+        }
+    }
+
     private fun handleStartDateChanged(newStartDate: LocalDateTime) {
         _uiState.update { it.copy(startDate = newStartDate) }
     }
 
     private fun handleEndDateChanged(newEndDate: LocalDateTime) {
         _uiState.update { it.copy(endDate = newEndDate) }
+    }
+
+    private fun handleTimeZoneSelected(timeZone: TimeZone) {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiEvent.emit(AddEventUiEvent.DismissTimeZoneSelection)
+            _uiState.update { it.copy(timezone = timeZone) }
+        }
     }
 
     private fun getInitialUiState(): AddEventUiState {
@@ -162,7 +201,7 @@ class AddEventScreenViewModel @Inject constructor(
             allDay = false,
             startDate = startDateTime,
             endDate = startDateTime.plusHours(1),
-            timezone = "",
+            timezone = timezoneProvider.provideDefault(),
             urls = "",
             calendar = Calendar(
                 id = 1,

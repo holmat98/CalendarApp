@@ -6,6 +6,8 @@ import com.mateuszholik.calendarapp.ui.provider.ColorsProvider
 import com.mateuszholik.calendarapp.ui.provider.ColorsProviderImpl
 import com.mateuszholik.calendarapp.ui.provider.StyleProvider
 import com.mateuszholik.calendarapp.ui.provider.StyleProviderImpl
+import com.mateuszholik.calendarapp.ui.provider.TimezoneProvider
+import com.mateuszholik.calendarapp.ui.provider.TimezoneProviderImpl
 import com.mateuszholik.calendarapp.ui.welcome.provider.WelcomeScreenInfoProvider
 import com.mateuszholik.calendarapp.ui.welcome.provider.WelcomeScreenInfoProviderImpl
 import dagger.Binds
@@ -32,6 +34,11 @@ internal abstract class ProvidersModule {
     abstract fun bindsColorsProvider(
         colorsProviderImpl: ColorsProviderImpl
     ): ColorsProvider
+
+    @Binds
+    abstract fun bindsTimezoneProvider(
+        timezoneProviderImpl: TimezoneProviderImpl
+    ): TimezoneProvider
 }
 
 @Module

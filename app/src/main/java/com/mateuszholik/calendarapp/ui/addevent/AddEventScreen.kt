@@ -31,10 +31,12 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
+import com.mateuszholik.calendarapp.extensions.asText
 import com.mateuszholik.calendarapp.ui.addevent.models.AddEventUiEvent
 import com.mateuszholik.calendarapp.ui.addevent.models.AddEventUiState
 import com.mateuszholik.calendarapp.ui.addevent.models.AddEventUserAction
@@ -55,14 +57,17 @@ import com.mateuszholik.uicomponents.color.ColorItem
 import com.mateuszholik.uicomponents.date.CommonDatePicker
 import com.mateuszholik.uicomponents.date.CommonDateTimePicker
 import com.mateuszholik.uicomponents.dialog.CommonDialog
+import com.mateuszholik.uicomponents.dialog.CommonSearchDialog
 import com.mateuszholik.uicomponents.scaffold.CommonScaffold
 import com.mateuszholik.uicomponents.switches.CommonSwitch
 import com.mateuszholik.uicomponents.text.BodyMediumText
+import com.mateuszholik.uicomponents.text.BodySmallText
 import com.mateuszholik.uicomponents.text.TextWithIcon
 import com.mateuszholik.uicomponents.text.TitleMediumText
 import com.mateuszholik.uicomponents.textfield.CommonOutlinedTextField
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,6 +77,7 @@ fun AddEventScreen(
 ) {
     var calendars by remember { mutableStateOf<List<Calendar>?>(null) }
     var colors by remember { mutableStateOf<List<ColorsProvider.ColorInfo>?>(null) }
+    var timezones by remember { mutableStateOf<List<TimeZone>?>(null) }
     var isButtonEnabled by remember { mutableStateOf(false) }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -89,6 +95,9 @@ fun AddEventScreen(
             is AddEventUiEvent.DismissColorEventSelection -> {
                 colors = null
             }
+            is AddEventUiEvent.DismissTimeZoneSelection -> {
+                timezones = null
+            }
             is AddEventUiEvent.Error -> {
                 coroutineScope.launch {
                     snackBarHostState.showSnackbar(
@@ -105,6 +114,9 @@ fun AddEventScreen(
             }
             is AddEventUiEvent.ShowEventColorSelection -> {
                 colors = uiEvent.colors
+            }
+            is AddEventUiEvent.ShowTimeZoneSelection -> {
+                timezones = uiEvent.timezones
             }
         }
     }
@@ -158,7 +170,8 @@ fun AddEventScreen(
             },
             onEndDateChanged = { newEndDate ->
                 viewModel.performUserAction(AddEventUserAction.EndDateChanged(newEndDate))
-            }
+            },
+            onTimeZonePressed = { viewModel.performUserAction(AddEventUserAction.SelectTimeZone) }
         )
     }
 
@@ -216,6 +229,34 @@ fun AddEventScreen(
         }
     }
 
+    timezones?.let {
+        CommonSearchDialog(
+            items = it,
+            title = stringResource(R.string.add_event_select_timezone),
+            searchHint = stringResource(R.string.add_event_search_for_timezone),
+            onDismissRequest = { viewModel.performUserAction(AddEventUserAction.SelectTimeZoneDismissed) },
+            predicate = { timezone, searchedText -> timezone.id.contains(searchedText, true) },
+            onEmptySearchContent = {
+                BodySmallText(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(R.string.add_event_search_timezone_not_found),
+                    textAlign = TextAlign.Center,
+                )
+            }
+        ) { timezone ->
+            BodySmallText(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        viewModel.performUserAction(
+                            AddEventUserAction.TimeZoneSelected(timezone)
+                        )
+                    },
+                text = timezone.asText()
+            )
+        }
+    }
+
 }
 
 @Composable
@@ -230,6 +271,7 @@ private fun Content(
     onStartDateChanged: (LocalDateTime) -> Unit = {},
     onEndDateChanged: (LocalDateTime) -> Unit = {},
     onAllDayChanged: (Boolean) -> Unit = {},
+    onTimeZonePressed: () -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
@@ -307,7 +349,7 @@ private fun Content(
                         }
                     )
                     TextWithIcon(
-                        text = addEventUiState.timezone,
+                        text = addEventUiState.timezone.asText(),
                         icon = Icons.Outlined.DateRange
                     )
                 } else {
@@ -331,8 +373,13 @@ private fun Content(
                             focusManager.clearFocus()
                         }
                     )
-                    SelectionCard(onClick = { focusManager.clearFocus() }) {
-                        BodyMediumText(text = addEventUiState.timezone)
+                    SelectionCard(
+                        onClick = {
+                            onTimeZonePressed()
+                            focusManager.clearFocus()
+                        }
+                    ) {
+                        BodyMediumText(text = addEventUiState.timezone.asText())
                     }
                 }
             }
@@ -405,7 +452,7 @@ private fun Preview() {
                     allDay = false,
                     startDate = LocalDateTime.of(2024, 2, 10, 15, 0, 0),
                     endDate = LocalDateTime.of(2024, 2, 10, 16, 0, 0),
-                    timezone = "Europe/Warsaw",
+                    timezone = TimeZone.getDefault(),
                     urls = "",
                     calendar = Calendar(
                         id = 1,
@@ -427,6 +474,7 @@ private fun Preview() {
                 onTitleChanged = {},
                 onDescriptionChanged = {},
                 onLocationChanged = {},
+                onTimeZonePressed = {},
             )
         }
     }
@@ -451,7 +499,7 @@ private fun Preview2() {
                     allDay = false,
                     startDate = LocalDateTime.of(2024, 2, 10, 15, 0, 0),
                     endDate = LocalDateTime.of(2024, 2, 10, 16, 0, 0),
-                    timezone = "Europe/Warsaw",
+                    timezone = TimeZone.getDefault(),
                     urls = "",
                     calendar = Calendar(
                         id = 1,
@@ -473,6 +521,7 @@ private fun Preview2() {
                 onTitleChanged = {},
                 onDescriptionChanged = {},
                 onLocationChanged = {},
+                onTimeZonePressed = {},
             )
         }
     }
@@ -497,7 +546,7 @@ private fun Preview3() {
                     allDay = true,
                     startDate = LocalDateTime.of(2024, 2, 10, 0, 0, 0),
                     endDate = LocalDateTime.of(2024, 2, 10, 0, 0, 0),
-                    timezone = "UTC",
+                    timezone = TimeZone.getDefault(),
                     urls = "",
                     calendar = Calendar(
                         id = 1,
@@ -519,6 +568,7 @@ private fun Preview3() {
                 onTitleChanged = {},
                 onDescriptionChanged = {},
                 onLocationChanged = {},
+                onTimeZonePressed = {},
             )
         }
     }
