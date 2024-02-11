@@ -45,7 +45,7 @@ class EditEventViewModel @Inject constructor(
     private var initialEventDetails: EditEventUiState.EventDetails? = null
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Timber.e(throwable, "Error on Calendar screen")
+        Timber.e(throwable, "Error on Edit event screen")
 
         viewModelScope.launch(dispatcherProvider.main()) {
             _uiEvent.emit(EditEventUiEvent.Error)

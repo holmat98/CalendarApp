@@ -1,6 +1,7 @@
 package com.mateuszholik.calendarapp.ui.addevent
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,27 +9,35 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
+import com.mateuszholik.calendarapp.ui.addevent.models.AddEventUiEvent
 import com.mateuszholik.calendarapp.ui.addevent.models.AddEventUiState
+import com.mateuszholik.calendarapp.ui.addevent.models.AddEventUserAction
 import com.mateuszholik.calendarapp.ui.addevent.models.AddEventUserAction.AllDaySelectionChanged
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
 import com.mateuszholik.calendarapp.ui.provider.ColorsProvider
@@ -45,11 +54,14 @@ import com.mateuszholik.uicomponents.cards.SelectionCard
 import com.mateuszholik.uicomponents.color.ColorItem
 import com.mateuszholik.uicomponents.date.CommonDatePicker
 import com.mateuszholik.uicomponents.date.CommonDateTimePicker
+import com.mateuszholik.uicomponents.dialog.CommonDialog
 import com.mateuszholik.uicomponents.scaffold.CommonScaffold
 import com.mateuszholik.uicomponents.switches.CommonSwitch
 import com.mateuszholik.uicomponents.text.BodyMediumText
 import com.mateuszholik.uicomponents.text.TextWithIcon
+import com.mateuszholik.uicomponents.text.TitleMediumText
 import com.mateuszholik.uicomponents.textfield.CommonOutlinedTextField
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,24 +70,57 @@ fun AddEventScreen(
     onBackPressed: () -> Unit,
     viewModel: AddEventScreenViewModel = hiltViewModel(),
 ) {
+    var calendars by remember { mutableStateOf<List<Calendar>?>(null) }
+    var colors by remember { mutableStateOf<List<ColorsProvider.ColorInfo>?>(null) }
+    var isButtonEnabled by remember { mutableStateOf(false) }
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val snackBarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     ChangeSystemBarColors()
 
     ObserveAsEvents(flow = viewModel.uiEvent) { uiEvent ->
-        println(uiEvent)
+        when (uiEvent) {
+            is AddEventUiEvent.DismissCalendarSelection -> {
+                calendars = null
+            }
+            is AddEventUiEvent.DismissColorEventSelection -> {
+                colors = null
+            }
+            is AddEventUiEvent.Error -> {
+                coroutineScope.launch {
+                    snackBarHostState.showSnackbar(
+                        message = context.getString(R.string.error_unknown_text),
+                        withDismissAction = true,
+                    )
+                }
+            }
+            is AddEventUiEvent.NavigateBack -> {
+                onBackPressed()
+            }
+            is AddEventUiEvent.ShowCalendarSelection -> {
+                calendars = uiEvent.calendars
+            }
+            is AddEventUiEvent.ShowEventColorSelection -> {
+                colors = uiEvent.colors
+            }
+        }
     }
 
     CommonScaffold(
         navigationIcon = {
             CommonIconButton(
                 imageVector = Icons.Default.ArrowBack,
-                onClick = onBackPressed,
+                onClick = { viewModel.performUserAction(AddEventUserAction.ExitAttempt) },
             )
         },
         actions = {
             CommonSmallButton(
+                modifier = Modifier.padding(end = MaterialTheme.spacing.small),
                 textResId = R.string.button_save,
+                isEnabled = isButtonEnabled,
                 onClick = {}
             )
         }
@@ -90,12 +135,85 @@ fun AddEventScreen(
         Content(
             paddingValues = paddingValues,
             addEventUiState = uiState,
-            onAllDaySelectionChanged = { allDay ->
+            onAllDayChanged = { allDay ->
                 viewModel.performUserAction(
                     AllDaySelectionChanged(allDay)
                 )
+            },
+            onCalendarPressed = { viewModel.performUserAction(AddEventUserAction.SelectCalendar) },
+            onColorPressed = { viewModel.performUserAction(AddEventUserAction.SelectEventColor) },
+            onTitleChanged = { newTitle ->
+                viewModel.performUserAction(
+                    AddEventUserAction.UpdateTitle(newTitle)
+                )
+            },
+            onDescriptionChanged = { newDescription ->
+                viewModel.performUserAction(AddEventUserAction.UpdateDescription(newDescription))
+            },
+            onLocationChanged = { newLocation ->
+                viewModel.performUserAction(AddEventUserAction.UpdateLocation(newLocation))
+            },
+            onStartDateChanged = { newStartDate ->
+                viewModel.performUserAction(AddEventUserAction.StartDateChanged(newStartDate))
+            },
+            onEndDateChanged = { newEndDate ->
+                viewModel.performUserAction(AddEventUserAction.EndDateChanged(newEndDate))
             }
         )
+    }
+
+    calendars?.let {
+        CommonDialog(
+            onDismissRequest = {
+                viewModel.performUserAction(AddEventUserAction.CalendarSelectionDismissed)
+            }
+        ) {
+            item {
+                TitleMediumText(textResId = R.string.edit_event_select_calendar)
+            }
+            items(items = it) { calendar ->
+                with(calendar) {
+                    CalendarItem(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                viewModel.performUserAction(
+                                    AddEventUserAction.CalendarSelected(calendar)
+                                )
+                            },
+                        email = accountName,
+                        name = calendarName,
+                        calendarColor = color
+                    )
+                }
+            }
+        }
+    }
+
+    colors?.let {
+        CommonDialog(
+            onDismissRequest = {
+                viewModel.performUserAction(AddEventUserAction.SelectEventColorDismissed)
+            }
+        ) {
+            item {
+                TitleMediumText(textResId = R.string.edit_event_select_event_color)
+            }
+
+            items(items = it) { color ->
+                ColorItem(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            viewModel.performUserAction(
+                                AddEventUserAction.SelectedEventColor(color)
+                            )
+                        },
+                    color = color.value,
+                    name = stringResource(color.name)
+                )
+            }
+        }
     }
 
 }
@@ -104,7 +222,14 @@ fun AddEventScreen(
 private fun Content(
     paddingValues: PaddingValues,
     addEventUiState: AddEventUiState,
-    onAllDaySelectionChanged: (Boolean) -> Unit,
+    onCalendarPressed: () -> Unit,
+    onColorPressed: () -> Unit,
+    onTitleChanged: (String) -> Unit,
+    onDescriptionChanged: (String) -> Unit,
+    onLocationChanged: (String) -> Unit,
+    onStartDateChanged: (LocalDateTime) -> Unit = {},
+    onEndDateChanged: (LocalDateTime) -> Unit = {},
+    onAllDayChanged: (Boolean) -> Unit = {},
 ) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
@@ -120,7 +245,7 @@ private fun Content(
             CommonOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 text = addEventUiState.title,
-                onTextChanged = {},
+                onTextChanged = onTitleChanged,
                 hint = stringResource(R.string.edit_event_provide_title),
                 focusRequester = focusRequester,
                 singleLine = true
@@ -131,6 +256,7 @@ private fun Content(
             SelectionCard(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
+                    onCalendarPressed()
                     focusManager.clearFocus()
                 }
             ) {
@@ -155,7 +281,7 @@ private fun Content(
                     text = stringResource(R.string.edit_event_all_day),
                     isSelected = addEventUiState.allDay,
                     onSelectionChanged = {
-                        onAllDaySelectionChanged(it)
+                        onAllDayChanged(it)
                         focusManager.clearFocus()
                     }
                 )
@@ -166,6 +292,7 @@ private fun Content(
                             .fillMaxWidth(),
                         date = addEventUiState.startDate.toLocalDate(),
                         onDateSelected = {
+                            onStartDateChanged(it.atStartOfDay())
                             focusManager.clearFocus()
                         }
                     )
@@ -175,6 +302,7 @@ private fun Content(
                             .fillMaxWidth(),
                         date = addEventUiState.endDate.toLocalDate(),
                         onDateSelected = {
+                            onEndDateChanged(it.atStartOfDay())
                             focusManager.clearFocus()
                         }
                     )
@@ -189,6 +317,7 @@ private fun Content(
                             .fillMaxWidth(),
                         date = addEventUiState.startDate,
                         onDateSelected = {
+                            onStartDateChanged(it)
                             focusManager.clearFocus()
                         }
                     )
@@ -198,6 +327,7 @@ private fun Content(
                             .fillMaxWidth(),
                         date = addEventUiState.endDate,
                         onDateSelected = {
+                            onEndDateChanged(it)
                             focusManager.clearFocus()
                         }
                     )
@@ -214,14 +344,19 @@ private fun Content(
             CommonOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 text = addEventUiState.description,
-                onTextChanged = {},
+                onTextChanged = onDescriptionChanged,
                 hint = stringResource(R.string.edit_event_provide_description),
                 focusRequester = focusRequester,
             )
         }
 
         item {
-            SelectionCard(onClick = { focusManager.clearFocus() }) {
+            SelectionCard(
+                onClick = {
+                    onColorPressed()
+                    focusManager.clearFocus()
+                }
+            ) {
                 ColorItem(
                     color = addEventUiState.color.value,
                     name = stringResource(addEventUiState.color.name),
@@ -243,7 +378,7 @@ private fun Content(
             CommonOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 text = addEventUiState.location,
-                onTextChanged = {},
+                onTextChanged = onLocationChanged,
                 hint = stringResource(R.string.edit_event_provide_location),
                 focusRequester = focusRequester,
             )
@@ -285,7 +420,13 @@ private fun Preview() {
                     ),
                     location = "Poland",
                 ),
-                onAllDaySelectionChanged = {},
+                onAllDayChanged = {},
+                onStartDateChanged = {},
+                onCalendarPressed = {},
+                onColorPressed = {},
+                onTitleChanged = {},
+                onDescriptionChanged = {},
+                onLocationChanged = {},
             )
         }
     }
@@ -325,7 +466,13 @@ private fun Preview2() {
                     ),
                     location = "Poland",
                 ),
-                onAllDaySelectionChanged = {},
+                onAllDayChanged = {},
+                onStartDateChanged = {},
+                onCalendarPressed = {},
+                onColorPressed = {},
+                onTitleChanged = {},
+                onDescriptionChanged = {},
+                onLocationChanged = {},
             )
         }
     }
@@ -365,7 +512,13 @@ private fun Preview3() {
                     ),
                     location = "Poland",
                 ),
-                onAllDaySelectionChanged = {},
+                onAllDayChanged = {},
+                onStartDateChanged = {},
+                onCalendarPressed = {},
+                onColorPressed = {},
+                onTitleChanged = {},
+                onDescriptionChanged = {},
+                onLocationChanged = {},
             )
         }
     }
