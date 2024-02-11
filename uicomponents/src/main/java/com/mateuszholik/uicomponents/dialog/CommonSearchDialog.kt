@@ -1,6 +1,10 @@
 package com.mateuszholik.uicomponents.dialog
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,6 +26,7 @@ import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.uicomponents.text.TitleMediumText
 import com.mateuszholik.uicomponents.textfield.CommonOutlinedTextField
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T> CommonSearchDialog(
     items: List<T>,
@@ -39,28 +44,33 @@ fun <T> CommonSearchDialog(
     Dialog(onDismissRequest = onDismissRequest) {
         Surface(shape = RoundedCornerShape(MaterialTheme.cornerRadius.normal)) {
             LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateContentSize(),
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.normal),
                 contentPadding = PaddingValues(MaterialTheme.spacing.normal)
             ) {
                 item { TitleMediumText(text = title) }
 
-                item {
-                    CommonOutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = searchedText,
-                        onTextChanged = { newText ->
-                            searchedText = newText
-                            filteredElements = if (newText.isEmpty()) {
-                                items
-                            } else {
-                                items.filter { predicate(it, newText) }
-                            }
-                        },
-                        hint = searchHint,
-                        focusRequester = focusRequester
-                    )
+                stickyHeader {
+                    Box(modifier = Modifier.background(color = MaterialTheme.colorScheme.surface)) {
+                        CommonOutlinedTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = searchedText,
+                            onTextChanged = { newText ->
+                                searchedText = newText
+                                filteredElements = if (newText.isEmpty()) {
+                                    items
+                                } else {
+                                    items.filter { predicate(it, newText) }
+                                }
+                            },
+                            hint = searchHint,
+                            focusRequester = focusRequester
+                        )
+                    }
                 }
+
                 if (filteredElements.isEmpty()) {
                     item(content = onEmptySearchContent)
                 } else {
