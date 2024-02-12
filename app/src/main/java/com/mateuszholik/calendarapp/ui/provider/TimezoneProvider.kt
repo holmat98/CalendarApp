@@ -23,5 +23,5 @@ internal class TimezoneProviderImpl @Inject constructor() : TimezoneProvider {
 
     override fun provideDefault(): TimeZone = TimeZone.getDefault()
 
-    override fun provideUTC(): TimeZone = TimeZone.getTimeZone(ZoneId.of("Etc/UTC"))
+    override fun provideUTC(): TimeZone = TimeZone.getTimeZone(ZoneId.of("UTC"))
 }

@@ -79,4 +79,5 @@
     <string name="edit_event_all_day">All day</string>
     <string name="add_event_search_for_timezone">Search timezone</string>
     <string name="add_event_search_timezone_not_found">There is no timezone for searched text</string>
+    <string name="add_event_provide_urls_explanation">www.example.com;www.example2.com</string>
 </resources>

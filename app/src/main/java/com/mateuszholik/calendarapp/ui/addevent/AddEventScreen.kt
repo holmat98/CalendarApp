@@ -48,6 +48,8 @@ import com.mateuszholik.calendarapp.ui.provider.ColorsProvider
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.ChangeSystemBarColors
 import com.mateuszholik.designsystem.models.StyleType
+import com.mateuszholik.designsystem.previews.BigPhonePreview
+import com.mateuszholik.designsystem.previews.MediumPhonePreview
 import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.domain.models.Calendar
@@ -172,7 +174,8 @@ fun AddEventScreen(
             onEndDateChanged = { newEndDate ->
                 viewModel.performUserAction(AddEventUserAction.EndDateChanged(newEndDate))
             },
-            onTimeZonePressed = { viewModel.performUserAction(AddEventUserAction.SelectTimeZone) }
+            onTimeZonePressed = { viewModel.performUserAction(AddEventUserAction.SelectTimeZone) },
+            onUrlsChanged = { newUrls -> viewModel.performUserAction(AddEventUserAction.UpdateUrls(newUrls)) },
         )
     }
 
@@ -273,6 +276,7 @@ private fun Content(
     onEndDateChanged: (LocalDateTime) -> Unit = {},
     onAllDayChanged: (Boolean) -> Unit = {},
     onTimeZonePressed: () -> Unit,
+    onUrlsChanged: (String) -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
@@ -420,7 +424,8 @@ private fun Content(
             CommonOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 text = addEventUiState.urls,
-                onTextChanged = {},
+                supportingText = stringResource(R.string.add_event_provide_urls_explanation),
+                onTextChanged = onUrlsChanged,
                 hint = stringResource(R.string.add_event_provide_urls),
                 focusRequester = focusRequester,
             )
@@ -480,12 +485,13 @@ private fun Preview() {
                 onDescriptionChanged = {},
                 onLocationChanged = {},
                 onTimeZonePressed = {},
+                onUrlsChanged = {},
             )
         }
     }
 }
 
-@SmallPhonePreview
+@MediumPhonePreview
 @Composable
 private fun Preview2() {
     CalendarAppTheme(styleType = StyleType.SUMMER) {
@@ -527,12 +533,13 @@ private fun Preview2() {
                 onDescriptionChanged = {},
                 onLocationChanged = {},
                 onTimeZonePressed = {},
+                onUrlsChanged = {},
             )
         }
     }
 }
 
-@SmallPhonePreview
+@BigPhonePreview
 @Composable
 private fun Preview3() {
     CalendarAppTheme(styleType = StyleType.WINTER, darkTheme = true) {
@@ -574,6 +581,7 @@ private fun Preview3() {
                 onDescriptionChanged = {},
                 onLocationChanged = {},
                 onTimeZonePressed = {},
+                onUrlsChanged = {},
             )
         }
     }

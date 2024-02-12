@@ -25,6 +25,7 @@ fun CommonOutlinedTextField(
     hint: String,
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
+    supportingText: String? = null,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     singleLine: Boolean = false,
     minLines: Int = 1,
@@ -35,6 +36,11 @@ fun CommonOutlinedTextField(
         value = text,
         onValueChange = onTextChanged,
         label = { LabelSmallText(text = hint) },
+        supportingText = supportingText?.let {
+            @Composable {
+                LabelSmallText(text = it)
+            }
+        },
         singleLine = singleLine,
         minLines = minLines,
         maxLines = maxLines,
@@ -72,6 +78,7 @@ private fun SummerPreviewDark() {
                 text = "123456789",
                 onTextChanged = {},
                 hint = "Provide phone number",
+                supportingText = "Supporting text",
                 focusRequester = remember { FocusRequester() },
             )
         }

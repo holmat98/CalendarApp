@@ -84,6 +84,8 @@ class AddEventScreenViewModel @Inject constructor(
                 handleUpdateLocation(action.newLocation)
             is AddEventUserAction.UpdateTitle ->
                 handleUpdateTitle(action.newTitle)
+            is AddEventUserAction.UpdateUrls ->
+                handleUpdateUrls(action.newUrls)
             is AddEventUserAction.TimeZoneSelected ->
                 handleTimeZoneSelected(action.timeZone)
         }
@@ -114,11 +116,8 @@ class AddEventScreenViewModel @Inject constructor(
         }
     }
 
-    private fun handleSelectCalendar() {
-        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
-            val calendars = getCalendarsUseCase()
-            _uiEvent.emit(AddEventUiEvent.ShowCalendarSelection(calendars))
-        }
+    private fun handleEndDateChanged(newEndDate: LocalDateTime) {
+        _uiState.update { it.copy(endDate = newEndDate) }
     }
 
     private fun handleExitAttempt() {
@@ -127,16 +126,11 @@ class AddEventScreenViewModel @Inject constructor(
         }
     }
 
-    private fun handleUpdateDescription(newDescription: String) {
-        _uiState.update { it.copy(description = newDescription) }
-    }
-
-    private fun handleUpdateLocation(newLocation: String) {
-        _uiState.update { it.copy(location = newLocation) }
-    }
-
-    private fun handleUpdateTitle(newTitle: String) {
-        _uiState.update { it.copy(title = newTitle) }
+    private fun handleSelectCalendar() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            val calendars = getCalendarsUseCase()
+            _uiEvent.emit(AddEventUiEvent.ShowCalendarSelection(calendars))
+        }
     }
 
     private fun handleSelectEventColor() {
@@ -160,6 +154,14 @@ class AddEventScreenViewModel @Inject constructor(
         }
     }
 
+    private fun handleStartDateChanged(newStartDate: LocalDateTime) {
+        _uiState.update { it.copy(startDate = newStartDate) }
+    }
+
+    private fun handleUpdateDescription(newDescription: String) {
+        _uiState.update { it.copy(description = newDescription) }
+    }
+
     private fun handleSelectTimeZone() {
         viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             val timezones = timezoneProvider.provideAllTimezones()
@@ -174,12 +176,16 @@ class AddEventScreenViewModel @Inject constructor(
         }
     }
 
-    private fun handleStartDateChanged(newStartDate: LocalDateTime) {
-        _uiState.update { it.copy(startDate = newStartDate) }
+    private fun handleUpdateLocation(newLocation: String) {
+        _uiState.update { it.copy(location = newLocation) }
     }
 
-    private fun handleEndDateChanged(newEndDate: LocalDateTime) {
-        _uiState.update { it.copy(endDate = newEndDate) }
+    private fun handleUpdateTitle(newTitle: String) {
+        _uiState.update { it.copy(title = newTitle) }
+    }
+
+    private fun handleUpdateUrls(newUrls: String) {
+        _uiState.update { it.copy(urls = newUrls) }
     }
 
     private fun handleTimeZoneSelected(timeZone: TimeZone) {
