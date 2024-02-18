@@ -27,6 +27,8 @@ sealed class AddEventUserAction : UserAction {
 
     data class UpdateUrls(val newUrls: String) : AddEventUserAction()
 
+    data object SaveEvent : AddEventUserAction()
+
     data object SelectEventColor : AddEventUserAction()
 
     data class SelectedEventColor(val color: ColorsProvider.ColorInfo) : AddEventUserAction()

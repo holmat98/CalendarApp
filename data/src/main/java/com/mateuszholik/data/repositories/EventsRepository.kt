@@ -2,6 +2,7 @@ package com.mateuszholik.data.repositories
 
 import android.content.Context
 import com.mateuszholik.common.provider.DispatcherProvider
+import com.mateuszholik.data.factories.AlertsContentProviderQueryFactory
 import com.mateuszholik.data.factories.CalendarContentProviderQueryFactory
 import com.mateuszholik.data.factories.EventsContentProviderQueryFactory
 import com.mateuszholik.data.mappers.CursorToCalendarIdsMapper
@@ -10,8 +11,10 @@ import com.mateuszholik.data.mappers.CursorToEventsMapper
 import com.mateuszholik.data.mappers.CursorToListOfDaysMapper
 import com.mateuszholik.data.repositories.models.Event
 import com.mateuszholik.data.repositories.models.EventDetails
+import com.mateuszholik.data.repositories.models.NewEvent
 import com.mateuszholik.data.repositories.models.UpdatedEventDetails
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.YearMonth
@@ -28,11 +31,14 @@ interface EventsRepository {
     suspend fun updateEventDetails(updatedEventDetails: UpdatedEventDetails)
 
     suspend fun deleteEvent(eventId: Long)
+
+    suspend fun createEvent(newEvent: NewEvent)
 }
 
 internal class EventsRepositoryImpl @Inject constructor(
     private val eventsContentProviderQueryFactory: EventsContentProviderQueryFactory,
     private val calendarContentProviderQueryFactory: CalendarContentProviderQueryFactory,
+    private val alertsContentProviderQueryFactory: AlertsContentProviderQueryFactory,
     private val cursorToEventsMapper: CursorToEventsMapper,
     private val cursorToListOfDaysMapper: CursorToListOfDaysMapper,
     private val cursorToCalendarIdsMapper: CursorToCalendarIdsMapper,
@@ -129,6 +135,25 @@ internal class EventsRepositoryImpl @Inject constructor(
             val deleteData = eventsContentProviderQueryFactory.createForDeleteEvent(eventId)
 
             contentResolver.delete(deleteData.uri, null, null)
+        }
+    }
+
+    override suspend fun createEvent(newEvent: NewEvent) {
+        withContext(dispatcherProvider.io()) {
+            val updateData = eventsContentProviderQueryFactory.createForCreateEvent(newEvent)
+
+            contentResolver.insert(updateData.uri, updateData.values)
+
+            newEvent.reminder?.let { reminder ->
+                withContext(NonCancellable) {
+                    updateData.uri.lastPathSegment?.toLong()?.let { eventId ->
+                        val alertUpdateData =
+                            alertsContentProviderQueryFactory.createForNewEvent(reminder, eventId)
+
+                        contentResolver.insert(alertUpdateData.uri, alertUpdateData.values)
+                    }
+                }
+            }
         }
     }
 

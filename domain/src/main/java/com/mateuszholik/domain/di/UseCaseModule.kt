@@ -1,5 +1,7 @@
 package com.mateuszholik.domain.di
 
+import com.mateuszholik.domain.usecases.CreateEventUseCase
+import com.mateuszholik.domain.usecases.CreateEventUseCaseImpl
 import com.mateuszholik.domain.usecases.DeleteEventUseCase
 import com.mateuszholik.domain.usecases.DeleteEventUseCaseImpl
 import com.mateuszholik.domain.usecases.GetCalendarsUseCase
@@ -25,6 +27,11 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @Module
 @InstallIn(ViewModelComponent::class)
 internal abstract class UseCaseModule {
+
+    @Binds
+    abstract fun bindsCreateEventUseCase(
+        createEventUseCaseImpl: CreateEventUseCaseImpl,
+    ): CreateEventUseCase
 
     @Binds
     abstract fun bindsDeleteUseCase(

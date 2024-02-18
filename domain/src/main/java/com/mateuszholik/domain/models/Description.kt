@@ -6,11 +6,42 @@ sealed interface Description {
     fun copyWith(newDescription: String): Description
 
     companion object {
-        private const val GOOGLE_MEET_DESCRIPTION_SEPARATOR = "-::~:~::~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~::~:~::-"
+        private const val CALENDAR_APP_DESCRIPTION_SEPARATOR =
+            "---------------------------------------------------------------------------------------"
+        private const val GOOGLE_MEET_DESCRIPTION_SEPARATOR =
+            "-::~:~::~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~:~::~:~::-"
         private const val GOOGLE_MEET_URL = "meet.google.com"
-        private val URL_REGEX = """(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])""".toRegex()
+        private val URL_REGEX =
+            """(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])""".toRegex()
+
+        fun from(description: String, urls: List<String>): CalendarAppDescription {
+            val fullDescription = StringBuilder().apply {
+                appendLine(description)
+                appendLine(CALENDAR_APP_DESCRIPTION_SEPARATOR)
+                urls.forEach { appendLine(it) }
+            }.toString()
+
+            return CalendarAppDescription(
+                description = description,
+                originalDescription = fullDescription,
+                urls = urls,
+            )
+        }
 
         fun from(description: String): Description {
+            if (description.contains(CALENDAR_APP_DESCRIPTION_SEPARATOR)) {
+                val splitDescription = description.split(CALENDAR_APP_DESCRIPTION_SEPARATOR)
+
+                val shortDescription = splitDescription[0].trim()
+                val urls = splitDescription[1].split("\n").map { it.trim() }
+
+                return CalendarAppDescription(
+                    description = shortDescription,
+                    originalDescription = description,
+                    urls = urls,
+                )
+            }
+
             if (description.contains(GOOGLE_MEET_DESCRIPTION_SEPARATOR)) {
                 val splitDescription = description.split(GOOGLE_MEET_DESCRIPTION_SEPARATOR)
 
@@ -35,7 +66,7 @@ sealed interface Description {
     }
 }
 
-data class Generic(override val description: String): Description {
+data class Generic(override val description: String) : Description {
 
     override fun copyWith(newDescription: String): Description =
         copy(description = newDescription)
@@ -53,7 +84,7 @@ data class GoogleMeet(
     val originalDescription: String,
     val meetingUrl: String,
     val otherUrls: List<String>,
-): Description {
+) : Description {
 
     override fun copyWith(newDescription: String): Description =
         copy(
@@ -67,4 +98,17 @@ data class GoogleMeet(
             is Generic -> originalDescription == other.description
             else -> false
         }
+}
+
+data class CalendarAppDescription(
+    override val description: String,
+    val originalDescription: String,
+    val urls: List<String>,
+) : Description {
+
+    override fun copyWith(newDescription: String): Description =
+        copy(
+            description = newDescription,
+            originalDescription = originalDescription.replace(description, newDescription)
+        )
 }

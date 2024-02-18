@@ -13,6 +13,9 @@ import com.mateuszholik.common.provider.DispatcherProvider
 import com.mateuszholik.dateutils.Minutes
 import com.mateuszholik.dateutils.extensions.copy
 import com.mateuszholik.domain.models.Calendar
+import com.mateuszholik.domain.models.Description
+import com.mateuszholik.domain.models.NewEvent
+import com.mateuszholik.domain.usecases.CreateEventUseCase
 import com.mateuszholik.domain.usecases.GetCalendarsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -36,6 +39,7 @@ class AddEventScreenViewModel @Inject constructor(
     private val getCalendarsUseCase: GetCalendarsUseCase,
     private val timezoneProvider: TimezoneProvider,
     private val minutesProvider: MinutesProvider,
+    private val createEventUseCase: CreateEventUseCase,
     private val dispatcherProvider: DispatcherProvider,
 ) : BaseViewModel<AddEventUiState, AddEventUserAction, AddEventUiEvent>() {
 
@@ -83,6 +87,8 @@ class AddEventScreenViewModel @Inject constructor(
                 handleStartDateChanged(action.newStartDate)
             is AddEventUserAction.UpdateDescription ->
                 handleUpdateDescription(action.newDescription)
+            is AddEventUserAction.SaveEvent ->
+                handleSaveEvent()
             is AddEventUserAction.SelectTimeZone ->
                 handleSelectTimeZone()
             is AddEventUserAction.SelectTimeZoneDismissed ->
@@ -183,6 +189,16 @@ class AddEventScreenViewModel @Inject constructor(
         _uiState.update { it.copy(description = newDescription) }
     }
 
+    private fun handleSaveEvent() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            val newEvent = _uiState.value.toNewEvent()
+
+            createEventUseCase(newEvent)
+
+            _uiEvent.emit(AddEventUiEvent.NavigateBack)
+        }
+    }
+
     private fun handleSelectTimeZone() {
         viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             val timezones = timezoneProvider.provideAllTimezones()
@@ -249,4 +265,18 @@ class AddEventScreenViewModel @Inject constructor(
             reminder = null,
         )
     }
+
+    private fun AddEventUiState.toNewEvent(): NewEvent =
+        NewEvent(
+            title = title,
+            description = Description.from(description, urls.split(";")),
+            allDay = allDay,
+            startDate = startDate,
+            endDate = endDate,
+            timezone = timezone.id,
+            calendarId = calendar.id,
+            eventColor = color.value,
+            location = location,
+            reminder = reminder?.value.toString(),
+        )
 }
