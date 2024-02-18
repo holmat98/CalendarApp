@@ -2,6 +2,7 @@ package com.mateuszholik.calendarapp.ui.addevent.models
 
 import com.mateuszholik.calendarapp.ui.base.UserAction
 import com.mateuszholik.calendarapp.ui.provider.ColorsProvider
+import com.mateuszholik.dateutils.Minutes
 import com.mateuszholik.domain.models.Calendar
 import java.time.LocalDateTime
 import java.util.TimeZone
@@ -32,9 +33,15 @@ sealed class AddEventUserAction : UserAction {
 
     data object SelectEventColorDismissed : AddEventUserAction()
 
+    data object SelectReminder : AddEventUserAction()
+
+    data object SelectReminderDismissed : AddEventUserAction()
+
     data object SelectTimeZone : AddEventUserAction()
 
     data object SelectTimeZoneDismissed : AddEventUserAction()
+
+    data class ReminderSelected(val minutes: Minutes) : AddEventUserAction()
 
     data class StartDateChanged(val newStartDate: LocalDateTime) : AddEventUserAction()
 

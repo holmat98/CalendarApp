@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -39,12 +40,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateuszholik.calendarapp.R
+import com.mateuszholik.calendarapp.extensions.asText
 import com.mateuszholik.calendarapp.ui.addevent.models.AddEventUiEvent
 import com.mateuszholik.calendarapp.ui.addevent.models.AddEventUiState
 import com.mateuszholik.calendarapp.ui.addevent.models.AddEventUserAction
 import com.mateuszholik.calendarapp.ui.addevent.models.AddEventUserAction.AllDaySelectionChanged
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
 import com.mateuszholik.calendarapp.ui.provider.ColorsProvider
+import com.mateuszholik.dateutils.Minutes
 import com.mateuszholik.designsystem.CalendarAppTheme
 import com.mateuszholik.designsystem.ChangeSystemBarColors
 import com.mateuszholik.designsystem.models.StyleType
@@ -66,6 +69,7 @@ import com.mateuszholik.uicomponents.dialog.CommonSearchDialog
 import com.mateuszholik.uicomponents.scaffold.CommonScaffold
 import com.mateuszholik.uicomponents.switches.CommonSwitch
 import com.mateuszholik.uicomponents.text.BodySmallText
+import com.mateuszholik.uicomponents.text.TextWithIcon
 import com.mateuszholik.uicomponents.text.TitleMediumText
 import com.mateuszholik.uicomponents.textfield.CommonOutlinedTextField
 import kotlinx.coroutines.launch
@@ -81,6 +85,7 @@ fun AddEventScreen(
     var calendars by remember { mutableStateOf<List<Calendar>?>(null) }
     var colors by remember { mutableStateOf<List<ColorsProvider.ColorInfo>?>(null) }
     var timezones by remember { mutableStateOf<List<TimeZone>?>(null) }
+    var reminders by remember { mutableStateOf<List<Minutes>?>(null) }
     var isButtonEnabled by remember { mutableStateOf(false) }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -120,6 +125,12 @@ fun AddEventScreen(
             }
             is AddEventUiEvent.ShowTimeZoneSelection -> {
                 timezones = uiEvent.timezones
+            }
+            is AddEventUiEvent.ShowReminderSelection -> {
+                reminders = uiEvent.minutes
+            }
+            is AddEventUiEvent.DismissReminderSelection -> {
+                reminders = null
             }
         }
     }
@@ -175,7 +186,10 @@ fun AddEventScreen(
                 viewModel.performUserAction(AddEventUserAction.EndDateChanged(newEndDate))
             },
             onTimeZonePressed = { viewModel.performUserAction(AddEventUserAction.SelectTimeZone) },
-            onUrlsChanged = { newUrls -> viewModel.performUserAction(AddEventUserAction.UpdateUrls(newUrls)) },
+            onUrlsChanged = { newUrls ->
+                viewModel.performUserAction(AddEventUserAction.UpdateUrls(newUrls))
+            },
+            onReminderPressed = { viewModel.performUserAction(AddEventUserAction.SelectReminder) },
         )
     }
 
@@ -261,6 +275,29 @@ fun AddEventScreen(
         }
     }
 
+    reminders?.let {
+        CommonDialog(
+            onDismissRequest = { viewModel.performUserAction(AddEventUserAction.SelectReminderDismissed) }
+        ) {
+            item {
+                TitleMediumText(textResId = R.string.add_event_select_reminder)
+            }
+
+            items(items = it) { minutes ->
+                TitleMediumText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            viewModel.performUserAction(
+                                AddEventUserAction.ReminderSelected(minutes)
+                            )
+                        },
+                    text = minutes.asText(context)
+                )
+            }
+        }
+    }
+
 }
 
 @Composable
@@ -277,6 +314,7 @@ private fun Content(
     onAllDayChanged: (Boolean) -> Unit = {},
     onTimeZonePressed: () -> Unit,
     onUrlsChanged: (String) -> Unit,
+    onReminderPressed: () -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
@@ -397,6 +435,25 @@ private fun Content(
         item { Divider() }
 
         item {
+            val context = LocalContext.current
+            SelectionCard(
+                onClick = {
+                    onReminderPressed()
+                    focusManager.clearFocus()
+                }
+            ) {
+                TextWithIcon(
+                    text = if (addEventUiState.reminder == null) {
+                        stringResource(R.string.add_event_select_reminder)
+                    } else {
+                        addEventUiState.reminder.asText(context)
+                    },
+                    icon = Icons.Outlined.Notifications
+                )
+            }
+        }
+
+        item {
             CommonOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 text = addEventUiState.description,
@@ -476,6 +533,7 @@ private fun Preview() {
                         name = R.string.color_current,
                     ),
                     location = "Poland",
+                    reminder = Minutes.from(45),
                 ),
                 onAllDayChanged = {},
                 onStartDateChanged = {},
@@ -486,6 +544,7 @@ private fun Preview() {
                 onLocationChanged = {},
                 onTimeZonePressed = {},
                 onUrlsChanged = {},
+                onReminderPressed = {},
             )
         }
     }
@@ -524,6 +583,7 @@ private fun Preview2() {
                         name = R.string.color_current,
                     ),
                     location = "Poland",
+                    reminder = null,
                 ),
                 onAllDayChanged = {},
                 onStartDateChanged = {},
@@ -534,6 +594,7 @@ private fun Preview2() {
                 onLocationChanged = {},
                 onTimeZonePressed = {},
                 onUrlsChanged = {},
+                onReminderPressed = {},
             )
         }
     }
@@ -572,6 +633,7 @@ private fun Preview3() {
                         name = R.string.color_current,
                     ),
                     location = "Poland",
+                    reminder = Minutes.fromDays(1),
                 ),
                 onAllDayChanged = {},
                 onStartDateChanged = {},
@@ -582,6 +644,7 @@ private fun Preview3() {
                 onLocationChanged = {},
                 onTimeZonePressed = {},
                 onUrlsChanged = {},
+                onReminderPressed = {},
             )
         }
     }

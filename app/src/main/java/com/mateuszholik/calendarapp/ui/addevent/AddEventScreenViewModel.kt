@@ -7,8 +7,10 @@ import com.mateuszholik.calendarapp.ui.addevent.models.AddEventUiState
 import com.mateuszholik.calendarapp.ui.addevent.models.AddEventUserAction
 import com.mateuszholik.calendarapp.ui.base.BaseViewModel
 import com.mateuszholik.calendarapp.ui.provider.ColorsProvider
+import com.mateuszholik.calendarapp.ui.provider.MinutesProvider
 import com.mateuszholik.calendarapp.ui.provider.TimezoneProvider
 import com.mateuszholik.common.provider.DispatcherProvider
+import com.mateuszholik.dateutils.Minutes
 import com.mateuszholik.dateutils.extensions.copy
 import com.mateuszholik.domain.models.Calendar
 import com.mateuszholik.domain.usecases.GetCalendarsUseCase
@@ -33,6 +35,7 @@ class AddEventScreenViewModel @Inject constructor(
     private val colorsProvider: ColorsProvider,
     private val getCalendarsUseCase: GetCalendarsUseCase,
     private val timezoneProvider: TimezoneProvider,
+    private val minutesProvider: MinutesProvider,
     private val dispatcherProvider: DispatcherProvider,
 ) : BaseViewModel<AddEventUiState, AddEventUserAction, AddEventUiEvent>() {
 
@@ -70,6 +73,10 @@ class AddEventScreenViewModel @Inject constructor(
                 handleSelectEventColor()
             is AddEventUserAction.SelectEventColorDismissed ->
                 handleSelectEventColorDismissed()
+            is AddEventUserAction.SelectReminder ->
+                handleSelectReminder()
+            is AddEventUserAction.SelectReminderDismissed ->
+                handleSelectReminderDismissed()
             is AddEventUserAction.SelectedEventColor ->
                 handleSelectedEventColor(action.color)
             is AddEventUserAction.StartDateChanged ->
@@ -80,6 +87,8 @@ class AddEventScreenViewModel @Inject constructor(
                 handleSelectTimeZone()
             is AddEventUserAction.SelectTimeZoneDismissed ->
                 handleSelectTimeZoneDismissed()
+            is AddEventUserAction.ReminderSelected ->
+                handleReminderSelected(action.minutes)
             is AddEventUserAction.UpdateLocation ->
                 handleUpdateLocation(action.newLocation)
             is AddEventUserAction.UpdateTitle ->
@@ -147,6 +156,18 @@ class AddEventScreenViewModel @Inject constructor(
         }
     }
 
+    private fun handleSelectReminder() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiEvent.emit(AddEventUiEvent.ShowReminderSelection(minutesProvider.provide()))
+        }
+    }
+
+    private fun handleSelectReminderDismissed() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiEvent.emit(AddEventUiEvent.DismissReminderSelection)
+        }
+    }
+
     private fun handleSelectedEventColor(color: ColorsProvider.ColorInfo) {
         viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             _uiEvent.emit(AddEventUiEvent.DismissColorEventSelection)
@@ -173,6 +194,13 @@ class AddEventScreenViewModel @Inject constructor(
     private fun handleSelectTimeZoneDismissed() {
         viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             _uiEvent.emit(AddEventUiEvent.DismissTimeZoneSelection)
+        }
+    }
+
+    private fun handleReminderSelected(minutes: Minutes) {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
+            _uiEvent.emit(AddEventUiEvent.DismissReminderSelection)
+            _uiState.update { it.copy(reminder = minutes) }
         }
     }
 
@@ -218,6 +246,7 @@ class AddEventScreenViewModel @Inject constructor(
             ),
             color = colorsProvider.provideDefault(),
             location = "",
+            reminder = null,
         )
     }
 }

@@ -4,6 +4,8 @@ import com.mateuszholik.calendarapp.provider.CurrentDateProvider
 import com.mateuszholik.calendarapp.provider.CurrentDateProviderImpl
 import com.mateuszholik.calendarapp.ui.provider.ColorsProvider
 import com.mateuszholik.calendarapp.ui.provider.ColorsProviderImpl
+import com.mateuszholik.calendarapp.ui.provider.MinutesProvider
+import com.mateuszholik.calendarapp.ui.provider.MinutesProviderImpl
 import com.mateuszholik.calendarapp.ui.provider.StyleProvider
 import com.mateuszholik.calendarapp.ui.provider.StyleProviderImpl
 import com.mateuszholik.calendarapp.ui.provider.TimezoneProvider
@@ -21,6 +23,16 @@ import dagger.hilt.components.SingletonComponent
 internal abstract class ProvidersModule {
 
     @Binds
+    abstract fun bindsColorsProvider(
+        colorsProviderImpl: ColorsProviderImpl,
+    ): ColorsProvider
+
+    @Binds
+    abstract fun bindsMinutesProvider(
+        minutesProviderImpl: MinutesProviderImpl,
+    ): MinutesProvider
+
+    @Binds
     abstract fun bindsStyleProvider(
         styleProviderImpl: StyleProviderImpl,
     ): StyleProvider
@@ -31,13 +43,8 @@ internal abstract class ProvidersModule {
     ): WelcomeScreenInfoProvider
 
     @Binds
-    abstract fun bindsColorsProvider(
-        colorsProviderImpl: ColorsProviderImpl
-    ): ColorsProvider
-
-    @Binds
     abstract fun bindsTimezoneProvider(
-        timezoneProviderImpl: TimezoneProviderImpl
+        timezoneProviderImpl: TimezoneProviderImpl,
     ): TimezoneProvider
 }
 
