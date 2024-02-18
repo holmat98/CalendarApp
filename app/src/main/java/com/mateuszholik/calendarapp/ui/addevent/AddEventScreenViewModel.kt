@@ -277,6 +277,6 @@ class AddEventScreenViewModel @Inject constructor(
             calendarId = calendar.id,
             eventColor = color.value,
             location = location,
-            reminder = reminder?.value.toString(),
+            reminder = reminder?.value,
         )
 }

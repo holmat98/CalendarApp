@@ -76,6 +76,7 @@ import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.domain.models.Attendee
+import com.mateuszholik.domain.models.CalendarAppDescription
 import com.mateuszholik.domain.models.EventDetails
 import com.mateuszholik.domain.models.Generic
 import com.mateuszholik.domain.models.GoogleMeet
@@ -401,6 +402,47 @@ private fun Content(
                             sectionIcon = Icons.Outlined.Info,
                             sectionTitle = stringResource(R.string.event_details_urls),
                             items = googleMeetDescription.otherUrls,
+                        ) { url, modifier ->
+
+                            Row(
+                                modifier = modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            ) {
+                                BodyMediumText(
+                                    modifier = Modifier.weight(1f),
+                                    text = url,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                CommonIconButton(
+                                    imageVector = Icons.Default.ExitToApp,
+                                    onClick = { context.startActivity(getUrlIntent(url)) }
+                                )
+                            }
+                        }
+                    }
+                }
+                is CalendarAppDescription -> {
+                    val calendarAppDescription = eventDetails.description as CalendarAppDescription
+
+                    item {
+                        EventCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            title = eventDetails.title,
+                            description = calendarAppDescription.description,
+                            eventStart = eventDetails.dateStart,
+                            eventEnd = eventDetails.dateEnd,
+                            allDay = eventDetails.allDay,
+                            eventColor = eventDetails.eventColor?.let { color -> Color(color) },
+                        )
+                    }
+
+                    item {
+                        SectionCard(
+                            sectionIcon = Icons.Outlined.Info,
+                            sectionTitle = stringResource(R.string.event_details_urls),
+                            items = calendarAppDescription.urls,
                         ) { url, modifier ->
 
                             Row(

@@ -86,7 +86,7 @@ fun AddEventScreen(
     var colors by remember { mutableStateOf<List<ColorsProvider.ColorInfo>?>(null) }
     var timezones by remember { mutableStateOf<List<TimeZone>?>(null) }
     var reminders by remember { mutableStateOf<List<Minutes>?>(null) }
-    var isButtonEnabled by remember { mutableStateOf(false) }
+    val isButtonEnabled by remember { mutableStateOf(true) }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -147,7 +147,7 @@ fun AddEventScreen(
                 modifier = Modifier.padding(end = MaterialTheme.spacing.small),
                 textResId = R.string.button_save,
                 isEnabled = isButtonEnabled,
-                onClick = {}
+                onClick = { viewModel.performUserAction(AddEventUserAction.SaveEvent) }
             )
         }
     ) {

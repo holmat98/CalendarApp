@@ -12,5 +12,5 @@ data class NewEvent(
     val calendarId: Long,
     val eventColor: Int,
     val location: String,
-    val reminder: String?,
+    val reminder: Int?,
 )

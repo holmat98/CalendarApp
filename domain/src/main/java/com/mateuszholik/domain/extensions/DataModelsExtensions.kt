@@ -12,9 +12,11 @@ import com.mateuszholik.data.repositories.models.Attendee as DataAttendee
 import com.mateuszholik.data.repositories.models.Calendar as DataCalendar
 import com.mateuszholik.data.repositories.models.Event as DataEvent
 import com.mateuszholik.data.repositories.models.EventDetails as DataEventDetails
+import com.mateuszholik.data.repositories.models.NewEvent as DataNewEvent
 import com.mateuszholik.data.repositories.models.UpdatedEventDetails as DataUpdatedEventDetails
 import com.mateuszholik.domain.models.Event
 import com.mateuszholik.domain.models.EventDetails
+import com.mateuszholik.domain.models.NewEvent
 import com.mateuszholik.domain.models.UpdatedEventDetails
 
 internal fun DataEvent.toCommonModel(): Event =
@@ -99,4 +101,18 @@ internal fun UpdatedEventDetails.toDataModel(): DataUpdatedEventDetails =
         eventColor = eventColor,
         location = location,
         calendarId = calendarId,
+    )
+
+internal fun NewEvent.toDataModel(): DataNewEvent =
+    DataNewEvent(
+        title = title,
+        description = description.originalDescription,
+        allDay = allDay,
+        startDate = startDate,
+        endDate = endDate,
+        timezone = timezone,
+        calendarId = calendarId,
+        eventColor = eventColor,
+        location = location,
+        reminder = reminder
     )

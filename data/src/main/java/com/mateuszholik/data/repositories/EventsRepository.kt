@@ -142,11 +142,11 @@ internal class EventsRepositoryImpl @Inject constructor(
         withContext(dispatcherProvider.io()) {
             val updateData = eventsContentProviderQueryFactory.createForCreateEvent(newEvent)
 
-            contentResolver.insert(updateData.uri, updateData.values)
+            val newEventUri = contentResolver.insert(updateData.uri, updateData.values)
 
             newEvent.reminder?.let { reminder ->
                 withContext(NonCancellable) {
-                    updateData.uri.lastPathSegment?.toLong()?.let { eventId ->
+                    newEventUri?.lastPathSegment?.toLong()?.let { eventId ->
                         val alertUpdateData =
                             alertsContentProviderQueryFactory.createForNewEvent(reminder, eventId)
 

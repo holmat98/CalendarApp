@@ -33,7 +33,10 @@ sealed interface Description {
                 val splitDescription = description.split(CALENDAR_APP_DESCRIPTION_SEPARATOR)
 
                 val shortDescription = splitDescription[0].trim()
-                val urls = splitDescription[1].split("\n").map { it.trim() }
+                val urls = splitDescription[1]
+                    .split("\n")
+                    .filterNot { it.isEmpty() }
+                    .map { it.trim() }
 
                 return CalendarAppDescription(
                     description = shortDescription,
