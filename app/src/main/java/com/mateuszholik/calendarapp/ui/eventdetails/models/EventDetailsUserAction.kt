@@ -17,6 +17,12 @@ sealed class EventDetailsUserAction : UserAction {
 
     data class EditEventPressed(val eventId: Long) : EventDetailsUserAction()
 
+    data class LaunchEmail(val email: String) : EventDetailsUserAction()
+
+    data class LaunchMaps(val location: String) : EventDetailsUserAction()
+
+    data class LaunchUrl(val url: String) : EventDetailsUserAction()
+
     data object NavigateBackPressed : EventDetailsUserAction()
 
     data object RetryGetEventDetailsPressed : EventDetailsUserAction()
