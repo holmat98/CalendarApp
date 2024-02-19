@@ -441,28 +441,30 @@ private fun Content(
                         )
                     }
 
-                    item {
-                        SectionCard(
-                            sectionIcon = Icons.Outlined.Info,
-                            sectionTitle = stringResource(R.string.event_details_urls),
-                            items = calendarAppDescription.urls,
-                        ) { url, modifier ->
+                    if (calendarAppDescription.urls.isNotEmpty()) {
+                        item {
+                            SectionCard(
+                                sectionIcon = Icons.Outlined.Info,
+                                sectionTitle = stringResource(R.string.event_details_urls),
+                                items = calendarAppDescription.urls,
+                            ) { url, modifier ->
 
-                            Row(
-                                modifier = modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                            ) {
-                                BodyMediumText(
-                                    modifier = Modifier.weight(1f),
-                                    text = url,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                                CommonIconButton(
-                                    imageVector = Icons.Default.ExitToApp,
-                                    onClick = { onUrlPressed(url) }
-                                )
+                                Row(
+                                    modifier = modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                ) {
+                                    BodyMediumText(
+                                        modifier = Modifier.weight(1f),
+                                        text = url,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    CommonIconButton(
+                                        imageVector = Icons.Default.ExitToApp,
+                                        onClick = { onUrlPressed(url) }
+                                    )
+                                }
                             }
                         }
                     }

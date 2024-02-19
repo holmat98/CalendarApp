@@ -14,7 +14,11 @@ sealed interface Description {
         private val URL_REGEX =
             """(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])""".toRegex()
 
-        fun from(description: String, urls: List<String>): CalendarAppDescription {
+        fun from(description: String, urls: List<String>): Description {
+            if (urls.isEmpty()) {
+                return Generic(description)
+            }
+
             val fullDescription = StringBuilder().apply {
                 appendLine(description)
                 appendLine(CALENDAR_APP_DESCRIPTION_SEPARATOR)
@@ -115,3 +119,10 @@ data class CalendarAppDescription(
             originalDescription = originalDescription.replace(description, newDescription)
         )
 }
+
+internal val Description.fullDescription: String
+    get() = when (this) {
+        is CalendarAppDescription -> originalDescription
+        is Generic -> description
+        is GoogleMeet -> originalDescription
+    }

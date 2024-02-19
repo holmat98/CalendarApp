@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 
 data class NewEvent(
     val title: String,
-    val description: CalendarAppDescription,
+    val description: Description,
     val allDay: Boolean,
     val startDate: LocalDateTime,
     val endDate: LocalDateTime,

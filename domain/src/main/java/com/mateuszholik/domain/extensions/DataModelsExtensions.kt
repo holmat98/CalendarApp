@@ -18,6 +18,7 @@ import com.mateuszholik.domain.models.Event
 import com.mateuszholik.domain.models.EventDetails
 import com.mateuszholik.domain.models.NewEvent
 import com.mateuszholik.domain.models.UpdatedEventDetails
+import com.mateuszholik.domain.models.fullDescription
 
 internal fun DataEvent.toCommonModel(): Event =
     Event(
@@ -106,7 +107,7 @@ internal fun UpdatedEventDetails.toDataModel(): DataUpdatedEventDetails =
 internal fun NewEvent.toDataModel(): DataNewEvent =
     DataNewEvent(
         title = title,
-        description = description.originalDescription,
+        description = description.fullDescription,
         allDay = allDay,
         startDate = startDate,
         endDate = endDate,

@@ -16,6 +16,7 @@ import com.mateuszholik.domain.models.Calendar
 import com.mateuszholik.domain.models.Description
 import com.mateuszholik.domain.models.NewEvent
 import com.mateuszholik.domain.usecases.CreateEventUseCase
+import com.mateuszholik.domain.usecases.GetCalendarUseCase
 import com.mateuszholik.domain.usecases.GetCalendarsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -27,6 +28,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.TimeZone
@@ -37,6 +39,7 @@ class AddEventScreenViewModel @Inject constructor(
     private val currentDateProvider: CurrentDateProvider,
     private val colorsProvider: ColorsProvider,
     private val getCalendarsUseCase: GetCalendarsUseCase,
+    private val getCalendarUseCase: GetCalendarUseCase,
     private val timezoneProvider: TimezoneProvider,
     private val minutesProvider: MinutesProvider,
     private val createEventUseCase: CreateEventUseCase,
@@ -239,32 +242,27 @@ class AddEventScreenViewModel @Inject constructor(
         }
     }
 
-    private fun getInitialUiState(): AddEventUiState {
-        val startDateTime = currentDateProvider
-            .provideDateTime()
-            .plusHours(1)
-            .copy(minute = 0, second = 0)
+    private fun getInitialUiState(): AddEventUiState =
+        runBlocking {
+            val startDateTime = currentDateProvider
+                .provideDateTime()
+                .plusHours(1)
+                .copy(minute = 0, second = 0)
 
-        return AddEventUiState(
-            title = "",
-            description = "",
-            allDay = false,
-            startDate = startDateTime,
-            endDate = startDateTime.plusHours(1),
-            timezone = timezoneProvider.provideDefault(),
-            urls = "",
-            calendar = Calendar(
-                id = 1,
-                accountName = "test",
-                calendarName = "test",
-                isVisible = true,
-                color = null
-            ),
-            color = colorsProvider.provideDefault(),
-            location = "",
-            reminder = null,
-        )
-    }
+            AddEventUiState(
+                title = "",
+                description = "",
+                allDay = false,
+                startDate = startDateTime,
+                endDate = startDateTime.plusHours(1),
+                timezone = timezoneProvider.provideDefault(),
+                urls = "",
+                calendar = getCalendarUseCase(),
+                color = colorsProvider.provideDefault(),
+                location = "",
+                reminder = null,
+            )
+        }
 
     private fun AddEventUiState.toNewEvent(): NewEvent =
         NewEvent(
