@@ -1,6 +1,7 @@
 package com.mateuszholik.uicomponents.cards
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -40,7 +41,9 @@ fun SelectionCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            content()
+            Box(modifier = Modifier.weight(1f)) {
+                content()
+            }
             CommonIconButton(
                 imageVector = Icons.Default.KeyboardArrowRight,
                 onClick = onClick

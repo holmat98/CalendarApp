@@ -1,5 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">CalendarApp</string>
+    <string name="add_event_provide_urls">Provide urls</string>
+    <string name="add_event_select_timezone">Select timezone</string>
+    <string name="add_event_urls_legend">Separate urls with ;</string>
     <string name="button_add_permission">Grant permission</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_go_to_settings">Open settings</string>
@@ -74,4 +77,21 @@
     <string name="welcome_screen_hello_school">Welcome\nSchool!</string>
     <string name="welcome_screen_hello_new_year">Happy\nNew Year!</string>
     <string name="edit_event_all_day">All day</string>
+    <string name="add_event_search_for_timezone">Search timezone</string>
+    <string name="add_event_search_timezone_not_found">There is no timezone for searched text</string>
+    <string name="add_event_provide_urls_explanation">www.example.com;www.example2.com</string>
+    <string name="add_event_select_reminder">Select reminder</string>
+    <plurals name="reminder_weeks_before">
+        <item quantity="one">Week before</item>
+        <item quantity="other">%1$d weeks before</item>
+    </plurals>
+    <plurals name="reminder_days_before">
+        <item quantity="one">Day before</item>
+        <item quantity="other">%1$d days before</item>
+    </plurals>
+    <plurals name="reminder_hours_before">
+        <item quantity="one">Hour before</item>
+        <item quantity="other">%1$d hours before</item>
+    </plurals>
+    <string name="reminder_minutes_before">%1$d minutes before</string>
 </resources>

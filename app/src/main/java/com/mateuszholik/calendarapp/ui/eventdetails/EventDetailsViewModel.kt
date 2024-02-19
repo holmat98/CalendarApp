@@ -2,6 +2,7 @@ package com.mateuszholik.calendarapp.ui.eventdetails
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.mateuszholik.calendarapp.launchers.WebsiteLauncher
 import com.mateuszholik.calendarapp.ui.base.BaseViewModel
 import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUiEvent
 import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUiState
@@ -28,6 +29,7 @@ import javax.inject.Inject
 class EventDetailsViewModel @Inject constructor(
     private val getEventDetailsUseCase: GetEventDetailsUseCase,
     private val deleteEventUseCase: DeleteEventUseCase,
+    private val websiteLauncher: WebsiteLauncher,
     private val dispatcherProvider: DispatcherProvider,
     savedStateHandle: SavedStateHandle,
 ) :
@@ -72,6 +74,12 @@ class EventDetailsViewModel @Inject constructor(
                 handleDeleteEventConfirmed()
             is EventDetailsUserAction.EditEventPressed ->
                 handleEnterEditEventPressedUserAction(action.eventId)
+            is EventDetailsUserAction.LaunchEmail ->
+                handleLaunchEmail(action.email)
+            is EventDetailsUserAction.LaunchMaps ->
+                handleLaunchMaps(action.location)
+            is EventDetailsUserAction.LaunchUrl ->
+                handleLaunchUrl(action.url)
             is EventDetailsUserAction.NavigateBackPressed ->
                 handleNavigateBack()
             is EventDetailsUserAction.RetryGetEventDetailsPressed ->
@@ -114,6 +122,18 @@ class EventDetailsViewModel @Inject constructor(
         viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             _uiEvent.emit(EventDetailsUiEvent.GoToEventDetails(eventId))
         }
+    }
+
+    private fun handleLaunchEmail(email: String) {
+        websiteLauncher.launchEmail(email)
+    }
+
+    private fun handleLaunchMaps(location: String) {
+        websiteLauncher.launchMaps(location)
+    }
+
+    private fun handleLaunchUrl(url: String) {
+        websiteLauncher.launchUrl(url)
     }
 
     private fun handleNavigateBack() {

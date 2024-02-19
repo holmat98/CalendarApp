@@ -1,7 +1,5 @@
 package com.mateuszholik.calendarapp.ui.eventdetails
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -63,6 +61,9 @@ import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUserActio
 import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUserAction.AttendeeSelected
 import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUserAction.DeleteEvent
 import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUserAction.EditEventPressed
+import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUserAction.LaunchEmail
+import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUserAction.LaunchMaps
+import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUserAction.LaunchUrl
 import com.mateuszholik.calendarapp.ui.eventdetails.models.EventDetailsUserAction.RetryGetEventDetailsPressed
 import com.mateuszholik.calendarapp.ui.observers.ObserveAsEvents
 import com.mateuszholik.calendarapp.ui.utils.PreviewConstants.EVENT_DETAILS
@@ -76,6 +77,7 @@ import com.mateuszholik.designsystem.previews.SmallPhonePreview
 import com.mateuszholik.designsystem.sizing
 import com.mateuszholik.designsystem.spacing
 import com.mateuszholik.domain.models.Attendee
+import com.mateuszholik.domain.models.CalendarAppDescription
 import com.mateuszholik.domain.models.EventDetails
 import com.mateuszholik.domain.models.Generic
 import com.mateuszholik.domain.models.GoogleMeet
@@ -163,7 +165,10 @@ fun EventDetailsScreen(
                 onBackPressed = { viewModel.performUserAction(EventDetailsUserAction.NavigateBackPressed) },
                 onEditPressed = { viewModel.performUserAction(EditEventPressed(it)) },
                 onDeletePressed = { viewModel.performUserAction(DeleteEvent) },
-                onAttendeePressed = { viewModel.performUserAction(AttendeeSelected(it)) }
+                onAttendeePressed = { viewModel.performUserAction(AttendeeSelected(it)) },
+                onEmailPressed = { viewModel.performUserAction(LaunchEmail(it)) },
+                onLocationPressed = { viewModel.performUserAction(LaunchMaps(it)) },
+                onUrlPressed = { viewModel.performUserAction(LaunchUrl(it)) },
             )
         }
     }
@@ -193,7 +198,7 @@ fun EventDetailsScreen(
                     .align(Alignment.CenterHorizontally),
                 textResId = R.string.event_details_send_email,
                 icon = Icons.Outlined.Email,
-                onClick = { context.startActivity(getMailIntent(attendee.email)) }
+                onClick = { viewModel.performUserAction(LaunchEmail(attendee.email)) }
             )
         }
     }
@@ -331,10 +336,11 @@ private fun Content(
     onBackPressed: () -> Unit,
     onEditPressed: (eventId: Long) -> Unit,
     onDeletePressed: () -> Unit,
-    onAttendeePressed: (attendee: Attendee) -> Unit,
+    onAttendeePressed: (Attendee) -> Unit,
+    onEmailPressed: (String) -> Unit,
+    onUrlPressed: (String) -> Unit,
+    onLocationPressed: (String) -> Unit,
 ) {
-    val context = LocalContext.current
-
     CommonScaffold(
         navigationIcon = {
             CommonIconButton(imageVector = Icons.Default.Close, onClick = onBackPressed)
@@ -390,9 +396,7 @@ private fun Content(
                             allDay = eventDetails.allDay,
                             eventColor = eventDetails.eventColor?.let { color -> Color(color) },
                             joinMeetingButtonText = stringResource(R.string.event_details_join_in_google_meets),
-                            onJoinMeetingButtonClick = {
-                                context.startActivity(getUrlIntent(googleMeetDescription.meetingUrl))
-                            }
+                            onJoinMeetingButtonClick = { onUrlPressed(googleMeetDescription.meetingUrl) }
                         )
                     }
 
@@ -416,8 +420,51 @@ private fun Content(
                                 )
                                 CommonIconButton(
                                     imageVector = Icons.Default.ExitToApp,
-                                    onClick = { context.startActivity(getUrlIntent(url)) }
+                                    onClick = { onUrlPressed(url) }
                                 )
+                            }
+                        }
+                    }
+                }
+                is CalendarAppDescription -> {
+                    val calendarAppDescription = eventDetails.description as CalendarAppDescription
+
+                    item {
+                        EventCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            title = eventDetails.title,
+                            description = calendarAppDescription.description,
+                            eventStart = eventDetails.dateStart,
+                            eventEnd = eventDetails.dateEnd,
+                            allDay = eventDetails.allDay,
+                            eventColor = eventDetails.eventColor?.let { color -> Color(color) },
+                        )
+                    }
+
+                    if (calendarAppDescription.urls.isNotEmpty()) {
+                        item {
+                            SectionCard(
+                                sectionIcon = Icons.Outlined.Info,
+                                sectionTitle = stringResource(R.string.event_details_urls),
+                                items = calendarAppDescription.urls,
+                            ) { url, modifier ->
+
+                                Row(
+                                    modifier = modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                ) {
+                                    BodyMediumText(
+                                        modifier = Modifier.weight(1f),
+                                        text = url,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    CommonIconButton(
+                                        imageVector = Icons.Default.ExitToApp,
+                                        onClick = { onUrlPressed(url) }
+                                    )
+                                }
                             }
                         }
                     }
@@ -427,11 +474,7 @@ private fun Content(
             if (eventDetails.location.isNotEmpty()) {
                 item {
                     CardWithImage(
-                        modifier = Modifier.clickable {
-                            context.startActivity(
-                                getMapsIntent(eventDetails.location)
-                            )
-                        },
+                        modifier = Modifier.clickable { onLocationPressed(eventDetails.location) },
                         text = eventDetails.location,
                         image = R.drawable.location_background,
                         smallIcon = Icons.Outlined.LocationOn
@@ -491,7 +534,7 @@ private fun Content(
                         )
                         CommonIconButton(
                             imageVector = Icons.Outlined.Email,
-                            onClick = { context.startActivity(getMailIntent(organizer)) }
+                            onClick = { onEmailPressed(organizer) }
                         )
                     }
                 }
@@ -519,22 +562,6 @@ private fun Content(
         }
     }
 }
-
-private fun getUrlIntent(url: String): Intent =
-    Intent(Intent.ACTION_VIEW).apply {
-        data = Uri.parse(url)
-    }
-
-private fun getMapsIntent(location: String): Intent =
-    Intent(Intent.ACTION_VIEW).apply {
-        data = Uri.parse("http://maps.google.co.in/maps?q=$location")
-    }
-
-private fun getMailIntent(email: String): Intent =
-    Intent(Intent.ACTION_SENDTO).apply {
-        data = Uri.parse("mailto:")
-        putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
-    }
 
 @MediumPhonePreview
 @Composable
@@ -570,6 +597,9 @@ private fun ViewModePreview() {
             onDeletePressed = {},
             onAttendeePressed = {},
             snackBarHostState = remember { SnackbarHostState() },
+            onEmailPressed = {},
+            onLocationPressed = {},
+            onUrlPressed = {},
         )
     }
 }
@@ -585,6 +615,9 @@ private fun ViewModePreview2() {
             onDeletePressed = {},
             onAttendeePressed = {},
             snackBarHostState = remember { SnackbarHostState() },
+            onEmailPressed = {},
+            onLocationPressed = {},
+            onUrlPressed = {},
         )
     }
 }

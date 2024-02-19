@@ -1,13 +1,15 @@
 package com.mateuszholik.calendarapp.ui.provider
 
 import androidx.annotation.StringRes
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import com.mateuszholik.calendarapp.R
 import com.mateuszholik.calendarapp.ui.provider.ColorsProvider.ColorInfo
 import javax.inject.Inject
 
 interface ColorsProvider {
 
-    fun provideDefault(color: Int): ColorInfo
+    fun provideDefault(color: Int = DEFAULT_COLOR): ColorInfo
 
     fun provide(): List<ColorInfo>
 
@@ -15,6 +17,10 @@ interface ColorsProvider {
         val value: Int,
         @StringRes val name: Int,
     )
+
+    private companion object {
+        val DEFAULT_COLOR = Color.Cyan.toArgb()
+    }
 }
 
 class ColorsProviderImpl @Inject constructor() : ColorsProvider {

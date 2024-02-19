@@ -2,7 +2,7 @@ package com.mateuszholik.dateutils.extensions
 
 import java.util.Locale
 
-internal fun String.capitalized(): String =
+fun String.capitalized(): String =
     replaceFirstChar {
         if (it.isLowerCase()) {
             it.titlecase(

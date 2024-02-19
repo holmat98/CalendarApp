@@ -1,11 +1,12 @@
 package com.mateuszholik.data.factories
 
 import android.content.ContentUris
-import android.content.ContentValues
 import android.provider.CalendarContract
+import com.mateuszholik.data.builders.ContentValuesBuilder.contentValuesBuilder
 import com.mateuszholik.data.factories.models.DeleteData
 import com.mateuszholik.data.factories.models.QueryData
 import com.mateuszholik.data.factories.models.UpdateData
+import com.mateuszholik.data.repositories.models.NewEvent
 import com.mateuszholik.data.repositories.models.UpdatedEventDetails
 import com.mateuszholik.dateutils.Milliseconds
 import java.time.LocalDate
@@ -24,6 +25,8 @@ internal interface EventsContentProviderQueryFactory {
     suspend fun createForUpdateEvent(updatedEventDetails: UpdatedEventDetails): UpdateData
 
     suspend fun createForDeleteEvent(eventId: Long): DeleteData
+
+    suspend fun createForCreateEvent(newEvent: NewEvent): UpdateData
 
     companion object {
         const val TODAY_EVENTS_ID_INDEX = 0
@@ -147,7 +150,7 @@ internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
                 CalendarContract.Events.CONTENT_URI,
                 updatedEventDetails.id
             ),
-            values = ContentValues().apply {
+            values =  contentValuesBuilder {
                 with(updatedEventDetails) {
                     title?.let { put(CalendarContract.Events.TITLE, it) }
                     description?.let { put(CalendarContract.Events.DESCRIPTION, it) }
@@ -177,6 +180,30 @@ internal class EventsContentProviderQueryFactoryImpl @Inject constructor() :
                 CalendarContract.Events.CONTENT_URI,
                 eventId
             )
+        )
+
+    override suspend fun createForCreateEvent(newEvent: NewEvent): UpdateData =
+        UpdateData(
+            uri = CalendarContract.Events.CONTENT_URI,
+            values = contentValuesBuilder {
+                with(newEvent) {
+                    put(CalendarContract.Events.TITLE, title)
+                    put(CalendarContract.Events.DESCRIPTION, description)
+                    put(CalendarContract.Events.ALL_DAY, allDay)
+                    put(
+                        CalendarContract.Events.DTSTART,
+                        Milliseconds.ofDateTime(startDate, ZoneId.of(timezone)).value
+                    )
+                    put(
+                        CalendarContract.Events.DTEND,
+                        Milliseconds.ofDateTime(endDate, ZoneId.of(timezone)).value
+                    )
+                    put(CalendarContract.Events.EVENT_TIMEZONE, timezone)
+                    put(CalendarContract.Events.EVENT_COLOR, eventColor)
+                    put(CalendarContract.Events.CALENDAR_ID, calendarId)
+                    put(CalendarContract.Events.EVENT_LOCATION, location)
+                }
+            }
         )
 
     private fun List<Long>.asInSelection(): String {
