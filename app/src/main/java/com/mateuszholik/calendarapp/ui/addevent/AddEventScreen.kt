@@ -3,6 +3,7 @@ package com.mateuszholik.calendarapp.ui.addevent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -158,39 +160,48 @@ fun AddEventScreen(
             bottom = it.calculateBottomPadding(),
         )
 
-        Content(
-            paddingValues = paddingValues,
-            addEventUiState = uiState,
-            onAllDayChanged = { allDay ->
-                viewModel.performUserAction(
-                    AllDaySelectionChanged(allDay)
+        when (uiState) {
+            is AddEventUiState.AddEventData -> {
+                Content(
+                    paddingValues = paddingValues,
+                    addEventData = uiState as AddEventUiState.AddEventData,
+                    onAllDayChanged = { allDay ->
+                        viewModel.performUserAction(
+                            AllDaySelectionChanged(allDay)
+                        )
+                    },
+                    onCalendarPressed = { viewModel.performUserAction(AddEventUserAction.SelectCalendar) },
+                    onColorPressed = { viewModel.performUserAction(AddEventUserAction.SelectEventColor) },
+                    onTitleChanged = { newTitle ->
+                        viewModel.performUserAction(
+                            AddEventUserAction.UpdateTitle(newTitle)
+                        )
+                    },
+                    onDescriptionChanged = { newDescription ->
+                        viewModel.performUserAction(AddEventUserAction.UpdateDescription(newDescription))
+                    },
+                    onLocationChanged = { newLocation ->
+                        viewModel.performUserAction(AddEventUserAction.UpdateLocation(newLocation))
+                    },
+                    onStartDateChanged = { newStartDate ->
+                        viewModel.performUserAction(AddEventUserAction.StartDateChanged(newStartDate))
+                    },
+                    onEndDateChanged = { newEndDate ->
+                        viewModel.performUserAction(AddEventUserAction.EndDateChanged(newEndDate))
+                    },
+                    onTimeZonePressed = { viewModel.performUserAction(AddEventUserAction.SelectTimeZone) },
+                    onUrlsChanged = { newUrls ->
+                        viewModel.performUserAction(AddEventUserAction.UpdateUrls(newUrls))
+                    },
+                    onReminderPressed = { viewModel.performUserAction(AddEventUserAction.SelectReminder) },
                 )
-            },
-            onCalendarPressed = { viewModel.performUserAction(AddEventUserAction.SelectCalendar) },
-            onColorPressed = { viewModel.performUserAction(AddEventUserAction.SelectEventColor) },
-            onTitleChanged = { newTitle ->
-                viewModel.performUserAction(
-                    AddEventUserAction.UpdateTitle(newTitle)
-                )
-            },
-            onDescriptionChanged = { newDescription ->
-                viewModel.performUserAction(AddEventUserAction.UpdateDescription(newDescription))
-            },
-            onLocationChanged = { newLocation ->
-                viewModel.performUserAction(AddEventUserAction.UpdateLocation(newLocation))
-            },
-            onStartDateChanged = { newStartDate ->
-                viewModel.performUserAction(AddEventUserAction.StartDateChanged(newStartDate))
-            },
-            onEndDateChanged = { newEndDate ->
-                viewModel.performUserAction(AddEventUserAction.EndDateChanged(newEndDate))
-            },
-            onTimeZonePressed = { viewModel.performUserAction(AddEventUserAction.SelectTimeZone) },
-            onUrlsChanged = { newUrls ->
-                viewModel.performUserAction(AddEventUserAction.UpdateUrls(newUrls))
-            },
-            onReminderPressed = { viewModel.performUserAction(AddEventUserAction.SelectReminder) },
-        )
+            }
+            is AddEventUiState.Loading -> {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+            }
+        }
     }
 
     calendars?.let {
@@ -303,7 +314,7 @@ fun AddEventScreen(
 @Composable
 private fun Content(
     paddingValues: PaddingValues,
-    addEventUiState: AddEventUiState,
+    addEventData: AddEventUiState.AddEventData,
     onCalendarPressed: () -> Unit,
     onColorPressed: () -> Unit,
     onTitleChanged: (String) -> Unit,
@@ -329,7 +340,7 @@ private fun Content(
         item {
             CommonOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                text = addEventUiState.title,
+                text = addEventData.title,
                 onTextChanged = onTitleChanged,
                 hint = stringResource(R.string.edit_event_provide_title),
                 focusRequester = focusRequester,
@@ -345,7 +356,7 @@ private fun Content(
                     focusManager.clearFocus()
                 }
             ) {
-                with(addEventUiState.calendar) {
+                with(addEventData.calendar) {
                     CalendarItem(
                         email = accountName,
                         name = calendarName,
@@ -364,18 +375,18 @@ private fun Content(
                         .padding(bottom = MaterialTheme.spacing.small)
                         .fillMaxWidth(),
                     text = stringResource(R.string.edit_event_all_day),
-                    isSelected = addEventUiState.allDay,
+                    isSelected = addEventData.allDay,
                     onSelectionChanged = {
                         onAllDayChanged(it)
                         focusManager.clearFocus()
                     }
                 )
-                if (addEventUiState.allDay) {
+                if (addEventData.allDay) {
                     CommonDatePicker(
                         modifier = Modifier
                             .padding(bottom = MaterialTheme.spacing.small)
                             .fillMaxWidth(),
-                        date = addEventUiState.startDate.toLocalDate(),
+                        date = addEventData.startDate.toLocalDate(),
                         onDateSelected = {
                             onStartDateChanged(it.atStartOfDay())
                             focusManager.clearFocus()
@@ -385,7 +396,7 @@ private fun Content(
                         modifier = Modifier
                             .padding(bottom = MaterialTheme.spacing.small)
                             .fillMaxWidth(),
-                        date = addEventUiState.endDate.toLocalDate(),
+                        date = addEventData.endDate.toLocalDate(),
                         onDateSelected = {
                             onEndDateChanged(it.atStartOfDay())
                             focusManager.clearFocus()
@@ -397,14 +408,14 @@ private fun Content(
                             imageVector = Icons.Default.DateRange,
                             contentDescription = null
                         )
-                        TimezoneItem(timezone = addEventUiState.timezone)
+                        TimezoneItem(timezone = addEventData.timezone)
                     }
                 } else {
                     CommonDateTimePicker(
                         modifier = Modifier
                             .padding(bottom = MaterialTheme.spacing.small)
                             .fillMaxWidth(),
-                        date = addEventUiState.startDate,
+                        date = addEventData.startDate,
                         onDateSelected = {
                             onStartDateChanged(it)
                             focusManager.clearFocus()
@@ -414,7 +425,7 @@ private fun Content(
                         modifier = Modifier
                             .padding(bottom = MaterialTheme.spacing.small)
                             .fillMaxWidth(),
-                        date = addEventUiState.endDate,
+                        date = addEventData.endDate,
                         onDateSelected = {
                             onEndDateChanged(it)
                             focusManager.clearFocus()
@@ -426,7 +437,7 @@ private fun Content(
                             focusManager.clearFocus()
                         }
                     ) {
-                        TimezoneItem(timezone = addEventUiState.timezone)
+                        TimezoneItem(timezone = addEventData.timezone)
                     }
                 }
             }
@@ -443,10 +454,10 @@ private fun Content(
                 }
             ) {
                 TextWithIcon(
-                    text = if (addEventUiState.reminder == null) {
+                    text = if (addEventData.reminder == null) {
                         stringResource(R.string.add_event_select_reminder)
                     } else {
-                        addEventUiState.reminder.asText(context)
+                        addEventData.reminder.asText(context)
                     },
                     icon = Icons.Outlined.Notifications
                 )
@@ -456,7 +467,7 @@ private fun Content(
         item {
             CommonOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                text = addEventUiState.description,
+                text = addEventData.description,
                 onTextChanged = onDescriptionChanged,
                 hint = stringResource(R.string.edit_event_provide_description),
                 focusRequester = focusRequester,
@@ -471,8 +482,8 @@ private fun Content(
                 }
             ) {
                 ColorItem(
-                    color = addEventUiState.color.value,
-                    name = stringResource(addEventUiState.color.name),
+                    color = addEventData.color.value,
+                    name = stringResource(addEventData.color.name),
                 )
             }
         }
@@ -480,7 +491,7 @@ private fun Content(
         item {
             CommonOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                text = addEventUiState.urls,
+                text = addEventData.urls,
                 supportingText = stringResource(R.string.add_event_provide_urls_explanation),
                 onTextChanged = onUrlsChanged,
                 hint = stringResource(R.string.add_event_provide_urls),
@@ -491,7 +502,7 @@ private fun Content(
         item {
             CommonOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                text = addEventUiState.location,
+                text = addEventData.location,
                 onTextChanged = onLocationChanged,
                 hint = stringResource(R.string.edit_event_provide_location),
                 focusRequester = focusRequester,
@@ -513,7 +524,7 @@ private fun Preview() {
                     horizontal = MaterialTheme.spacing.normal,
                     vertical = 0.dp
                 ),
-                addEventUiState = AddEventUiState(
+                addEventData = AddEventUiState.AddEventData(
                     title = "Title",
                     description = "Description",
                     allDay = false,
@@ -563,7 +574,7 @@ private fun Preview2() {
                     horizontal = MaterialTheme.spacing.normal,
                     vertical = 0.dp
                 ),
-                addEventUiState = AddEventUiState(
+                addEventData = AddEventUiState.AddEventData(
                     title = "Title",
                     description = "Description",
                     allDay = false,
@@ -613,7 +624,7 @@ private fun Preview3() {
                     horizontal = MaterialTheme.spacing.normal,
                     vertical = 0.dp
                 ),
-                addEventUiState = AddEventUiState(
+                addEventData = AddEventUiState.AddEventData(
                     title = "Title",
                     description = "Description",
                     allDay = true,

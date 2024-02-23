@@ -28,7 +28,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.TimeZone
@@ -46,7 +45,8 @@ class AddEventScreenViewModel @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
 ) : BaseViewModel<AddEventUiState, AddEventUserAction, AddEventUiEvent>() {
 
-    private val _uiState = MutableStateFlow(getInitialUiState())
+    private val _uiState: MutableStateFlow<AddEventUiState> =
+        MutableStateFlow(AddEventUiState.Loading)
     override val uiState: StateFlow<AddEventUiState>
         get() = _uiState.asStateFlow()
 
@@ -60,6 +60,10 @@ class AddEventScreenViewModel @Inject constructor(
         viewModelScope.launch(dispatcherProvider.main()) {
             _uiEvent.emit(AddEventUiEvent.Error)
         }
+    }
+
+    init {
+        setInitialAddEventData()
     }
 
     override fun performUserAction(action: AddEventUserAction) =
@@ -109,7 +113,7 @@ class AddEventScreenViewModel @Inject constructor(
         }
 
     private fun handleAllDaySelectionChanged(allDay: Boolean) {
-        _uiState.update {
+        _uiState.updateAddEventData {
             it.copy(
                 allDay = allDay,
                 timezone = if (allDay) {
@@ -124,7 +128,7 @@ class AddEventScreenViewModel @Inject constructor(
     private fun handleCalendarSelected(calendar: Calendar) {
         viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             _uiEvent.emit(AddEventUiEvent.DismissCalendarSelection)
-            _uiState.update { it.copy(calendar = calendar) }
+            _uiState.updateAddEventData { it.copy(calendar = calendar) }
         }
     }
 
@@ -135,7 +139,7 @@ class AddEventScreenViewModel @Inject constructor(
     }
 
     private fun handleEndDateChanged(newEndDate: LocalDateTime) {
-        _uiState.update { it.copy(endDate = newEndDate) }
+        _uiState.updateAddEventData { it.copy(endDate = newEndDate) }
     }
 
     private fun handleExitAttempt() {
@@ -180,25 +184,28 @@ class AddEventScreenViewModel @Inject constructor(
     private fun handleSelectedEventColor(color: ColorsProvider.ColorInfo) {
         viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             _uiEvent.emit(AddEventUiEvent.DismissColorEventSelection)
-            _uiState.update { it.copy(color = color) }
+            _uiState.updateAddEventData { it.copy(color = color) }
         }
     }
 
     private fun handleStartDateChanged(newStartDate: LocalDateTime) {
-        _uiState.update { it.copy(startDate = newStartDate) }
+        _uiState.updateAddEventData { it.copy(startDate = newStartDate) }
     }
 
     private fun handleUpdateDescription(newDescription: String) {
-        _uiState.update { it.copy(description = newDescription) }
+        _uiState.updateAddEventData { it.copy(description = newDescription) }
     }
 
     private fun handleSaveEvent() {
         viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
-            val newEvent = _uiState.value.toNewEvent()
+            val currentState = _uiState.value
+            if (currentState is AddEventUiState.AddEventData) {
+                val newEvent = currentState.toNewEvent()
 
-            createEventUseCase(newEvent)
+                createEventUseCase(newEvent)
 
-            _uiEvent.emit(AddEventUiEvent.NavigateBack)
+                _uiEvent.emit(AddEventUiEvent.NavigateBack)
+            }
         }
     }
 
@@ -219,52 +226,66 @@ class AddEventScreenViewModel @Inject constructor(
     private fun handleReminderSelected(minutes: Minutes) {
         viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             _uiEvent.emit(AddEventUiEvent.DismissReminderSelection)
-            _uiState.update { it.copy(reminder = minutes) }
+            _uiState.updateAddEventData { it.copy(reminder = minutes) }
         }
     }
 
     private fun handleUpdateLocation(newLocation: String) {
-        _uiState.update { it.copy(location = newLocation) }
+        _uiState.updateAddEventData { it.copy(location = newLocation) }
     }
 
     private fun handleUpdateTitle(newTitle: String) {
-        _uiState.update { it.copy(title = newTitle) }
+        _uiState.updateAddEventData { it.copy(title = newTitle) }
     }
 
     private fun handleUpdateUrls(newUrls: String) {
-        _uiState.update { it.copy(urls = newUrls) }
+        _uiState.updateAddEventData { it.copy(urls = newUrls) }
     }
 
     private fun handleTimeZoneSelected(timeZone: TimeZone) {
         viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             _uiEvent.emit(AddEventUiEvent.DismissTimeZoneSelection)
-            _uiState.update { it.copy(timezone = timeZone) }
+            _uiState.updateAddEventData { it.copy(timezone = timeZone) }
         }
     }
 
-    private fun getInitialUiState(): AddEventUiState =
-        runBlocking {
+    private fun setInitialAddEventData() {
+        viewModelScope.launch(dispatcherProvider.main() + exceptionHandler) {
             val startDateTime = currentDateProvider
                 .provideDateTime()
                 .plusHours(1)
                 .copy(minute = 0, second = 0)
 
-            AddEventUiState(
-                title = "",
-                description = "",
-                allDay = false,
-                startDate = startDateTime,
-                endDate = startDateTime.plusHours(1),
-                timezone = timezoneProvider.provideDefault(),
-                urls = "",
-                calendar = getCalendarUseCase(),
-                color = colorsProvider.provideDefault(),
-                location = "",
-                reminder = null,
+            _uiState.emit(
+                AddEventUiState.AddEventData(
+                    title = "",
+                    description = "",
+                    allDay = false,
+                    startDate = startDateTime,
+                    endDate = startDateTime.plusHours(1),
+                    timezone = timezoneProvider.provideDefault(),
+                    urls = "",
+                    calendar = getCalendarUseCase(),
+                    color = colorsProvider.provideDefault(),
+                    location = "",
+                    reminder = null,
+                )
             )
         }
+    }
 
-    private fun AddEventUiState.toNewEvent(): NewEvent =
+    private fun MutableStateFlow<AddEventUiState>.updateAddEventData(
+        transform: (AddEventUiState.AddEventData) -> AddEventUiState,
+    ): Unit =
+        update { currentState ->
+            if (currentState is AddEventUiState.AddEventData) {
+                transform(currentState)
+            } else {
+                currentState
+            }
+        }
+
+    private fun AddEventUiState.AddEventData.toNewEvent(): NewEvent =
         NewEvent(
             title = title,
             description = Description.from(description, urls.split(";")),
