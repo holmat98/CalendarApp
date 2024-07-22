@@ -5,11 +5,16 @@ App has four themes, one for every season. This app support different screen siz
 Currently app is under development and user can only see the welcome screen, screen with calendar permissions and screen with events for specific day.</b>
 
 ### Table of contents
+* [Sample app](#sample-app)
 * [How to build and run the app](#how-to-build-and-run-the-app)
 * [Supported Android versions](#supported-android-versions)
 * [Tech stack](#tech-stack)
 * [Architecture and modularization](#architecture-and-modularization)
 * [App design](#app-design)
+
+### Sample app
+
+You can download sample app [here](https://install.appcenter.ms/users/holmat1998/apps/calendar-app/distribution_groups/releases/releases/5)
 
 ### How to build and run the app
 
